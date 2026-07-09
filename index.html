@@ -1,0 +1,2413 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>柊渚の思考動物園</title>
+<style>
+  :root{
+    --bg:#fef7ec; --panel:#ffffff; --panel2:#fff3dc;
+    --ink:#33291f; --muted:#8a7a68; --faint:#bdae9c;
+    --outline:#33291f;
+    --red:#ff5a4e; --yellow:#ffc226; --blue:#3aa7e8; --green:#4cbf6b; --purple:#9b7ce0;
+    --zoo:#2f7d4f; --wood:#8a5a33;
+    --accent:var(--zoo); --accent-ink:#fff;
+    --hi:rgba(255,194,38,.45);
+    --hard:4px 4px 0 var(--outline);
+    --hard-sm:3px 3px 0 var(--outline);
+    --thumb:repeating-linear-gradient(45deg,#ffe9c4 0 14px,#fff3dc 14px 28px);
+    --sans:"Hiragino Maru Gothic ProN","HGMaruGothicMPRO","HG丸ｺﾞｼｯｸM-PRO","Yu Gothic","YuGothic","Meiryo",sans-serif;
+    --mono:"Consolas","Menlo",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#272038; --panel:#332b4a; --panel2:#3d3458;
+      --ink:#fdf3e0; --muted:#b5a9c9; --faint:#7d7295;
+      --outline:#171225;
+      --zoo:#3f9e68; --wood:#7a5233;
+      --hi:rgba(255,194,38,.3);
+      --thumb:repeating-linear-gradient(45deg,#3d3458 0 14px,#332b4a 14px 28px);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#fef7ec; --panel:#ffffff; --panel2:#fff3dc;
+    --ink:#33291f; --muted:#8a7a68; --faint:#bdae9c;
+    --outline:#33291f; --hi:rgba(255,194,38,.45);
+    --zoo:#2f7d4f; --wood:#8a5a33;
+    --thumb:repeating-linear-gradient(45deg,#ffe9c4 0 14px,#fff3dc 14px 28px);
+  }
+  :root[data-theme="dark"]{
+    --bg:#272038; --panel:#332b4a; --panel2:#3d3458;
+    --ink:#fdf3e0; --muted:#b5a9c9; --faint:#7d7295;
+    --outline:#171225; --hi:rgba(255,194,38,.3);
+    --zoo:#3f9e68; --wood:#7a5233;
+    --thumb:repeating-linear-gradient(45deg,#3d3458 0 14px,#332b4a 14px 28px);
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); line-height:1.9; font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+  button{font-family:var(--sans); color:var(--ink)}
+  .wrap{max-width:880px; margin:0 auto; padding:0 24px}
+  mark{background:linear-gradient(transparent 55%, var(--hi) 55%); color:inherit; padding:0 2px}
+
+  /* ---------- 入園ゲート ---------- */
+  #gateOverlay{
+    position:fixed; inset:0; z-index:99; display:flex; align-items:center; justify-content:center;
+    background:var(--zoo); transition:opacity .6s ease; padding:20px;
+  }
+  #gateOverlay .gate-inner{text-align:center}
+  .ticket{
+    position:relative; background:#fffdf6; color:#33291f; border:2.5px solid #33291f;
+    border-radius:14px; box-shadow:6px 6px 0 rgba(0,0,0,.3); padding:24px 30px;
+    display:inline-flex; gap:24px; align-items:center; cursor:pointer;
+    transition:transform .5s ease, opacity .5s ease;
+  }
+  .ticket:hover{transform:rotate(-1.5deg)}
+  .ticket .t-main{text-align:left}
+  .ticket .t-zoo{font-family:var(--mono); font-size:9.5px; letter-spacing:.28em; color:#8a7a68}
+  .ticket .t-title{font-size:28px; font-weight:900; letter-spacing:.12em; margin-top:2px}
+  .ticket .t-sub{font-size:12px; font-weight:700; color:#8a7a68; margin-top:4px}
+  .ticket .t-stub{
+    border-left:2.5px dashed #bdae9c; padding-left:22px; text-align:center;
+    font-weight:900; font-size:14px;
+  }
+  .ticket .t-stub .paw{font-size:26px; display:block; margin-bottom:2px}
+  .gate-hint{margin-top:20px; color:#fff; font-weight:800; font-size:14.5px; letter-spacing:.12em}
+  .gate-skip{
+    margin-top:12px; background:none; border:none; color:rgba(255,255,255,.75);
+    font-family:var(--sans); font-size:12px; font-weight:700; cursor:pointer; text-decoration:underline;
+  }
+  #gateOverlay.leave{opacity:0; pointer-events:none}
+  #gateOverlay.leave .ticket{transform:translateY(-30px) rotate(-6deg); opacity:0}
+
+  /* ---------- 園内放送 ---------- */
+  .hoso{
+    display:flex; align-items:center; gap:12px;
+    max-width:880px; margin:0 auto; padding:2px 24px 8px;
+  }
+  .hoso-label{
+    flex:none; font-size:11px; font-weight:900; letter-spacing:.08em;
+    background:var(--panel); border:2px solid var(--outline); border-radius:999px;
+    padding:3px 12px; box-shadow:2px 2px 0 var(--outline);
+  }
+  .hoso-track{
+    flex:1; overflow:hidden; white-space:nowrap; position:relative;
+    background:#0e0e0e; border:2.5px solid var(--outline); border-radius:8px;
+    padding:7px 0 6px; box-shadow:inset 0 0 10px rgba(0,0,0,.9), 3px 3px 0 var(--outline);
+  }
+  .hoso-track::after{
+    content:""; position:absolute; inset:0; pointer-events:none; border-radius:5px;
+    background:
+      repeating-linear-gradient(0deg, rgba(0,0,0,.5) 0 1px, transparent 1px 3px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.5) 0 1px, transparent 1px 3px);
+  }
+  .hoso-track span{
+    display:inline-block; padding-left:100%;
+    animation:hoso 38s linear infinite;
+    font-family:var(--mono); font-size:13px; font-weight:700; letter-spacing:.14em;
+    color:#ffb43a;
+    text-shadow:0 0 5px rgba(255,170,40,.85), 0 0 14px rgba(255,140,0,.4);
+  }
+  @keyframes hoso{to{transform:translateX(-100%)}}
+
+  /* ---------- 園内マップ ---------- */
+  .zoo-map{
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:18px;
+    box-shadow:var(--hard-sm); padding:8px;
+  }
+  .mapsvg{width:100%; height:auto; display:block}
+  .mzone{cursor:pointer; transition:filter .15s ease}
+  .mzone:hover{filter:brightness(1.07) drop-shadow(0 3px 0 rgba(51,41,31,.25))}
+  .map-photo{position:relative}
+  .map-photo img{width:100%; display:block; border-radius:12px}
+  .map-photo .hot{position:absolute; display:block; border-radius:16px}
+  .map-photo .hot:hover,.map-photo .hot:focus-visible{
+    background:rgba(255,255,255,.14);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.75), 0 0 0 2px rgba(51,41,31,.35);
+  }
+  .map-photo .hot-moon{position:absolute; right:8%; bottom:8%; font-size:17px; opacity:.55}
+
+  /* ---------- 順路 ---------- */
+  .junro{display:flex; justify-content:center; margin:-14px 0 0}
+  .junro span{
+    font-size:11px; font-weight:900; letter-spacing:.2em; color:#fff7ea;
+    background:var(--wood); border:2px solid var(--outline); border-radius:6px;
+    padding:3px 16px 3px 14px; box-shadow:2px 2px 0 var(--outline); transform:rotate(-2deg);
+  }
+  .junro span::after{content:"　→"}
+
+  /* ---------- 入口テント ---------- */
+  .awning{height:14px; background:var(--zoo); position:relative; margin-bottom:12px}
+  .awning::after{
+    content:""; position:absolute; top:14px; left:0; right:0; height:10px;
+    background:radial-gradient(circle at 12px 0, var(--zoo) 10px, transparent 11px);
+    background-size:24px 10px; background-repeat:repeat-x;
+  }
+
+  /* ---------- header ---------- */
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:880px; margin:0 auto; padding:20px 24px; flex-wrap:wrap; gap:12px;
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-weight:800; font-size:16px; letter-spacing:.06em}
+  nav{display:flex; gap:8px; font-size:13px; flex-wrap:wrap}
+  nav a{
+    text-decoration:none; font-weight:700; padding:5px 12px;
+    border:2px solid transparent; border-radius:999px;
+  }
+  nav a:hover,nav a:focus-visible{border-color:var(--outline); background:var(--panel); box-shadow:var(--hard-sm)}
+
+  /* ---------- gate (hero) ---------- */
+  .gate{
+    max-width:880px; margin:0 auto; padding:56px 24px 52px;
+    display:flex; gap:44px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+  }
+  .gate-copy{max-width:32em}
+  .open-board{
+    display:block; font-family:var(--mono); font-size:11px; font-weight:700;
+    letter-spacing:.18em; color:var(--zoo); margin-bottom:12px;
+  }
+  .paw-trail{display:flex; gap:32px; margin-top:20px; opacity:.32; font-size:15px}
+  .paw-trail span:nth-child(1){transform:rotate(-8deg)}
+  .paw-trail span:nth-child(2){transform:rotate(12deg) translateY(-5px)}
+  .paw-trail span:nth-child(3){transform:rotate(26deg) translateY(-10px)}
+  .katagaki{
+    display:inline-block; font-size:12.5px; font-weight:800; letter-spacing:.2em;
+    border:2px solid var(--outline); border-radius:999px; padding:4px 16px;
+    background:var(--yellow); color:#33291f; box-shadow:var(--hard-sm);
+    transform:rotate(-2deg); margin-bottom:24px;
+  }
+  .gate h1{
+    font-size:clamp(30px,5.6vw,46px); font-weight:900; line-height:1.55;
+    letter-spacing:.03em; margin:0 0 20px; text-wrap:balance;
+  }
+  .gate p{color:var(--muted); margin:0 0 10px; font-size:15.5px; font-weight:600}
+  .logo-namae{
+    flex:none; text-align:center;
+  }
+  .logo-namae .moji{
+    display:inline-block; font-size:clamp(46px,8vw,72px); font-weight:900; line-height:1;
+  }
+  .logo-namae .moji:nth-child(1){color:var(--green); transform:rotate(-6deg)}
+  .logo-namae .moji:nth-child(2){color:var(--blue); transform:rotate(5deg) translateY(6px)}
+  .logo-namae .yomi{
+    margin-top:18px; font-family:var(--mono); font-size:11px; letter-spacing:.4em; color:var(--faint);
+  }
+  .logo-namae .crest-big{margin-bottom:14px}
+
+  /* ---------- sections ---------- */
+  section{padding:48px 0}
+  .flag{
+    display:inline-block; font-size:13px; font-weight:800; letter-spacing:.25em;
+    background:var(--wood); color:#fff7ea; border:2px solid var(--outline); border-radius:6px;
+    padding:6px 28px; box-shadow:var(--hard-sm); transform:rotate(-1.5deg);
+    margin-bottom:16px; position:relative;
+  }
+  .flag::before,.flag::after{
+    content:""; position:absolute; top:50%; width:5px; height:5px; border-radius:50%;
+    background:rgba(255,247,234,.75); box-shadow:0 1px 0 rgba(0,0,0,.35);
+    transform:translateY(-50%);
+  }
+  .flag::before{left:10px}
+  .flag::after{right:10px}
+  .flag.f-red,.flag.f-blue,.flag.f-green,.flag.f-yellow,.flag.f-purple{background:var(--wood); color:#fff7ea}
+  .sec-head{margin-bottom:26px}
+  .sec-head h2{font-size:26px; font-weight:900; letter-spacing:.04em; margin:6px 0 10px}
+  .sec-head p{color:var(--muted); margin:0; max-width:38em; font-weight:600; font-size:15px}
+
+  /* ---------- diary ---------- */
+  .kinkyo{display:flex; flex-direction:column; gap:12px}
+  .ki{
+    display:flex; gap:16px; align-items:baseline;
+    background:var(--panel); border:2px solid var(--outline); border-radius:14px;
+    padding:14px 18px; box-shadow:var(--hard-sm);
+  }
+  .ki:nth-child(2){transform:rotate(.4deg)}
+  .ki:nth-child(3){transform:rotate(-.4deg)}
+  .ki .hi{
+    flex:none; font-size:11px; font-weight:800; letter-spacing:.1em;
+    background:var(--panel2); border-radius:999px; padding:2px 10px;
+  }
+  .ki p{margin:0; font-size:14.5px; font-weight:600}
+  .ki p small{color:var(--muted)}
+  .ki .ki-body{flex:1; min-width:12em; font-size:14.5px; font-weight:600}
+  .ki .ki-body p{margin:0 0 6px}
+  .ki .ki-body p:last-child{margin-bottom:0}
+
+  /* ---------- gacha ---------- */
+  .stage{
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:20px;
+    box-shadow:var(--hard); overflow:hidden; position:relative;
+  }
+  .stage-bar{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:12px 20px; border-bottom:2.5px solid var(--outline);
+    background:var(--zoo); color:#fff;
+    font-size:12px; font-weight:800; letter-spacing:.15em;
+  }
+  .stage-body{padding:36px 28px 32px; min-height:300px; position:relative}
+  .slot{
+    display:flex; align-items:center; justify-content:center; gap:14px;
+    flex-wrap:wrap; margin-bottom:10px;
+  }
+  .slot .cell{
+    font-size:clamp(20px,3.4vw,27px); font-weight:900;
+    background:var(--panel2); border:2.5px solid var(--outline); border-radius:14px;
+    padding:6px 18px 8px; min-width:5.5em; text-align:center; box-shadow:var(--hard-sm);
+  }
+  .slot .cell:first-child{transform:rotate(-1.2deg)}
+  .slot .cell:last-child{transform:rotate(1.2deg)}
+  .slot .x{font-weight:900; font-size:22px; color:var(--red)}
+  .slot-label{
+    text-align:center; font-size:11px; font-weight:800; letter-spacing:.3em;
+    color:var(--faint); margin-bottom:26px;
+  }
+  .steps{max-width:36em; margin:0 auto}
+  .step{
+    display:flex; gap:14px; margin:0 0 14px;
+    opacity:0; transform:translateY(10px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .step.show{opacity:1; transform:none}
+  .step .no{
+    flex:none; font-size:11px; font-weight:900; color:#fff;
+    background:var(--blue); border:2px solid var(--outline); border-radius:999px;
+    padding:2px 10px; height:fit-content; margin-top:6px; letter-spacing:.08em;
+  }
+  .step p{margin:0; font-weight:600; font-size:15px}
+  .punch{
+    margin:28px auto 0; max-width:30em; text-align:center;
+    font-size:clamp(19px,3vw,23px); line-height:1.9; font-weight:900;
+    opacity:0; transform:translateY(10px) scale(.97);
+    transition:opacity .7s ease, transform .7s cubic-bezier(.34,1.56,.64,1);
+  }
+  .punch.show{opacity:1; transform:none}
+  .punch::before{
+    content:"つまり…！"; display:block; font-size:13px; color:var(--red);
+    letter-spacing:.25em; margin-bottom:8px; font-weight:800;
+  }
+  .punch span{background:linear-gradient(transparent 55%, var(--hi) 55%)}
+  .stage-actions{
+    display:flex; gap:14px; justify-content:center; flex-wrap:wrap;
+    padding:0 24px 34px;
+  }
+  .btn{
+    appearance:none; border:2.5px solid var(--outline); background:var(--panel);
+    font-size:14.5px; font-weight:800; letter-spacing:.06em;
+    padding:12px 28px; border-radius:14px; cursor:pointer;
+    box-shadow:var(--hard-sm); transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .btn:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--outline)}
+  .btn:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--outline)}
+  .btn:focus-visible{outline:3px solid var(--blue); outline-offset:2px}
+  .btn-primary{background:var(--zoo); color:#fff}
+  .btn-yellow{background:var(--yellow); color:#33291f}
+  .btn[disabled]{opacity:.5; cursor:default; transform:none; box-shadow:var(--hard-sm)}
+  .btn-sm{padding:8px 18px; font-size:13px}
+  .idle-copy{
+    text-align:center; color:var(--muted); max-width:30em; margin:44px auto;
+    font-size:15px; font-weight:600;
+  }
+  .idle-copy strong{color:var(--ink); font-weight:900}
+  .kata-card{
+    background:var(--hi); border:2.5px solid var(--outline); border-radius:16px;
+    padding:18px 22px; margin-bottom:22px; box-shadow:var(--hard-sm);
+  }
+  .kata-label{
+    display:inline-block; font-size:10px; font-weight:800; letter-spacing:.2em;
+    background:var(--zoo); color:#fff; border:2px solid var(--outline);
+    border-radius:999px; padding:2px 10px; margin-bottom:8px;
+  }
+  .kata-name{font-size:24px; font-weight:900; letter-spacing:.03em}
+  .kata-q{font-size:13.5px; font-weight:700; color:var(--muted); margin-top:4px}
+  .demo-chips{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px}
+  .demo-chip{
+    appearance:none; border:2.5px solid var(--outline); background:var(--panel2);
+    border-radius:999px; padding:9px 18px; font-size:13.5px; font-weight:800;
+    cursor:pointer; box-shadow:var(--hard-sm); transition:transform .08s ease;
+  }
+  .demo-chip:hover{transform:translate(-1px,-1px)}
+  .demo-chip:focus-visible{outline:3px solid var(--blue); outline-offset:2px}
+  .demo-chip.watched{background:var(--green); color:#fff}
+  .try-box{
+    border:2.5px dashed var(--outline); border-radius:16px;
+    padding:20px 22px; margin-top:26px;
+  }
+  .try-box.ready{border-style:solid; background:var(--panel2); box-shadow:var(--hard-sm)}
+  .try-box.done{border-style:solid}
+  .try-label{
+    display:inline-block; font-size:10px; font-weight:800; letter-spacing:.2em;
+    background:var(--blue); color:#fff; border:2px solid var(--outline);
+    border-radius:999px; padding:2px 10px; margin-bottom:10px;
+  }
+  .try-topic{font-size:19px; font-weight:900; margin:0 0 8px}
+  .try-msg{font-size:14px; font-weight:600; color:var(--muted); margin:0 0 14px}
+  .try-note{
+    max-width:32em; margin:18px auto 0; text-align:center;
+    font-size:13px; font-weight:700; color:var(--muted);
+  }
+  .next-week{font-size:12.5px; font-weight:700; color:var(--faint); align-self:center}
+  .confetti{
+    position:absolute; top:-10px; font-size:18px; pointer-events:none;
+    animation:fall 1.6s ease-in forwards;
+  }
+  @keyframes fall{
+    0%{transform:translateY(0) rotate(0); opacity:1}
+    100%{transform:translateY(340px) rotate(360deg); opacity:0}
+  }
+
+  /* ---------- series ---------- */
+  .series-tabs{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:14px}
+  .series-tab{
+    appearance:none; border:2.5px solid var(--outline); background:var(--panel);
+    cursor:pointer; font-size:13.5px; font-weight:800; letter-spacing:.04em;
+    padding:9px 18px; border-radius:999px; box-shadow:var(--hard-sm);
+    transition:transform .08s ease;
+  }
+  .series-tab:hover{transform:translate(-1px,-1px)}
+  .series-tab:focus-visible{outline:3px solid var(--blue); outline-offset:2px}
+  .series-tab.active{color:#fff}
+  .series-tab.active.c-red{background:var(--red)}
+  .series-tab.active.c-blue{background:var(--blue)}
+  .series-tab.active.c-green{background:var(--green)}
+  .series-tab.active.c-purple{background:var(--purple)}
+  .series-tab.active.c-yellow{background:var(--yellow); color:#33291f}
+  .series-tab .dot{
+    display:inline-block; width:8px; height:8px; border-radius:50%;
+    background:currentColor; margin-right:8px; opacity:.9;
+  }
+  .series-tab .dot.off{opacity:.25}
+  .series-panel{
+    background:var(--panel); border:2.5px solid var(--outline);
+    border-radius:20px; padding:30px 28px 34px; box-shadow:var(--hard);
+  }
+  .series-head{
+    display:flex; justify-content:space-between; gap:20px; align-items:flex-start;
+    flex-wrap:wrap; margin-bottom:8px;
+  }
+  .series-head h3{font-size:23px; font-weight:900; letter-spacing:.03em; margin:0 0 6px}
+  .series-head .desc{color:var(--muted); font-size:14.5px; margin:0; max-width:34em; font-weight:600}
+  .plate{
+    display:grid; grid-template-columns:auto 1fr; gap:2px 14px; align-items:baseline;
+    margin-top:14px; max-width:30em;
+    background:var(--panel2); border:2px solid var(--outline); border-radius:10px;
+    padding:10px 16px; box-shadow:2px 2px 0 var(--outline);
+  }
+  .plate span{
+    font-family:var(--mono); font-size:10px; font-weight:700; letter-spacing:.15em;
+    color:var(--faint);
+  }
+  .plate b{font-size:12.5px; font-weight:800}
+  .yoteichi{
+    margin-top:20px; border:2.5px dashed var(--outline); border-radius:16px;
+    padding:18px 20px 16px; opacity:.92;
+  }
+  .yoteichi-head{font-weight:900; font-size:14px; letter-spacing:.05em; margin-bottom:12px}
+  .yoteichi-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px}
+  .lot{
+    border:2px dashed var(--faint); border-radius:10px; padding:8px 12px;
+  }
+  .lot b{display:block; font-size:13.5px; font-weight:900}
+  .lot span{font-family:var(--mono); font-size:9.5px; color:var(--faint); letter-spacing:.04em}
+  .yoteichi-note{font-size:12px; color:var(--faint); font-weight:700; margin:14px 0 0}
+  .series-sub{
+    flex:none; text-align:right; display:flex; flex-direction:column;
+    gap:8px; align-items:flex-end;
+  }
+  .series-sub .price{font-size:20px; font-weight:900}
+  .series-sub .price small{font-size:12px; color:var(--muted); font-weight:600}
+  .sub-state{
+    font-size:11px; font-weight:800; letter-spacing:.12em; color:var(--green);
+  }
+  .part-head{
+    display:flex; align-items:center; gap:12px;
+    margin:32px 0 14px;
+  }
+  .part-head .part-title{
+    font-size:15px; font-weight:900; letter-spacing:.08em;
+    border:2px solid var(--outline); border-radius:10px; padding:3px 14px;
+    background:var(--panel2); box-shadow:2px 2px 0 var(--outline);
+  }
+  .part-head .part-note{font-size:12px; color:var(--faint); font-weight:700}
+  .part-head::after{content:""; height:2px; flex:1; background:var(--outline); opacity:.15; border-radius:2px}
+  .vgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:16px}
+  .vcard{
+    border:2.5px solid var(--outline); border-radius:16px; overflow:hidden;
+    background:var(--panel); box-shadow:var(--hard-sm);
+  }
+  .vthumb{
+    position:relative; aspect-ratio:16/9; background:var(--thumb);
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    border-bottom:2.5px solid var(--outline);
+  }
+  .vthumb .play{
+    width:50px; height:50px; border-radius:50%;
+    background:var(--red); border:2.5px solid var(--outline);
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:var(--hard-sm); transition:transform .15s ease;
+  }
+  .vthumb:hover .play{transform:scale(1.12) rotate(8deg)}
+  .vthumb .play::after{
+    content:""; border-style:solid; border-width:9px 0 9px 14px;
+    border-color:transparent transparent transparent #fff;
+    margin-left:4px;
+  }
+  .vthumb::after{
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background:repeating-linear-gradient(90deg, rgba(51,41,31,.15) 0 4px, transparent 4px 30px);
+  }
+  .vthumb .dur{
+    position:absolute; right:8px; bottom:8px; font-family:var(--mono);
+    font-size:10.5px; font-weight:700; background:var(--outline); color:var(--bg);
+    padding:2px 8px; border-radius:999px; letter-spacing:.08em;
+  }
+  .vthumb .embed-note{
+    padding:14px; font-size:12px; color:var(--muted); text-align:center;
+    line-height:1.7; font-weight:600;
+  }
+  .vcard .vtitle{padding:12px 14px 14px; font-size:13.5px; line-height:1.6; font-weight:700}
+  .vcard.locked .vthumb{cursor:default}
+  .vcard.locked .play{background:var(--panel2)}
+  .vcard.locked .play::after{display:none}
+  .vcard.locked .play::before{content:"🔒"; font-size:17px}
+  .vcard.locked .vtitle{filter:blur(4px); user-select:none}
+  .badge{
+    display:inline-block; font-size:10px; font-weight:800; letter-spacing:.12em;
+    padding:2px 10px; border-radius:999px; border:2px solid var(--green);
+    color:var(--green); margin-bottom:6px;
+  }
+  .badge.grey{border-color:var(--faint); color:var(--faint)}
+  .brows{display:flex; flex-direction:column; gap:10px}
+  .brow{
+    display:flex; gap:14px; align-items:baseline; padding:12px 16px;
+    border:2px solid var(--outline); border-radius:12px; background:var(--panel2);
+    cursor:pointer; transition:transform .08s ease;
+  }
+  .brow:hover{transform:translate(-1px,-1px); box-shadow:var(--hard-sm)}
+  .brow .bmeta{
+    flex:none; font-size:10.5px; font-weight:800; color:var(--muted);
+    letter-spacing:.1em; width:5.5em;
+  }
+  .brow .btitle{font-size:14px; flex:1; font-weight:700}
+  .brow.locked{cursor:default; border-style:dashed}
+  .brow.locked:hover{transform:none; box-shadow:none}
+  .brow.locked .btitle{filter:blur(4px); user-select:none}
+  .brow .lockmark{flex:none; font-size:12px}
+  .reader-note{
+    margin-top:12px; padding:16px 18px; background:var(--hi);
+    border:2px dashed var(--outline); border-radius:12px;
+    font-size:13px; font-weight:600; display:none;
+  }
+  .reader-note.show{display:block}
+
+  /* ---------- sticker book ---------- */
+  .streak{
+    display:inline-flex; align-items:baseline; gap:10px;
+    font-size:12.5px; font-weight:800; letter-spacing:.08em;
+    border:2.5px solid var(--outline); border-radius:999px; background:var(--panel);
+    padding:8px 20px; margin-bottom:26px; box-shadow:var(--hard-sm);
+  }
+  .streak b{font-size:22px; color:var(--red)}
+  .grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:18px}
+  .card{
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:18px;
+    padding:18px 20px; position:relative; min-height:150px;
+    display:flex; flex-direction:column; gap:8px; box-shadow:var(--hard-sm);
+  }
+  .grid .card:nth-child(odd){transform:rotate(-.8deg)}
+  .grid .card:nth-child(even){transform:rotate(.8deg)}
+  .card h3{font-size:17px; letter-spacing:.03em; margin:0; font-weight:900}
+  .card .q{font-size:12.5px; color:var(--muted); margin:0; flex:1; font-weight:600}
+  .tag{
+    align-self:flex-start; font-size:10px; font-weight:800; letter-spacing:.15em;
+    color:#fff; background:var(--blue); border:2px solid var(--outline);
+    border-radius:999px; padding:1px 10px;
+  }
+  .card.premium-card .tag{background:var(--purple)}
+  .card.locked{border-style:dashed; box-shadow:none; background:var(--panel2)}
+  .card.locked h3,.card.locked .q{filter:blur(5px); user-select:none}
+  .card .lock{
+    position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:6px;
+    font-size:12px; color:var(--muted); font-weight:700;
+  }
+  .card .lock .key{font-size:22px}
+  .card.sealed h3,.card.sealed .q{filter:blur(5px); user-select:none}
+  .card.sealed{box-shadow:none; background:var(--panel2)}
+  .card .got{
+    position:absolute; top:-10px; right:-6px; font-size:10px; font-weight:900;
+    letter-spacing:.1em; background:var(--yellow); color:#33291f;
+    border:2px solid var(--outline); border-radius:999px; padding:3px 10px;
+    transform:rotate(6deg); box-shadow:2px 2px 0 var(--outline);
+  }
+
+  /* ---------- ticket ---------- */
+  .ticket-box{
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:20px;
+    padding:36px 32px; box-shadow:var(--hard);
+  }
+  .ticket-box .honbun{max-width:36em}
+  .ticket-box .honbun p{margin:0 0 14px; font-size:15px; font-weight:600; line-height:2}
+  .seki{margin:26px 0 8px; display:flex; flex-direction:column; gap:14px}
+  .seki-row{
+    display:flex; gap:18px; align-items:center; padding:18px 20px;
+    border:2.5px solid var(--outline); border-radius:16px; flex-wrap:wrap;
+    background:var(--panel2);
+  }
+  .seki-row.feature{background:var(--hi); transform:rotate(-.5deg); box-shadow:var(--hard-sm)}
+  .seki-row .seki-name{
+    flex:none; width:8.5em; font-size:16.5px; font-weight:900; letter-spacing:.04em;
+  }
+  .seki-row .seki-price{flex:none; width:8.5em; font-size:15px; font-weight:900}
+  .seki-row .seki-price small{font-size:11.5px; color:var(--muted); font-weight:600}
+  .seki-row .seki-desc{flex:1; min-width:14em; font-size:13px; color:var(--muted); font-weight:600}
+  .seki-row .seki-desc em{font-style:normal; color:var(--red); font-weight:800}
+  .econ-note{margin-top:16px; font-size:13px; color:var(--muted); font-weight:600}
+  .econ-note b{color:var(--red)}
+  .shomei{
+    margin-top:26px; display:flex; justify-content:flex-end; align-items:center; gap:12px;
+    font-weight:900; letter-spacing:.15em; font-size:15px;
+  }
+
+  /* ---------- profile ---------- */
+  .profile{display:flex; gap:36px; align-items:flex-start; flex-wrap:wrap}
+  .profile .kao{flex:none}
+  .profile .pr-text{flex:1; min-width:260px; max-width:36em}
+  .profile .pr-text p{margin:0 0 14px; font-size:15px; font-weight:700}
+  .profile .pr-text p.gray{color:var(--muted); font-size:14px; font-weight:600}
+  .santou{margin-top:24px; display:flex; flex-direction:column; gap:12px}
+  .qa{
+    padding:14px 18px; border:2px solid var(--outline); border-radius:14px;
+    background:var(--panel);
+  }
+  .qa:nth-child(odd){transform:rotate(.3deg)}
+  .qa:nth-child(even){transform:rotate(-.3deg)}
+  .qa .q-line{font-size:14.5px; font-weight:900; margin:0 0 4px}
+  .qa .q-line::before{content:"Q. "; color:var(--blue)}
+  .qa .a-line{margin:0; font-size:13.5px; color:var(--muted); font-weight:600}
+  .qa .a-line::before{content:"渚 "; color:var(--red); font-weight:900}
+
+  footer{
+    border-top:2.5px solid var(--outline); margin-top:44px;
+    padding:36px 24px 64px; color:var(--muted); font-size:12.5px; font-weight:600;
+  }
+  footer .wrap{padding:0; display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; align-items:flex-end}
+  footer p{max-width:40em; margin:0 0 6px}
+  footer .f-sign{display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:.1em; color:var(--ink)}
+  .uraguchi{
+    display:inline-block; margin-top:14px; font-size:15px; text-decoration:none;
+    opacity:.22; filter:grayscale(1); transition:opacity .4s ease, filter .4s ease;
+  }
+  .uraguchi:hover,.uraguchi:focus-visible{opacity:1; filter:none}
+
+  /* ==================== 管理室（デモCMS） ==================== */
+  #admin{min-height:100vh}
+  .admin-wrap{max-width:720px; margin:0 auto; padding:56px 24px 100px}
+  .adm-title{font-size:26px; font-weight:900; margin:0 0 18px}
+  .adm-note{font-size:13px; color:var(--muted); font-weight:600; line-height:1.9}
+  .adm-note code{background:var(--panel2); padding:1px 8px; border-radius:6px; border:1.5px solid var(--line); font-family:var(--mono)}
+  .adm-err{color:var(--red); font-weight:800; font-size:13.5px}
+  .adm-input{
+    font-family:var(--sans); font-size:14.5px; font-weight:600; color:var(--ink);
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:10px;
+    padding:10px 14px; width:100%; margin:5px 0;
+  }
+  .adm-input:focus{outline:3px solid var(--blue); outline-offset:1px}
+  textarea.adm-input{resize:vertical; line-height:1.9}
+  .adm-row{display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+  .adm-row .adm-input{width:auto; flex:1; min-width:150px}
+  .adm-check{font-size:13.5px; font-weight:700; display:flex; gap:7px; align-items:center}
+  .adm-bar{
+    display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:12px;
+    padding:12px 16px; box-shadow:var(--hard-sm); font-size:13.5px; font-weight:800;
+    margin-bottom:24px;
+  }
+  .adm-bar .sp{flex:1}
+  .adm-h{font-size:17px; font-weight:900; margin:30px 0 10px}
+  .adm-form{
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:14px;
+    padding:18px 20px; box-shadow:var(--hard-sm);
+    display:flex; flex-direction:column; gap:4px;
+  }
+  .fmt-bar{display:flex; gap:7px; flex-wrap:wrap; align-items:center; margin:8px 0 2px}
+  .fmt-hint{font-size:11px; font-weight:700; color:var(--faint)}
+  .fmt-btn{
+    appearance:none; border:2px solid var(--outline); border-radius:8px;
+    background:var(--panel2); color:var(--ink); font-family:var(--sans);
+    font-weight:800; font-size:12px; padding:4px 12px; cursor:pointer;
+    box-shadow:2px 2px 0 var(--outline); transition:transform .08s ease;
+  }
+  .fmt-btn:hover{transform:translate(-1px,-1px)}
+  .fmt-btn:active{transform:translate(1px,1px); box-shadow:none}
+  .post-item{display:flex; gap:12px; align-items:baseline; flex-wrap:wrap; padding:12px 4px; border-bottom:2px dashed var(--line)}
+  .post-item .pi-side{font-family:var(--mono); font-size:10px; font-weight:700; border:2px solid var(--outline); border-radius:999px; padding:1px 9px; flex:none}
+  .post-item .pi-title{flex:1; min-width:10em; font-weight:800; font-size:14px}
+  .post-item .pi-date{font-family:var(--mono); font-size:11px; color:var(--faint)}
+  .omote-link2{display:inline-block; margin-top:36px; font-weight:800; font-size:13.5px; color:var(--muted)}
+  .omote-link2:hover{color:var(--red)}
+
+  /* ==================== 裏 — still life ==================== */
+  body.ura-mode{background:#0b0b0c}
+  #ura{
+    --min:"Yu Mincho","YuMincho","Hiragino Mincho ProN","MS PMincho",serif;
+    min-height:100vh; background:#0b0b0c; color:#e3e1dc;
+    font-family:var(--sans); font-weight:500;
+  }
+  #ura .ura-inner{
+    position:relative; max-width:680px; margin:0 auto; padding:84px 26px 140px;
+  }
+  #ura .ura-head{
+    display:flex; flex-direction:column; align-items:center; gap:18px; margin-bottom:76px;
+  }
+  #ura .ura-title{
+    font-family:var(--mono); font-size:11px; letter-spacing:.8em; text-indent:.8em;
+    color:#9a98a0; text-transform:lowercase;
+  }
+  #ura .ura-sub{margin:0; font-size:12px; letter-spacing:.24em; color:#5b5a63}
+  #ura .ura-nav{display:flex; gap:20px; flex-wrap:wrap; justify-content:center; margin-top:10px}
+  #ura .ura-nav a{
+    font-family:var(--mono); font-size:11px; letter-spacing:.18em; color:#8b8a92;
+    text-decoration:none; border-bottom:1px solid transparent; padding-bottom:3px;
+  }
+  #ura .ura-nav a:hover,#ura .ura-nav a:focus-visible{color:#e3e1dc; border-color:#8b8a92}
+  #ura .ura-sec{margin:0 0 96px}
+  #ura .ura-h{
+    font-size:12px; font-weight:700; letter-spacing:.3em; color:#9a98a0;
+    margin:0 0 26px; display:flex; align-items:baseline; gap:14px;
+  }
+  #ura .ura-h .no{font-family:var(--mono); font-size:11px; color:#5b5a63}
+  #ura .ura-sec > p{
+    font-family:var(--min); font-size:15px; line-height:2.3; letter-spacing:.02em;
+    color:#d7d5cf; margin:0 0 24px; max-width:36em;
+  }
+  #ura .ura-lead{
+    font-size:12px !important; letter-spacing:.14em !important; color:#5b5a63 !important;
+    margin:-10px 0 30px !important; font-family:var(--sans) !important; line-height:2 !important;
+  }
+  #ura .ura-greeting{
+    font-family:var(--min); font-size:19px !important; line-height:2.4 !important;
+    letter-spacing:.04em !important; color:#e3e1dc !important; margin:0 0 28px !important;
+  }
+  /* --- 論考 --- */
+  #ura .ronko{border-top:1px solid #232329; padding-top:44px}
+  #ura .ronko-meta{
+    display:flex; gap:16px; flex-wrap:wrap; align-items:center;
+    font-family:var(--mono); font-size:11px; letter-spacing:.12em; color:#5b5a63;
+    margin:0 0 24px;
+  }
+  #ura .ronko-meta .t{border:1px solid #3a3a42; border-radius:2px; padding:1px 8px; color:#8b8a92}
+  #ura .ronko h1{
+    font-family:var(--min); font-size:clamp(25px,4.6vw,33px); font-weight:600;
+    line-height:1.9; letter-spacing:.02em; margin:0 0 8px; text-wrap:balance;
+  }
+  #ura .ronko .en{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.14em; color:#8b8a92;
+    margin:0 0 46px;
+  }
+  #ura .ronko h2{
+    font-family:var(--min); font-size:18.5px; font-weight:600; letter-spacing:.03em;
+    margin:60px 0 22px; display:flex; gap:14px; align-items:baseline;
+  }
+  #ura .ronko h2 .n{font-family:var(--mono); font-size:12px; color:#5b5a63; flex:none}
+  #ura .ronko p{
+    font-family:var(--min); font-size:16px; line-height:2.35; letter-spacing:.02em;
+    color:#d7d5cf; margin:0 0 28px;
+  }
+  #ura .ronko p sup{font-family:var(--mono); font-size:10px; color:#8b8a92}
+  #ura .ronko em{font-style:normal; border-bottom:1px solid #55545e; padding-bottom:1px}
+  #ura .footnotes{margin-top:56px; border-top:1px solid #232329; padding-top:24px}
+  #ura .footnotes p{
+    font-family:var(--min); font-size:13px; line-height:2.1; color:#8b8a92; margin:0 0 12px;
+  }
+  /* --- 書架 --- */
+  #ura .shoka{display:flex; flex-direction:column; border-top:1px solid #232329}
+  #ura .shoka-row{
+    display:flex; gap:18px; align-items:baseline; padding:18px 2px;
+    border-bottom:1px solid #232329; text-decoration:none; flex-wrap:wrap;
+  }
+  #ura .s-date{font-family:var(--mono); flex:none; width:7em; font-size:11px; color:#5b5a63; letter-spacing:.06em}
+  #ura .s-title{
+    flex:1; min-width:12em; font-family:var(--min); font-size:15.5px;
+    letter-spacing:.02em; color:#d7d5cf; transition:color .2s;
+  }
+  #ura .shoka-row:hover .s-title,#ura .shoka-row:focus-visible .s-title{color:#ffffff}
+  #ura .s-min{flex:none; font-family:var(--mono); font-size:11px; color:#5b5a63; letter-spacing:.06em}
+  #ura .s-tag{
+    flex:none; font-family:var(--mono); font-size:10px; letter-spacing:.1em;
+    border:1px solid #3a3a42; border-radius:2px; padding:1px 8px; color:#8b8a92;
+  }
+  #ura .shoka-note{margin:18px 0 0; font-size:12.5px; color:#8b8a92; line-height:2}
+  /* --- 目録 --- */
+  #ura .meiroku{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:1px; background:#232329; border:1px solid #232329;
+  }
+  #ura .prod{
+    background:#0b0b0c; padding:26px 24px; display:flex; flex-direction:column;
+    gap:8px; cursor:pointer; transition:background .3s ease;
+  }
+  #ura .prod:hover{background:#101014}
+  #ura .prod .p-no{font-family:var(--mono); font-size:10px; letter-spacing:.2em; color:#5b5a63}
+  #ura .prod h3{font-family:var(--min); font-size:17px; font-weight:600; letter-spacing:.02em; margin:0; color:#e3e1dc}
+  #ura .prod .p-en{font-family:var(--mono); font-size:10px; letter-spacing:.14em; color:#5b5a63}
+  #ura .prod .p-desc{font-size:12.5px; color:#8b8a92; line-height:2; margin:4px 0 10px; flex:1}
+  #ura .prod .p-foot{display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap}
+  #ura .prod .p-price{font-family:var(--min); font-size:15px; color:#e3e1dc}
+  #ura .prod .p-price small{font-size:11px; color:#8b8a92}
+  #ura .prod .p-status{
+    font-family:var(--mono); font-size:10px; letter-spacing:.12em;
+    border:1px solid #3a3a42; border-radius:2px; padding:1px 8px; color:#8b8a92;
+  }
+  #ura .prod .p-status.open{color:#c9c7c1; border-color:#55545e}
+  #ura .prod .p-status.dim{color:#4a4952}
+  /* --- 帳面 --- */
+  #ura .ura-diary{display:flex; flex-direction:column; border-top:1px solid #232329}
+  #ura .uki{
+    display:flex; gap:20px; padding:16px 2px; border-bottom:1px solid #232329;
+    align-items:baseline; flex-wrap:wrap;
+  }
+  #ura .uki span{font-family:var(--mono); flex:none; width:6em; font-size:11px; color:#5b5a63; letter-spacing:.08em}
+  #ura .uki p{
+    margin:0; flex:1; min-width:14em; font-family:var(--min);
+    font-size:14.5px; line-height:2.2; color:#c9c7c1;
+  }
+  /* --- 標本 --- */
+  #ura .hikiage{border:1px solid #232329; padding:34px 28px; text-align:center; margin-bottom:36px}
+  #ura .hikiage-body{min-height:104px; display:flex; align-items:center; justify-content:center}
+  #ura .hikiage-idle{margin:0; font-family:var(--mono); font-size:12px; letter-spacing:.3em; color:#5b5a63}
+  #ura .hikiage-frag{
+    margin:0; max-width:28em; font-family:var(--min); font-size:15px; line-height:2.35;
+    letter-spacing:.02em; color:#e3e1dc; opacity:0; animation:ura-rise 2.2s ease forwards;
+  }
+  #ura .hikiage-frag small{
+    display:block; font-family:var(--mono); font-size:10px; letter-spacing:.4em;
+    color:#5b5a63; margin-bottom:14px;
+  }
+  #ura .hikiage-btn{
+    appearance:none; background:none; border:1px solid #4a4952; cursor:pointer;
+    margin-top:28px; padding:12px 36px; color:#e3e1dc;
+    font-family:var(--mono); font-size:12px; letter-spacing:.35em; text-indent:.35em;
+    transition:background .4s ease, color .4s ease;
+  }
+  #ura .hikiage-btn:hover,#ura .hikiage-btn:focus-visible{background:#e3e1dc; color:#0b0b0c}
+  #ura .specimens{
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr));
+    gap:1px; background:#232329; border:1px solid #232329;
+  }
+  #ura .spec{
+    margin:0; background:#0b0b0c; padding:22px 20px;
+    opacity:0; transform:translateY(8px); animation:ura-rise 1.2s ease forwards;
+  }
+  #ura .spec:nth-child(1){animation-delay:.15s}
+  #ura .spec:nth-child(2){animation-delay:.3s}
+  #ura .spec:nth-child(3){animation-delay:.45s}
+  #ura .spec:nth-child(4){animation-delay:.6s}
+  #ura .spec:nth-child(5){animation-delay:.75s}
+  #ura .spec:nth-child(6){animation-delay:.9s}
+  #ura .spec:nth-child(7){animation-delay:1.05s}
+  #ura .spec:nth-child(8){animation-delay:1.2s}
+  @keyframes ura-rise{to{opacity:1; transform:none}}
+  #ura .spec figcaption{
+    font-family:var(--mono); font-size:10px; letter-spacing:.3em; color:#5b5a63; margin-bottom:10px;
+  }
+  #ura .spec p{
+    margin:0; font-family:var(--min); font-size:13.5px; line-height:2.2;
+    letter-spacing:.02em; color:#c9c7c1;
+  }
+  #ura .spec.dim figcaption{color:#3a3a42}
+  #ura .spec.dim p{color:#3a3a42; letter-spacing:.3em}
+  /* --- 案内・対坐・人物 --- */
+  #ura .ura-svc{margin:0; display:flex; flex-direction:column; border-top:1px solid #232329}
+  #ura .ura-svc > div{
+    display:flex; gap:24px; padding:18px 2px; border-bottom:1px solid #232329; flex-wrap:wrap;
+  }
+  #ura .ura-svc dt{flex:none; width:11em; font-size:13px; letter-spacing:.1em; color:#e3e1dc; font-weight:700}
+  #ura .ura-svc dd{
+    margin:0; flex:1; min-width:14em; font-size:13px; letter-spacing:.02em;
+    color:#8b8a92; line-height:2.1;
+  }
+  #ura .taiza{border:1px solid #4a4952; padding:42px 38px}
+  #ura .taiza-meta{
+    list-style:none; margin:6px 0 32px; padding:0;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  #ura .taiza-meta li{font-family:var(--mono); font-size:12px; letter-spacing:.14em; color:#8b8a92}
+  #ura .taiza-meta li::before{content:"—　"; color:#3a3a42}
+  #ura .taiza-apply{
+    display:inline-block; font-family:var(--mono); font-size:12.5px; letter-spacing:.3em; text-indent:.3em;
+    color:#e3e1dc; text-decoration:none; border:1px solid #e3e1dc;
+    padding:14px 34px; transition:background .4s ease, color .4s ease;
+  }
+  #ura .taiza-apply:hover,#ura .taiza-apply:focus-visible{background:#e3e1dc; color:#0b0b0c}
+  #ura .taiza-note{margin:20px 0 0; font-size:12.5px; letter-spacing:.02em; color:#8b8a92; line-height:2.1}
+  #ura .ura-qa{margin-top:32px; border-left:1px solid #3a3a42; padding-left:24px}
+  #ura .uq{margin:0 0 8px; font-family:var(--mono); font-size:12px; letter-spacing:.14em; color:#5b5a63}
+  #ura .ua{margin:0; font-family:var(--min); font-size:15px; letter-spacing:.02em; line-height:2.3; color:#e3e1dc}
+  #ura .ura-close{
+    margin:20px 0 0; text-align:center; font-family:var(--min);
+    font-size:13.5px; line-height:2.6; letter-spacing:.14em; color:#8b8a92;
+  }
+  #ura .omote-link{
+    display:block; width:fit-content; margin:64px auto 0;
+    font-family:var(--mono); font-size:11px; letter-spacing:.4em; text-indent:.4em;
+    color:#8b8a92; text-decoration:none; border-bottom:1px solid #3a3a42;
+    padding-bottom:6px; transition:color .3s ease;
+  }
+  #ura .omote-link:hover,#ura .omote-link:focus-visible{color:#e3e1dc}
+  @media (prefers-reduced-motion: reduce){
+    #ura .spec,#ura .hikiage-frag{opacity:1; transform:none; animation:none}
+  }
+  @media (max-width:560px){
+    #ura .taiza{padding:30px 20px}
+    #ura .hikiage{padding:28px 18px}
+  }
+</style>
+
+<!-- 柊マスコット: 葉っぱに顔+波 -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="mascot">
+      <circle cx="32" cy="32" r="28" fill="var(--panel, #fff)" stroke="var(--outline,#33291f)" stroke-width="3"/>
+      <path d="M32 11 C42 16 42 30 32 36 C22 30 22 16 32 11 Z" fill="#4cbf6b" stroke="var(--outline,#33291f)" stroke-width="2.5"/>
+      <circle cx="28.5" cy="23" r="1.8" fill="var(--outline,#33291f)"/>
+      <circle cx="35.5" cy="23" r="1.8" fill="var(--outline,#33291f)"/>
+      <path d="M28 27.5 q4 3.4 8 0" fill="none" stroke="var(--outline,#33291f)" stroke-width="2" stroke-linecap="round"/>
+      <path d="M14 45 q9 -8 18 0 t18 0" fill="none" stroke="#3aa7e8" stroke-width="3" stroke-linecap="round"/>
+      <path d="M19 52 q6.5 -6 13 0 t13 0" fill="none" stroke="#3aa7e8" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+    </g>
+    <g id="leaf-still">
+      <path d="M32 8 C44 15 44 33 32 41 C20 33 20 15 32 8 Z" fill="none" stroke="#8b8a92" stroke-width="1.6"/>
+      <path d="M32 12 L32 39" stroke="#4a4952" stroke-width="1"/>
+      <path d="M32 41 C31 48 33 52 30 57" fill="none" stroke="#8b8a92" stroke-width="1.2"/>
+    </g>
+  </defs>
+</svg>
+
+<div id="omote">
+<div class="awning" id="page-top" aria-hidden="true"></div>
+<header>
+  <div class="brand">
+    <svg width="34" height="34" viewBox="0 0 64 64"><use href="#mascot"/></svg>
+    柊渚の思考動物園
+  </div>
+  <nav>
+    <a href="#kinkyo">観察日誌</a>
+    <a href="#series">飼育舎</a>
+    <a href="#zukan">スタンプ帳</a>
+    <a href="#nyumon">入園案内</a>
+    <a href="#watashi">柊渚</a>
+    <a href="#machine">今週の一頭</a>
+  </nav>
+</header>
+
+<div class="hoso" aria-hidden="true">
+  <span class="hoso-label">📢 園内放送</span>
+  <div class="hoso-track"><span>本日の放飼は「羊水」です　◦　お帰りの際は、エサやり（問い）をお忘れなく　◦　閉園間際にだけ開く扉がある、という噂があります　◦　迷子のお知らせ：「じぶん」をお探しのお客様が、園内に多数いらっしゃいます　◦　哲学の確度、上がっていますか</span></div>
+</div>
+
+<div class="gate wrap">
+  <div class="gate-copy">
+    <span class="open-board">本日開園 ｜ 入園無料 ｜ 9:00 – 24:00</span>
+    <span class="katagaki">思考動物園、はじめました</span>
+    <h1>考えるのって、<br>こんなに<mark>楽しかったっけ？</mark></h1>
+    <p>はじめまして、柊渚です。ここは僕の頭の中をまるごと開放した動物園。「AIで人類は二分するのか」「人間は原始化するのか」「宇宙人は実在するのか」——そんな考えごとという生き物を、放し飼いにしています。</p>
+    <p>観るだけでいい。聞くだけでもいい。帰るころには、あなたの<strong>哲学の確度</strong>がすこし上がっています。園内をひと回りして、帰り際に「今週の一頭」を連れて帰ってください。入園無料！</p>
+    <div class="paw-trail" aria-hidden="true"><span>🐾</span><span>🐾</span><span>🐾</span></div>
+  </div>
+  <div class="logo-namae" id="logoNamae">
+    <div class="crest-big">
+      <svg width="110" height="110" viewBox="0 0 64 64"><use href="#mascot"/></svg>
+    </div>
+    <span class="moji">柊</span><span class="moji">渚</span>
+    <div class="yomi">HIIRAGI NAGISA</div>
+  </div>
+</div>
+
+<section id="map">
+  <div class="wrap">
+    <span class="flag f-green">園内マップ</span>
+    <div class="sec-head">
+      <h2>園内マップ</h2>
+      <p>この動物園は、僕の頭の中にあります。気になるところを押すと、そこまで飛べます。<mark>閉園後の入口は、地図のどこかに。</mark></p>
+    </div>
+    <div class="zoo-map">
+      <svg class="mapsvg" id="mapSvg" viewBox="0 0 720 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="園内マップ">
+        <!-- 園地 -->
+        <rect x="25" y="20" width="670" height="390" rx="48" fill="#b9dda2" stroke="#33291f" stroke-width="3"/>
+        <!-- 小道（中央広場から各所へ） -->
+        <g stroke="#f6eed6" stroke-width="14" stroke-linecap="round" fill="none" aria-hidden="true">
+          <path d="M355 272 L355 402"/>
+          <path d="M322 212 L245 172"/>
+          <path d="M390 210 L500 140"/>
+          <path d="M394 245 L520 258"/>
+          <path d="M318 252 L190 296"/>
+          <path d="M340 270 L280 338"/>
+          <path d="M382 262 L442 318"/>
+        </g>
+        <circle cx="355" cy="235" r="42" fill="#f6eed6" stroke="#e0d2ae" stroke-width="3" aria-hidden="true"/>
+        <text x="355" y="240" font-size="11" font-weight="800" fill="#a08a5f" text-anchor="middle" aria-hidden="true">ひろば</text>
+        <!-- 池（閉園後の入口） -->
+        <a href="#ura" aria-label="うらぐち（池の底）"><g class="mzone">
+          <ellipse cx="100" cy="82" rx="48" ry="26" fill="#a9d8ef" stroke="#33291f" stroke-width="2.5"/>
+          <path d="M78 80 q8 -6 16 0 t16 0" fill="none" stroke="#ffffff" stroke-width="2" opacity=".7" stroke-linecap="round"/>
+          <text x="118" y="98" font-size="12" opacity="0.4">🌘</text>
+        </g></a>
+        <!-- 木々 -->
+        <g aria-hidden="true">
+          <g transform="translate(66,180)"><rect x="-2" y="8" width="5" height="12" fill="#8a5a33"/><circle r="14" fill="#57a05a" stroke="#33291f" stroke-width="2"/></g>
+          <g transform="translate(58,330)"><rect x="-2" y="8" width="5" height="12" fill="#8a5a33"/><circle r="12" fill="#57a05a" stroke="#33291f" stroke-width="2"/></g>
+          <g transform="translate(300,58)"><rect x="-2" y="8" width="5" height="12" fill="#8a5a33"/><circle r="13" fill="#57a05a" stroke="#33291f" stroke-width="2"/></g>
+          <g transform="translate(430,52)"><rect x="-2" y="8" width="5" height="12" fill="#8a5a33"/><circle r="11" fill="#57a05a" stroke="#33291f" stroke-width="2"/></g>
+          <g transform="translate(652,320)"><rect x="-2" y="8" width="5" height="12" fill="#8a5a33"/><circle r="14" fill="#57a05a" stroke="#33291f" stroke-width="2"/></g>
+        </g>
+        <!-- 暗い森（閉園後の側） -->
+        <a href="#ura" aria-label="うらぐち（暗い森）">
+          <g class="mzone">
+            <path d="M560 20 L672 20 Q695 20 695 66 L695 150 Q595 112 548 22 Z" fill="#40573f" stroke="#33291f" stroke-width="3"/>
+            <circle cx="626" cy="62" r="15" fill="#2e4230"/>
+            <circle cx="662" cy="92" r="12" fill="#2e4230"/>
+            <text x="648" y="60" font-size="15" opacity="0.85">🌘</text>
+          </g>
+        </a>
+        <!-- 飼育舎エリア -->
+        <a href="#series"><g class="mzone">
+          <ellipse cx="230" cy="150" rx="100" ry="62" fill="#e9dcc0" stroke="#33291f" stroke-width="2.5"/>
+          <g transform="translate(170,120)"><rect width="26" height="18" rx="3" fill="#ff5a4e" stroke="#33291f" stroke-width="2"/><path d="M-2 0 L13 -12 L28 0 Z" fill="#8a5a33" stroke="#33291f" stroke-width="2"/></g>
+          <g transform="translate(218,102)"><rect width="26" height="18" rx="3" fill="#3aa7e8" stroke="#33291f" stroke-width="2"/><path d="M-2 0 L13 -12 L28 0 Z" fill="#8a5a33" stroke="#33291f" stroke-width="2"/></g>
+          <g transform="translate(264,122)"><rect width="26" height="18" rx="3" fill="#4cbf6b" stroke="#33291f" stroke-width="2"/><path d="M-2 0 L13 -12 L28 0 Z" fill="#8a5a33" stroke="#33291f" stroke-width="2"/></g>
+          <g transform="translate(192,158)"><rect width="26" height="18" rx="3" fill="#9b7ce0" stroke="#33291f" stroke-width="2"/><path d="M-2 0 L13 -12 L28 0 Z" fill="#8a5a33" stroke="#33291f" stroke-width="2"/></g>
+          <g transform="translate(244,160)"><rect width="26" height="18" rx="3" fill="#ffc226" stroke="#33291f" stroke-width="2"/><path d="M-2 0 L13 -12 L28 0 Z" fill="#8a5a33" stroke="#33291f" stroke-width="2"/><text x="13" y="14" font-size="9" text-anchor="middle">🌙</text></g>
+          <g transform="translate(230,208)"><rect x="-50" y="-11" width="100" height="22" rx="5" fill="#8a5a33" stroke="#33291f" stroke-width="2"/><text y="4" font-size="11" font-weight="800" fill="#fff7ea" text-anchor="middle">飼育舎エリア</text></g>
+        </g></a>
+        <!-- 今週の一頭（放飼場） -->
+        <a href="#machine"><g class="mzone">
+          <ellipse cx="540" cy="108" rx="70" ry="40" fill="#f0e6c8" stroke="#33291f" stroke-width="2.5"/>
+          <ellipse cx="540" cy="108" rx="70" ry="40" fill="none" stroke="#8a5a33" stroke-width="4" stroke-dasharray="2 12" stroke-linecap="round"/>
+          <text x="540" y="115" font-size="19" text-anchor="middle">🐾</text>
+          <g transform="translate(540,163)"><rect x="-48" y="-11" width="96" height="22" rx="5" fill="#8a5a33" stroke="#33291f" stroke-width="2"/><text y="4" font-size="11" font-weight="800" fill="#fff7ea" text-anchor="middle">今週の一頭</text></g>
+        </g></a>
+        <!-- 渚観察日誌 -->
+        <a href="#kinkyo"><g class="mzone">
+          <circle cx="150" cy="298" r="38" fill="#f6eed6" stroke="#33291f" stroke-width="2.5"/>
+          <text x="150" y="306" font-size="20" text-anchor="middle">📋</text>
+          <g transform="translate(150,352)"><rect x="-44" y="-11" width="88" height="22" rx="5" fill="#8a5a33" stroke="#33291f" stroke-width="2"/><text y="4" font-size="11" font-weight="800" fill="#fff7ea" text-anchor="middle">渚観察日誌</text></g>
+        </g></a>
+        <!-- スタンプ帳 -->
+        <a href="#zukan"><g class="mzone">
+          <g transform="translate(565,252)"><rect x="-26" y="-14" width="52" height="32" rx="4" fill="#f6c94a" stroke="#33291f" stroke-width="2.5"/><path d="M-32 -14 L0 -34 L32 -14 Z" fill="#8a5a33" stroke="#33291f" stroke-width="2.5"/><text y="10" font-size="16" text-anchor="middle">📒</text></g>
+          <g transform="translate(565,302)"><rect x="-46" y="-11" width="92" height="22" rx="5" fill="#8a5a33" stroke="#33291f" stroke-width="2"/><text y="4" font-size="11" font-weight="800" fill="#fff7ea" text-anchor="middle">スタンプ帳</text></g>
+        </g></a>
+        <!-- 入園案内 -->
+        <a href="#nyumon"><g class="mzone">
+          <g transform="translate(262,352)">
+            <rect x="-28" y="-18" width="56" height="38" rx="4" fill="#fffdf6" stroke="#33291f" stroke-width="2.5"/>
+            <rect x="-33" y="-26" width="66" height="12" rx="4" fill="#2f7d4f" stroke="#33291f" stroke-width="2"/>
+            <rect x="-22" y="-26" width="11" height="12" fill="#ffffff" opacity=".85"/><rect x="0" y="-26" width="11" height="12" fill="#ffffff" opacity=".85"/><rect x="22" y="-26" width="11" height="12" fill="#ffffff" opacity=".85"/>
+            <text y="10" font-size="15" text-anchor="middle">🎫</text>
+          </g>
+          <g transform="translate(262,394)"><rect x="-42" y="-10" width="84" height="20" rx="5" fill="#8a5a33" stroke="#33291f" stroke-width="2"/><text y="4" font-size="10.5" font-weight="800" fill="#fff7ea" text-anchor="middle">入園案内</text></g>
+        </g></a>
+        <!-- 柊渚 -->
+        <a href="#watashi"><g class="mzone">
+          <circle cx="462" cy="330" r="34" fill="#f6eed6" stroke="#33291f" stroke-width="2.5"/>
+          <g transform="translate(447,315)"><use href="#mascot" width="30" height="30"/></g>
+          <g transform="translate(462,380)"><rect x="-34" y="-11" width="68" height="22" rx="5" fill="#8a5a33" stroke="#33291f" stroke-width="2"/><text y="4" font-size="11" font-weight="800" fill="#fff7ea" text-anchor="middle">柊渚</text></g>
+        </g></a>
+        <!-- 入口ゲート -->
+        <g aria-hidden="true">
+          <rect x="330" y="392" width="9" height="40" rx="3" fill="#8a5a33" stroke="#33291f" stroke-width="2"/>
+          <rect x="372" y="392" width="9" height="40" rx="3" fill="#8a5a33" stroke="#33291f" stroke-width="2"/>
+          <rect x="320" y="378" width="72" height="20" rx="7" fill="#2f7d4f" stroke="#33291f" stroke-width="2.5"/>
+          <text x="356" y="392" font-size="11" font-weight="800" fill="#ffffff" text-anchor="middle">入口</text>
+        </g>
+      </svg>
+      <div class="map-photo" id="mapPhoto" hidden></div>
+    </div>
+  </div>
+</section>
+
+<div class="junro" aria-hidden="true"><span>順路</span></div>
+
+<section id="kinkyo">
+  <div class="wrap">
+    <span class="flag f-yellow">渚観察日誌</span>
+    <div class="sec-head">
+      <h2>渚観察日誌</h2>
+      <p>柊渚という一頭の、生態記録。この個体は、自分で自分を観察しています。</p>
+    </div>
+    <div class="kinkyo" id="kinkyoList">
+      <div class="ki"><span class="hi">7月8日</span><p>個体、ガチ文化祭より生還。三六二日ぶんの病みを、三日で回収した模様。摂食・睡眠ともに回復傾向。今年の収穫は「転生」とのこと。</p></div>
+      <div class="ki"><span class="hi">7月5日</span><p>個体、「AIで人類が二分する」の回を構想中。<small>「分かれ方は使う/使われるじゃない。もっと嫌な分かれ方」と、繰り返し鳴いている。</small></p></div>
+      <div class="ki"><span class="hi">7月2日</span><p>宇宙人の資料で夜ふかし。「ロマンじゃなく、構造で詰めたい」。夜行性が強まっている。</p></div>
+    </div>
+  </div>
+</section>
+
+<div class="junro" aria-hidden="true"><span>順路</span></div>
+
+<section id="series">
+  <div class="wrap">
+    <span class="flag f-blue">飼育舎エリア</span>
+    <div class="sec-head">
+      <h2>思考の飼育舎</h2>
+      <p>僕の考えごとは5つの舎で飼育しています。舎ごとに月980円。中は<mark>「観る回」と「読む回」</mark>の2つの観察窓つき。無料公開回はどなたでもどうぞ！</p>
+    </div>
+    <div class="series-tabs" id="seriesTabs" role="tablist"></div>
+    <div class="series-panel" id="seriesPanel"></div>
+    <div class="yoteichi">
+      <div class="yoteichi-head">🚧 増築予定地 — これから建つ舎</div>
+      <div class="yoteichi-grid">
+        <div class="lot"><b>時間舎</b><span>Tempus fugiens ／ 食性: 明日</span></div>
+        <div class="lot"><b>座標舎</b><span>Locus mutans ／ 食性: 環境</span></div>
+        <div class="lot"><b>転生舎</b><span>Renatus quotidianus ／ 食性: 昨日の自分</span></div>
+        <div class="lot"><b>ことば舎</b><span>Verbum irrevocabile ／ 食性: 沈黙</span></div>
+        <div class="lot"><b>お金舎</b><span>Pecunia loquax ／ 食性: 欲望</span></div>
+        <div class="lot"><b>ひとり舎</b><span>Solitudo vulgaris ／ 食性: 通知</span></div>
+        <div class="lot"><b>祭舎</b><span>Festum breve ／ 食性: 三日間</span></div>
+        <div class="lot"><b>檻舎</b><span>Carcer amans ／ 食性: 自由</span></div>
+        <div class="lot"><b>鏡舎</b><span>Speculum verax ／ 食性: 視線</span></div>
+        <div class="lot"><b>忘却舎</b><span>Oblivio patiens ／ 食性: 思い出</span></div>
+      </div>
+      <p class="yoteichi-note">※檻舎に入るのは、あなたのほうかもしれません。死生舎の扉は、閉園間際にだけ開くそうです。</p>
+    </div>
+  </div>
+</section>
+
+<div class="junro" aria-hidden="true"><span>順路</span></div>
+
+<section id="zukan">
+  <div class="wrap">
+    <span class="flag f-green">スタンプラリー</span>
+    <div class="sec-head">
+      <h2>観察スタンプ帳</h2>
+      <p>今週の一頭を最後まで観察すると、その概念のスタンプが帳面にペタンと押されます。集まっていくのは、柊渚の哲学の語彙。金のスタンプ4個は、全園パスの人だけの観察記録。</p>
+    </div>
+    <div class="streak">🔥 連続観察 <b id="streakNum">0</b> 日目 / スタンプ <b id="lensNum">0</b>個</div>
+    <div class="grid" id="zukanGrid"></div>
+  </div>
+</section>
+
+<div class="junro" aria-hidden="true"><span>順路</span></div>
+
+<section id="nyumon">
+  <div class="wrap">
+    <span class="flag f-purple">入園案内</span>
+    <div class="sec-head">
+      <h2>入園のご案内</h2>
+    </div>
+    <div class="ticket-box">
+      <div class="honbun">
+        <p><mark>入園はずっと無料です。</mark>今週の一頭も、各舎の無料公開回も、いくら眺めてもタダ。それで十分楽しければ、それでよし！</p>
+        <p>気に入った舎があれば「観覧パス」でその舎が見放題。全部の舎と金のスタンプと、僕に直接質問できる席がほしい人は「全園パス」をどうぞ。</p>
+        <p>どの席でも、約束はひとつだけ。<mark><strong>あなたの哲学の確度を上げること。</strong></mark></p>
+      </div>
+      <div class="seki">
+        <div class="seki-row">
+          <span class="seki-name">ぶらり入園</span>
+          <span class="seki-price">¥0 <small>ずっと</small></span>
+          <span class="seki-desc">今週の一頭・各舎の無料公開回・スタンプ4個。</span>
+          <button class="btn btn-sm" disabled>いま入園中</button>
+        </div>
+        <div class="seki-row">
+          <span class="seki-name">観覧パス</span>
+          <span class="seki-price">¥980 <small>/ 月・舎</small></span>
+          <span class="seki-desc">選んだ舎の動画・記事・音声版ぜんぶ。過去回込み。何枚でも。</span>
+          <button class="btn btn-sm" onclick="document.getElementById('series').scrollIntoView()">舎を選ぶ</button>
+        </div>
+        <div class="seki-row feature">
+          <span class="seki-name">全園パス</span>
+          <span class="seki-price">¥4,000 <small>/ 月</small></span>
+          <span class="seki-desc">全5舎＋金のスタンプ4個＋全園パス組のDiscord＋月イチ生放送への質問権＋<em>見つけた人だけの、もうひとつの特典</em>。</span>
+          <button class="btn btn-primary btn-sm" id="allBtn">全園パスを買う（デモ）</button>
+        </div>
+      </div>
+      <p class="econ-note">お会計は正直に。5つの舎を観覧パスで回ると<b>¥4,900</b>、全園パスは<b>¥4,000</b>。3舎気になったら全園パスが得になる仕掛けです。</p>
+      <div class="shomei">
+        柊渚
+        <svg width="30" height="30" viewBox="0 0 64 64"><use href="#mascot"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="junro" aria-hidden="true"><span>順路</span></div>
+
+<section id="watashi">
+  <div class="wrap">
+    <span class="flag f-red">柊渚のこと</span>
+    <div class="sec-head">
+      <h2>柊渚ってだれ？</h2>
+    </div>
+    <div class="profile">
+      <div class="kao">
+        <svg width="100" height="100" viewBox="0 0 64 64"><use href="#mascot"/></svg>
+      </div>
+      <div class="pr-text">
+        <p>柊渚（ひいらぎ・なぎさ）。この動物園をつくって、ひとりで飼育している人。</p>
+        <p class="gray">中2に上がる春、勉強のやり方を「反復式」に作り変えた。毎回の授業までに準備を終わらせて、授業そのものが復習装置になるようにした——成績は2倍に跳ねた。このとき掴んだ一行が、いまも僕の哲学の芯にあります。<strong>「自分を変えるのは意志じゃなく、環境の設計」</strong>。いまは経営と思考法を学ぶ約70人のコミュニティを一人で運営しながら、年に一度のガチ文化祭で自分を転生させ続けています。マスコットは柊の葉っぱ。トゲはあるけど、なつきます。</p>
+        <div class="santou">
+          <div class="qa">
+            <p class="q-line">ここで何が身につくの？</p>
+            <p class="a-line">知識じゃなくて、ものの見方。僕の考察を浴びてるうちに、あなたの哲学の確度が勝手に上がります。</p>
+          </div>
+          <div class="qa">
+            <p class="q-line">勉強っぽいのは苦手です。</p>
+            <p class="a-line">最高。ここは勉強禁止の動物園です。宇宙人の檻から入って、気づいたら文明の檻の前に立ってるように作ってあります。</p>
+          </div>
+          <div class="qa">
+            <p class="q-line">結論が強引な気がします。</p>
+            <p class="a-line">褒め言葉！正しさは学校で買えますが、強引で面白い補助線はここにしか置いてません。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="junro" aria-hidden="true"><span>おみやげは、こちら</span></div>
+
+<section id="machine">
+  <div class="wrap">
+    <span class="flag f-red">帰り際の一頭</span>
+    <div class="sec-head">
+      <h2>今週の一頭 — 柊渚の哲学語録</h2>
+      <p>帰り際に、僕の哲学からひとつだけ連れて帰ってください。<mark>生態を3つ観察</mark>したら、締めはエサやり——あなたへの問いがひとつ。答えは要りません、10秒だけ。</p>
+    </div>
+    <div class="stage">
+      <div class="stage-bar">
+        <span>🐾 今週の一頭</span>
+        <span id="counter">観察 0 / 3</span>
+      </div>
+      <div class="stage-body" id="stageBody">
+        <div class="kata-card">
+          <span class="kata-label">今週の一頭</span>
+          <div class="kata-name">羊水</div>
+          <div class="kata-q">定義 「誕生とは、羊水からの解放である。」</div>
+        </div>
+        <div class="demo-chips" id="demoChips"></div>
+        <div id="playArea"></div>
+        <div class="try-box" id="tryBox"></div>
+      </div>
+      <div class="stage-actions">
+        <button class="btn btn-yellow" id="listenBtn" hidden>🎧 耳で聞く</button>
+        <span class="next-week">来週の一頭：「座標」</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <p>柊渚の思考動物園（試作品）。「観覧パス」「全園パス」ボタンはデモで、この端末の表示が切り替わるだけです。実運用では決済と会員認証がこの裏に入ります。動画枠には YouTube 限定公開 / Vimeo の埋め込みが入ります。</p>
+      <p>スタンプ帳と連続記録は、あなたの端末にだけ保存されます。</p>
+    </div>
+    <div class="f-sign">
+      <svg width="26" height="26" viewBox="0 0 64 64"><use href="#mascot"/></svg>
+      柊渚の思考動物園
+      <a class="uraguchi" href="#ura" aria-label="うらぐち">🌘</a>
+      <a class="uraguchi" href="#admin" aria-label="管理室">⚙</a>
+    </div>
+  </div>
+</footer>
+</div><!-- /#omote -->
+
+<div id="ura" hidden>
+  <div class="ura-inner">
+    <div class="ura-head">
+      <svg width="56" height="56" viewBox="0 0 64 64" aria-hidden="true"><use href="#leaf-still"/></svg>
+      <div class="ura-title">still life</div>
+      <p class="ura-sub">人間の静物画 — 柊渚</p>
+      <nav class="ura-nav">
+        <a href="#ura-ronko">論考</a>
+        <a href="#ura-meiroku">目録</a>
+        <a href="#ura-zemi">ゼミ</a>
+        <a href="#ura-dive">Dive</a>
+        <a href="#ura-cho">帳面</a>
+        <a href="#ura-nagisa">柊渚</a>
+      </nav>
+    </div>
+
+    <div class="ura-sec">
+      <p class="ura-greeting">ここは Still life。<br>人間の静物画を描く場所。</p>
+      <p>多くの人は「自分らしく生きている」と言う。しかし実際は、親や学校や会社やSNSが用意したレールの上を歩いているだけかもしれない。好きなものも、夢も、価値観も、本当に自分で選んだと言い切れる人は少ない。Still life は、その人の肩書きや実績ではなく——<em>何を愛し、何を失い、何を恐れて生きてきたのか</em>という、人生の輪郭を見つける試みだ。</p>
+      <p>人はいつか必ず死ぬ。それなのに多くの人は、自分だけはまだ先だと思いながら生きている。だから本音を後回しにし、やりたいことを先延ばしにし、他人の期待に人生を使う。Still life は「どう生きるか」を教える活動ではない。<em>「どうせ死ぬなら、お前は何者として生きるのか」</em>を問い続ける活動である。</p>
+      <p>Still life とは本来、静物画を意味する言葉だ。しかし僕にとっての Still life は、人間の静物画である。その人の人生を机の上に置き、成功も失敗も綺麗事も言い訳も並べて観察する。そして、その人だけが持つ輪郭を切り取る。誰もが忘れられていく世界で、せめて「こう生きた」という痕跡だけは残したいと思っている。</p>
+      <p>世の中には、成長や成功を売るサービスが溢れている。でも僕は、成功したい人よりも、<em>自分が何者なのか知りたい人</em>に興味がある。年収でもフォロワー数でもなく、「なぜ今の自分になったのか」を見つめる人だ。Still life は、人生を良くするためではなく、人生を理解するために存在している。</p>
+      <p>僕は、人間は二度死ぬと思っている。一度目は、肉体が死ぬとき。二度目は、その人の存在を覚えている人がいなくなるとき。Still life は、その二度目の死に少しだけ抵抗する活動だ。大きな歴史には残らなくてもいい。ただ、この人は確かにこう生きたのだと、その輪郭だけを残したい。</p>
+      <p>この下に並んでいる論考と商品は、ぜんぶそのための道具です。奥のものほど、あなたを強く制限します。哲学の確度は、そうやってしか上がらないので。</p>
+    </div>
+
+    <div class="ura-sec" id="ura-ronko">
+      <h2 class="ura-h"><span class="no">00</span>最新の論考</h2>
+      <article class="ronko">
+        <div class="ronko-meta">
+          <span>2026.07.08</span><span class="t">論考</span><span>ガチ文化祭・三日目の夜に</span>
+        </div>
+        <h1>誕生とは、羊水からの解放である</h1>
+        <p class="en">still life — 抑圧と解放、そして転生について</p>
+
+        <h2><span class="n">0.</span>まず、病む話から</h2>
+        <p>今年も実施した、ガチ文化祭。<sup>＊1</sup>　毎年、この文化祭では病む。圧倒的に病む。忙殺されるからだ。みんなが想像している以上に山積みのタスクが目の前にあり、開発と集客を繰り返せば繰り返すほど、「なぜ自分は今ここにいるのだろう？」という気持ちになる。</p>
+        <p>病むかどうかは人それぞれだと思う。僕はもともと精神を病んだことがあり、病みやすい体質だ。だから病む。それでも毎回、この三日間は<em>哲学の確度</em>が上がる。それが、僕がガチ文化祭を作り続ける理由だ。三六二日病んでも、三日で回収できる。今年体現した哲学は「輪廻転生」——自分を転生させているからこそ、辿り着ける思考だと思う。</p>
+
+        <h2><span class="n">1.</span>人生の厚さは、輪廻の回数である</h2>
+        <p>人生の厚さは、輪廻の回数だと思っている。自分の脳内でどれだけ人生を完遂し、新たに自分を誕生させられるか。内的なアクションだけでは、ほとんどの場合それは成立しない。ほとんどの人が、達成しないまま終わる。だからこそ、外的な環境設定が必要なのである。</p>
+
+        <h2><span class="n">2.</span>座標仮説——努力は要らないかもしれない</h2>
+        <p>自分が変わるから環境が変わるのではない。<em>環境が自分を変える</em>。だとすれば、やるべきことは「どこに自分の座標を置くのが正解か」を探すことだけでいい。努力は必要ないかもしれない、という仮説だ（必要なのは、座標からズレない努力のみ）。</p>
+        <p>この仮説の中で、「死」は自分の中で定義できていた——余命を決める、という生き方だ。だが「誕生」は定義できていなかった。それが、一週間前の僕だった。</p>
+
+        <h2><span class="n">3.</span>誕生とは、羊水からの解放である</h2>
+        <p>これが、僕の辿り着いた結論だ。</p>
+        <p>解放されることが多くなった昨今の若者には、生き方が無限通り存在する。解放が当たり前になり、抑圧や制限を強いられることがない。結婚をしなければ、フリーターでも貯金は貯まり続けるから困らない。それが選択肢としてある以上、ほとんどの場合、キャリアは「余剰の選択」だ。</p>
+        <p>利益が発生している状態で、何を選択するのか？　自由になったからこその悩みで、四十代には理解できない悩みがそこにある。そんな世界になってしまったからこそ——<em>抑圧されることが心地よくなる人が、増えている</em>肌感がある。</p>
+
+        <h2><span class="n">4.</span>stilllife——捨てることでしか得られないもの</h2>
+        <p>哲学の確度を上げるには、抑圧を受けないといけない。制限されるからこそ、そこを飛び出したいという欲が湧く。だからこそ、見える世界が存在する。</p>
+        <p>僕は「stilllife」と書かれた一枚の絵に固執していた。二〇二三年に初めて作った、僕のシンボルのような絵だ。<sup>＊2</sup>　そこから解脱することで、解放を得た。その瞬間に、哲学の確度が上がった。僕の中で stilllife という哲学がアップデートされたのである。捨てることでしか、得られないものだ。</p>
+
+        <h2><span class="n">5.</span>僕のアウトプットは、羊水を作ること</h2>
+        <p>羊水の中では、五感は制限され、栄養だけが送り込まれ、生きることを強いられている。自我も芽生えないまま細胞分裂を繰り返しながら、息だけをし続けている——生きることを強いられている、最大限の抑圧を受けている瞬間である。</p>
+        <p>そこから解放されて、酸素を吸い込んだとき、自分の人生が始まる。</p>
+        <p>僕のアウトプットは、羊水を作ることだ。この部屋の奥に並べてある商品は、ぜんぶそのために作ってある。あなたの哲学の確度を上げることを、お約束します。</p>
+
+        <div class="footnotes">
+          <p>＊1　ガチ文化祭：年に一度、僕が主催している三日間の祭り。開発と集客を大人が本気でやる。</p>
+          <p>＊2　stilllife：この裏ページの名前の由来。二〇二三年の絵に書いた言葉で、僕の哲学の屋号のようなもの。</p>
+        </div>
+      </article>
+
+      <h2 class="ura-h" style="margin-top:80px"><span class="no">対</span>対になる論考 — 死の側</h2>
+      <article class="ronko">
+        <div class="ronko-meta">
+          <span>前編</span><span class="t">論考</span><span>「誕生」の対になる、「死」の定義</span>
+        </div>
+        <h1>死を受け入れ、自分を循環させる</h1>
+        <p class="en">still life — on death, before rebirth</p>
+
+        <h2><span class="n">0.</span>人は、死を遠ざけて生きている</h2>
+        <p>人は無意識のうちに、想像以上に「生」を近づけ、「死」を遠ざけている。死にたいと叫ぶのは「生きたい！」の表れで、人はどんどん、コンフォートゾーンである精神世界に自分を押し込めていく。その人たちにどんな声をかけようが、その声は届かない。<em>明日が無限に存在すると思っている</em>からだ。</p>
+        <p>いつか人は死ぬという事実を、論理的には理解していない。感覚的な「今日」という刹那が、明日からも無限に積み重なって人生が進んでいくのだと思っている。生きるという営みそれ自体が「生」を遠ざけ、「死」を近づける行為だと、気付いていない。</p>
+
+        <h2><span class="n">1.</span>父の死</h2>
+        <p>僕は二十代の前半で、父と祖父を亡くした。親族の死を公開するのもどうかと思うが、生きる糧になっているので、許してほしい。祖父は家族に囲まれて逝き、父は孤独死だった。あまりに対照的な死に方だった。</p>
+        <p>塞ぎ込んだのは、父のほうだった。母子家庭で、ほとんど会っていないのに。会っていないから、だったのだろうか。あまりに突然の報せに、頭が真っ白になったのを覚えている。おそらくその時の僕は虚勢を張り、何事もないように振る舞っていた。それが逆に、いまも尾を引いているのかもしれない。</p>
+        <p>そのとき、ずっと慕ってくれている後輩と企画をやっている最中だった。その月の企画は中止。自分の実力不足、精神力不足を嘆いたのを覚えている。ホテルに四日間ほど篭って、人生について考察した。僕はダウナーに入ると、人生について深く考え始める。そこで出てきたのが、この論考のタイトルの言葉だ。</p>
+
+        <h2><span class="n">2.</span>死をゴールにしたら、楽になった</h2>
+        <p>死を受け入れてこそ、人生のスタートなのだ。死を遠ざけていては、人生が始まらない。なぜなら、脳内のゴールが死ではないから。頭は「生」に向かい、体は「死」に向かう。脳内で自己矛盾が発生している。だから、体が動かなくなる。死にたくない！と思う。死にたくないと思えば思うほど過呼吸になり、酸素が欠乏して、パニックになる。あるあるの流れだ。（その後輩は、ずっと助けてくれた。）</p>
+        <p>だから僕はその日、自分の死を受け入れることにした。突然、楽になった。死をゴールにしたら、自己矛盾が少なくなったからだ。最終的に、何もなくなることがゴールなんだ。今あるすべてのマイナスもプラスも、存在さえも、何もなくなる。そう思うと、目の前に起きている事象がちっぽけなものだと理解できた。スッと落ちた瞬間だ。死を受け入れることが、どれほどスッキリすることか。思い知った。</p>
+
+        <h2><span class="n">3.</span>ただし、ゴールが遠すぎる</h2>
+        <p>しかし、これには少し問題が生じる。<em>ロングランすぎる</em>ということだ。二十代の人間には、生きてきた時間の三倍以上の時間軸がまだ存在する（平均寿命なら四倍くらいだ）。ゴールを教えられないマラソンはきついが、ゴールまでが遠すぎるマラソンも、ほぼ同じだ。ゴールの実感が湧かないから、進めない。</p>
+        <p>だから、そこで必要になるのが——<em>【自分の循環】</em>である。</p>
+
+        <div class="footnotes">
+          <p>（後編に続く。「循環」の設計——余命を決め、自分を転生させる方法——は、次の論考で。）</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="ura-sec" id="ura-shoka">
+      <h2 class="ura-h"><span class="no">01</span>書架 — 過去の論考</h2>
+      <p class="ura-lead">どれも長い。短くする気がないので。最新の一本は常に公開、書架は全園パスの領分。</p>
+      <div class="shoka" id="shokaList">
+        <a class="shoka-row" href="#ura-shoka"><span class="s-date">2026.06.28</span><span class="s-title">余命を決めるという生き方のススメ</span><span class="s-min">10,900字</span><span class="s-tag">公開</span></a>
+        <a class="shoka-row" href="#ura-shoka"><span class="s-date">2026.06.14</span><span class="s-title">座標仮説 — 努力は要らないかもしれない</span><span class="s-min">9,800字</span><span class="s-tag">全園パス</span></a>
+        <a class="shoka-row" href="#ura-shoka"><span class="s-date">2026.05.31</span><span class="s-title">抑圧が心地よくなる時代について</span><span class="s-min">11,400字</span><span class="s-tag">全園パス</span></a>
+        <a class="shoka-row" href="#ura-shoka"><span class="s-date">2026.05.17</span><span class="s-title">輪廻の回数が、人生の厚さを決める</span><span class="s-min">12,600字</span><span class="s-tag">全園パス</span></a>
+        <a class="shoka-row" href="#ura-shoka"><span class="s-date">2026.05.03</span><span class="s-title">水底の質量 — 思考が言葉になる前の物理</span><span class="s-min">14,200字</span><span class="s-tag">全園パス</span></a>
+      </div>
+      <div class="shoka-note" id="shokaNote" hidden></div>
+    </div>
+
+    <div class="ura-sec" id="ura-meiroku">
+      <h2 class="ura-h"><span class="no">02</span>目録 — 柊渚の商品</h2>
+      <p class="ura-lead">売り物の全部。上から浅い順。奥のものほど、席が少ない。</p>
+      <div class="meiroku">
+        <div class="prod" data-note="表へどうぞ。ページ最下部の「おもてへ」から戻れます。">
+          <span class="p-no">P-01</span>
+          <h3>思考動物園（表）</h3>
+          <span class="p-en">the zoo — free</span>
+          <p class="p-desc">今週の一頭と、各舎の無料公開回。すべての入口。</p>
+          <div class="p-foot"><span class="p-price">¥0</span><span class="p-status open">公開中</span></div>
+        </div>
+        <div class="prod" data-note="「思考の飼育舎」——実サイトでは、ここから決済へ。デモでは表の飼育舎タブで購読を試せます。">
+          <span class="p-no">P-02</span>
+          <h3>思考の飼育舎</h3>
+          <span class="p-en">serials</span>
+          <p class="p-desc">観る回と読む回。考えごとという生き物の連載。舎ごとに購読。</p>
+          <div class="p-foot"><span class="p-price">¥980 <small>/ 月・棚</small></span><span class="p-status open">受付中</span></div>
+        </div>
+        <div class="prod" data-note="「全園パス」——全五舎と、金のスタンプと、この書架の全論考。実サイトでは決済へ。">
+          <span class="p-no">P-03</span>
+          <h3>全園パス</h3>
+          <span class="p-en">all access</span>
+          <p class="p-desc">全5舎＋金のスタンプ＋裏の書架の全論考＋質問の席。</p>
+          <div class="p-foot"><span class="p-price">¥4,000 <small>/ 月</small></span><span class="p-status open">受付中</span></div>
+        </div>
+        <div class="prod" data-note="「書架」——上の 01 に一覧があります。最新の一本は、いつでも無料。">
+          <span class="p-no">P-04</span>
+          <h3>書架（論考アーカイブ）</h3>
+          <span class="p-en">archive</span>
+          <p class="p-desc">一万字級の論考の保管庫。最新は常に公開。</p>
+          <div class="p-foot"><span class="p-price">全園パスに含む</span><span class="p-status open">公開中</span></div>
+        </div>
+        <div class="prod" data-note="「水底ゼミ」——詳細はこの下の 03 に。次期は九月開講。">
+          <span class="p-no">P-05</span>
+          <h3>水底ゼミ（少人数私塾）</h3>
+          <span class="p-en">private seminar</span>
+          <p class="p-desc">六名、三ヶ月の羊水。期の終わりに、一度だけ転生する。</p>
+          <div class="p-foot"><span class="p-price">¥98,000 <small>/ 期</small></span><span class="p-status">次期 九月</span></div>
+        </div>
+        <div class="prod" data-note="「Dive」——詳細はこの下の 04 に。今月の残席は一。">
+          <span class="p-no">P-06</span>
+          <h3>Dive（深層セッション）</h3>
+          <span class="p-en">deep dive · 1 on 1</span>
+          <p class="p-desc">九十分、二人で水底まで。圧縮前の思考を引き上げる潜水。</p>
+          <div class="p-foot"><span class="p-price">¥15,000 <small>/ 回</small></span><span class="p-status">今月 残一席</span></div>
+        </div>
+        <div class="prod" data-note="「レンズの型紙」——八レンズの問いの型と練習三十問のPDF。いま乾かしています。">
+          <span class="p-no">P-07</span>
+          <h3>レンズの型紙</h3>
+          <span class="p-en">worksheets (pdf)</span>
+          <p class="p-desc">八本のレンズの問いの型＋練習帳三十問。買い切り。</p>
+          <div class="p-foot"><span class="p-price">¥2,980</span><span class="p-status dim">準備中</span></div>
+        </div>
+        <div class="prod" data-note="講演・研修・執筆——実サイトでは依頼フォームへ。趣意を数行いただければ、返事をします。">
+          <span class="p-no">P-08</span>
+          <h3>講演・研修・執筆</h3>
+          <span class="p-en">lectures &amp; writing</span>
+          <p class="p-desc">法人・学校・媒体向け。思考レンズの出張と、受注執筆。</p>
+          <div class="p-foot"><span class="p-price">応相談</span><span class="p-status open">受付中</span></div>
+        </div>
+        <div class="prod" data-note="「ガチ文化祭」——年に一度、三日間の最大出力。次回の詳細は生放送で告知します。">
+          <span class="p-no">P-09</span>
+          <h3>ガチ文化祭</h3>
+          <span class="p-en">the festival — once a year</span>
+          <p class="p-desc">年に一度、三日間だけの最大出力の羊水。三六二日ぶんを、三日で回収する。</p>
+          <div class="p-foot"><span class="p-price">年一回</span><span class="p-status">次回 来夏</span></div>
+        </div>
+      </div>
+      <div class="shoka-note" id="meirokuNote" hidden></div>
+    </div>
+
+    <div class="ura-sec taiza" id="ura-zemi">
+      <h2 class="ura-h"><span class="no">03</span>水底ゼミ — 少人数私塾</h2>
+      <p>六名だけの羊水です。三ヶ月、隔週九十分を六回。ここでやるのは勉強ではなく、座標の設計——「どこに自分を置けば、勝手に変わるのか」を三ヶ月かけて突き止めます。</p>
+      <p>期の終わりに、自分の哲学を一本、論考の形で書き上げてもらいます。それがあなたの、一回分の転生です。書けたものは、希望があればこの書架に並べます。</p>
+      <ul class="taiza-meta">
+        <li>定員六名、次期は九月</li>
+        <li>三ヶ月・全六回、98,000円</li>
+        <li>オンライン、夜間</li>
+      </ul>
+      <a class="taiza-apply" href="#ura-zemi" id="zemiApply">入塾の手紙を書く</a>
+      <p class="taiza-note" id="zemiNote" hidden>——実サイトでは、ここから応募フォームへ。「いま測りたい水底」を数行添えてもらい、こちらから返事をします。</p>
+    </div>
+
+    <div class="ura-sec taiza" id="ura-dive">
+      <h2 class="ura-h"><span class="no">04</span>Dive — 深層へ潜るセッション</h2>
+      <p class="ura-lead">deep dive — 90分、二人で水底まで</p>
+      <p>これは面談ではなく、潜水です。九十分かけて、あなたの深層心理——ふだんは自分でも触れられない水底まで、二人で潜っていきます。仕事の決断でも、書きかけの思想でも、名前のつかない違和感でも。いちばん重くて沈んでいるものを、一緒に見に行きます。</p>
+      <p>僕が持っていくのは、光の当て方（レンズ）だけです。答えは持っていきません。あなたの水底から何かを引き上げ、名前をつけて、水面まで連れて帰る。九十分の抑圧、そのあとの一呼吸——出てくるときに、酸素を吸ってもらいます。</p>
+      <ul class="taiza-meta">
+        <li>ひと月に、二名まで</li>
+        <li>一回九十分、15,000円</li>
+        <li>オンライン、夜間</li>
+      </ul>
+      <a class="taiza-apply" href="#ura-dive" id="taizaApply">潜る前の手紙を書く</a>
+      <p class="taiza-note" id="taizaNote" hidden>——実サイトでは、ここから予約フォームへ。「いま水底に沈んでいる気がするもの」を数行添えてもらい、こちらから返事をします。</p>
+    </div>
+
+    <div class="ura-sec" id="ura-cho">
+      <h2 class="ura-h"><span class="no">05</span>夜の帳面</h2>
+      <p class="ura-lead">表の日記と同じ日付。書かなかったほうの行。</p>
+      <div class="ura-diary">
+        <div class="uki"><span>07.08</span><p>文化祭三日目。三六二日ぶんを、三日で回収した。今年の収穫は「転生」。</p></div>
+        <div class="uki"><span>07.05</span><p>誕生の定義が、やっと降りてきた。一週間かかった。</p></div>
+        <div class="uki"><span>07.02</span><p>病むのは仕様。確度が上がっている音がする。</p></div>
+      </div>
+    </div>
+
+    <div class="ura-sec" id="ura-nagisa">
+      <h2 class="ura-h"><span class="no">06</span>裏の柊渚</h2>
+      <p>中二の春、授業を復習装置に作り変えて、成績が倍になった。あのとき知ったことを、いまも考え続けています——自分を変えるのは意志ではなく、環境の設計だということ。授業を装置に変えた中学生は、いま、羊水を設計する大人になりました。</p>
+      <p>表の僕は明るい。あれも本当です。ここの僕も本当です。人は、入口をふたつ持っていい。</p>
+      <div class="ura-qa">
+        <p class="uq">問——病みませんか。</p>
+        <p class="ua">病みます。でも三六二日病んでも、三日で回収できる設計にしてあります。病みは、哲学の確度が上がっている音なので。</p>
+      </div>
+    </div>
+
+    <p class="ura-close">表は入口、裏は奥。<br>奥のものほど、静かに売っています。</p>
+    <a class="omote-link" href="#">おもてへ</a>
+  </div>
+</div>
+
+<div id="admin" hidden>
+  <div class="admin-wrap">
+    <h2 class="adm-title">⚙ 管理室</h2>
+
+    <div id="adminLogin">
+      <p class="adm-note">合言葉を入れてください。（試作デモ：初期パスワードは <code>nagisa</code>。中で変えられます）</p>
+      <input type="password" id="admPass" class="adm-input" placeholder="合言葉" style="max-width:320px">
+      <div class="adm-row">
+        <button class="btn btn-primary" id="admLoginBtn">入る</button>
+      </div>
+      <p class="adm-err" id="admErr" hidden>ちがうみたいです。</p>
+    </div>
+
+    <div id="adminPanel" hidden>
+      <div class="adm-bar">
+        <span>🔓 ログイン中：柊渚</span>
+        <span class="sp"></span>
+        <button class="btn btn-sm" id="admPwBtn">合言葉を変える</button>
+        <button class="btn btn-sm" id="admLogoutBtn">出る</button>
+      </div>
+      <div class="adm-row" id="pwRow" hidden>
+        <input type="password" id="admNewPass" class="adm-input" placeholder="新しい合言葉">
+        <button class="btn btn-sm" id="admNewPassBtn">保存</button>
+      </div>
+
+      <h3 class="adm-h">✍ 新しい投稿</h3>
+      <div class="adm-form">
+        <div class="adm-row">
+          <select id="pSide" class="adm-input">
+            <option value="omote">表 — 飼育舎の「読む回」に載せる</option>
+            <option value="ura">裏 — 書架の論考に載せる</option>
+            <option value="diary">表 — 渚観察日誌に一行たす（タイトル不要）</option>
+          </select>
+          <select id="pSeries" class="adm-input"></select>
+        </div>
+        <input id="pTitle" class="adm-input" placeholder="タイトル">
+        <div class="adm-row">
+          <label class="adm-check">読了 <input id="pMin" class="adm-input" type="number" min="1" value="5" style="max-width:90px; flex:none"> 分</label>
+          <label class="adm-check"><input type="checkbox" id="pFree" checked> 無料公開にする（外すと購読/全園パス限定）</label>
+        </div>
+        <div class="fmt-bar" id="fmtBar">
+          <span class="fmt-hint">選択してから→</span>
+          <button type="button" class="fmt-btn" data-tag="特大" style="font-size:14px">特大</button>
+          <button type="button" class="fmt-btn" data-tag="大">大きく</button>
+          <button type="button" class="fmt-btn" data-tag="小" style="font-size:10.5px">小さく</button>
+          <button type="button" class="fmt-btn" data-tag="赤" style="color:#e35b4f">赤</button>
+          <button type="button" class="fmt-btn" data-tag="青" style="color:#3f97d8">青</button>
+          <button type="button" class="fmt-btn" data-tag="緑" style="color:#3f9e68">緑</button>
+          <button type="button" class="fmt-btn" data-tag="マーカー" style="background:linear-gradient(transparent 55%, rgba(255,194,38,.55) 55%)">マーカー</button>
+        </div>
+        <textarea id="pBody" class="adm-input" rows="10" placeholder="本文。空行で段落が分かれます。装飾したい部分をドラッグで選んで、上のボタンを押してください。画像は「🖼 画像を差し込む」でカーソル位置に入ります。"></textarea>
+        <div class="adm-row">
+          <input type="file" id="pImgFile" accept="image/*" style="display:none">
+          <button class="btn btn-sm" id="pImgBtn">🖼 画像を差し込む</button>
+          <span class="adm-note" style="margin:0; flex:1">カーソル位置に [画像:ID] のしるしが入り、本文のその場所に画像が表示されます。</span>
+        </div>
+        <div class="adm-row">
+          <button class="btn btn-primary" id="pSaveBtn">公開する</button>
+          <button class="btn btn-sm" id="pCancelBtn" hidden>編集をやめる</button>
+        </div>
+      </div>
+
+      <h3 class="adm-h">🗺 園内マップの画像</h3>
+      <div class="adm-row">
+        <input type="file" id="mapImgFile" accept="image/*" style="display:none">
+        <button class="btn btn-sm" id="mapImgBtn">マップ画像を差し替える</button>
+        <button class="btn btn-sm" id="mapImgReset">元の地図に戻す</button>
+        <span class="adm-note" style="margin:0; flex:1">アップした絵地図が園内マップになり、絵の上の各エリアを押すとその場所へ飛びます。</span>
+      </div>
+
+      <h3 class="adm-h">📚 投稿一覧</h3>
+      <div id="postList"><p class="adm-note">まだ投稿はありません。</p></div>
+      <p class="adm-note" style="margin-top:24px">※試作デモです。投稿と合言葉はこの端末のブラウザにだけ保存されます（本物の認証ではありません）。実サイトでは WordPress / microCMS 等のCMSと本物のログインがここに入ります。</p>
+    </div>
+
+    <a class="omote-link2" href="#">← 動物園へもどる</a>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================= data ================= */
+  /* 概念図鑑: 柊渚の哲学語彙。定義はすべて本人の言葉から */
+  var LENSES = [
+    {id:"yosui",  name:"羊水",       q:"誕生とは、羊水からの解放である。制限と抑圧の、いちばん深い装置。", tier:"free"},
+    {id:"zahyo",  name:"座標",       q:"環境が自分を変える。必要なのは努力ではなく、座標からズレない努力だけ。", tier:"free"},
+    {id:"rinne",  name:"輪廻",       q:"人生の厚さは、輪廻の回数である。脳内で何度、人生を完遂できるか。", tier:"free"},
+    {id:"yomei",  name:"余命",       q:"死を受け入れてこそ、人生が始まる。余命は、自分で決めていい。", tier:"free"},
+    {id:"rinkaku",name:"輪郭",       q:"何を愛し、何を失い、何を恐れて生きてきたか。それが、その人の輪郭。", tier:"premium"},
+    {id:"kakudo", name:"哲学の確度", q:"哲学の確度は、抑圧の中でしか上がらない。", tier:"premium"},
+    {id:"nidome", name:"二度目の死", q:"人は二度死ぬ。二度目は、覚えている人がいなくなるとき。", tier:"premium"},
+    {id:"tensei", name:"転生",       q:"自分の脳内で人生を完遂し、新たに自分を誕生させること。", tier:"premium"}
+  ];
+
+  /* 今週の一頭: 柊渚の哲学から、週替わりで概念をひとつ放し飼いにする。生態の原文は本人のもの */
+  var WEEK = {
+    id:"c1", lens:"yosui", name:"羊水",
+    teigi:"誕生とは、羊水からの解放である。",
+    observations:[
+      {label:"生態① 抑圧", text:"羊水の中では、五感は制限され、栄養だけが送り込まれ、生きることを強いられている。自我も芽生えないまま、息だけをし続けている——最大限の抑圧を受けている瞬間である。"},
+      {label:"生態② 解放", text:"そこから解放されて、酸素を吸い込んだとき、自分の人生が始まる。誕生とは場所の移動ではなく、抑圧からの解放のことだ。"},
+      {label:"生態③ 現代", text:"解放が当たり前になった時代には、抑圧や制限を強いられることがない。だからこそ——抑圧されることが、心地よくなる人が増えている。"}
+    ],
+    question:"あなたが、いま浸かっている羊水はなんですか。",
+    hitokoto:"見つからなくても大丈夫。それが見えた日が、あなたの二度目の誕生日です。——この一頭の全身は、閉園後の奥で飼っています。"
+  };
+
+  var SERIES = [
+    {id:"mirai", name:"未来舎", color:"c-red",
+     plate:{g:"Futurum incognitum", s:"現在", h:"10年後のあなた"},
+     desc:"人類はこれからどうなるのか。AI、テクノロジー、その先の分岐。未来という名の、まだ姿の見えない一頭を飼っています。",
+     videos:[
+       {t:"AIが人類を二分する日——分かれ方は「使う/使われる」ではない", dur:"28:40", free:true},
+       {t:"人間原始化計画——便利の果てに、僕らは狩猟採集へ戻る", dur:"31:05"},
+       {t:"考えることを外注した種の末路——思考筋の退化について", dur:"26:12"}
+     ],
+     blogs:[
+       {t:"二分後の世界年表——2040年までの思考実験", min:12, free:true},
+       {t:"AIに任せた瞬間、人間から消える能力のリスト", min:15}
+     ]},
+    {id:"uchu", name:"宇宙舎", color:"c-blue",
+     plate:{g:"Universum silens", s:"問い", h:"頭上に、常に"},
+     desc:"宇宙人は実在するのか。宇宙はなぜ黙っているのか。いちばん大きなスケールの考えごとを、ここに放してあります。",
+     videos:[
+       {t:"宇宙人は実在するのか——「いない」と言い切れない構造の話", dur:"24:30", free:true}
+     ],
+     blogs:[
+       {t:"フェルミのパラドックスを夜食で考える", min:9},
+       {t:"「会えない」と「いない」のあいだにある18の仮説", min:11}
+     ]},
+    {id:"bunmei", name:"文明舎", color:"c-green",
+     plate:{g:"Civilizatio mortalis", s:"人間の集まり", h:"国家から文化祭まで"},
+     desc:"人間が集まると、何が興って、何が滅ぶのか。国家から文化祭まで——文明という群れの、観察記録。",
+     videos:[
+       {t:"ガチ文化祭は文明の縮図である——3日で興り、3日で滅ぶ", dur:"38:20", free:true},
+       {t:"文明とは、忘れるための装置である", dur:"35:10"}
+     ],
+     blogs:[
+       {t:"人間が三人集まると、文明が始まる", min:8}
+     ]},
+    {id:"ningen", name:"人間舎", color:"c-purple",
+     plate:{g:"Homo introspectus", s:"本音", h:"鏡の前"},
+     desc:"いちばん観察しがいのある生き物は、結局これ。生き方、病み、自分らしさ——人間という一頭を、檻の外から眺めます。",
+     videos:[
+       {t:"「自分らしく生きる」の正体——そのレールは誰が敷いたのか", dur:"27:10", free:true}
+     ],
+     blogs:[
+       {t:"なぜ祭りのあとに、人は病むのか", min:8, free:true},
+       {t:"余命を決めると、人生が始まる（入門版）", min:9}
+     ]},
+    {id:"shinya", name:"夜行館", color:"c-yellow",
+     plate:{g:"Nagisa nocturnus", s:"質問と夜食", h:"月に一度の深夜"},
+     desc:"夜行性の館。月イチ生放送の全記録です。台本のない雑談と質疑の中にしか出てこない思想があります。",
+     videos:[
+       {t:"第1夜「推し活とお金の話」ダイジェスト", dur:"18:00", free:true},
+       {t:"第1夜「推し活とお金の話」完全版", dur:"1:58:00"},
+       {t:"第2夜「働かないアリに意義がある夜」完全版", dur:"2:10:00"}
+     ],
+     blogs:[
+       {t:"第1夜の見どころ年表——どこから観るか迷ったら", min:5}
+     ]}
+  ];
+
+  /* 増築予定地: 管理室から投稿が入ると、自動で開舎する */
+  var YOTEI = [
+    {id:"y-jikan",   name:"時間舎",   color:"c-red",    plate:{g:"Tempus fugiens", s:"明日", h:"「いつか」の中"}, desc:"増築されたばかりの舎。最初の一頭が入りました。", videos:[], blogs:[]},
+    {id:"y-zahyo",   name:"座標舎",   color:"c-blue",   plate:{g:"Locus mutans", s:"環境", h:"あなたの現在地"}, desc:"増築されたばかりの舎。最初の一頭が入りました。", videos:[], blogs:[]},
+    {id:"y-tensei",  name:"転生舎",   color:"c-green",  plate:{g:"Renatus quotidianus", s:"昨日の自分", h:"生まれ直すところ"}, desc:"増築されたばかりの舎。最初の一頭が入りました。", videos:[], blogs:[]},
+    {id:"y-kotoba",  name:"ことば舎", color:"c-purple", plate:{g:"Verbum irrevocabile", s:"沈黙", h:"喉の手前"}, desc:"増築されたばかりの舎。最初の一頭が入りました。", videos:[], blogs:[]},
+    {id:"y-kane",    name:"お金舎",   color:"c-yellow", plate:{g:"Pecunia loquax", s:"欲望", h:"財布と心の間"}, desc:"増築されたばかりの舎。最初の一頭が入りました。", videos:[], blogs:[]},
+    {id:"y-hitori",  name:"ひとり舎", color:"c-red",    plate:{g:"Solitudo vulgaris", s:"通知", h:"満員電車の中"}, desc:"増築されたばかりの舎。最初の一頭が入りました。", videos:[], blogs:[]},
+    {id:"y-matsuri", name:"祭舎",     color:"c-blue",   plate:{g:"Festum breve", s:"三日間", h:"興って、滅ぶところ"}, desc:"増築されたばかりの舎。最初の一頭が入りました。", videos:[], blogs:[]},
+    {id:"y-ori",     name:"檻舎",     color:"c-green",  plate:{g:"Carcer amans", s:"自由", h:"気づかぬうちに、あなたの周り"}, desc:"増築されたばかりの舎。最初の一頭が入りました。", videos:[], blogs:[]},
+    {id:"y-kagami",  name:"鏡舎",     color:"c-purple", plate:{g:"Speculum verax", s:"視線", h:"あなたの正面"}, desc:"増築されたばかりの舎。最初の一頭が入りました。", videos:[], blogs:[]},
+    {id:"y-bokyaku", name:"忘却舎",   color:"c-yellow", plate:{g:"Oblivio patiens", s:"思い出", h:"卒業アルバムの奥"}, desc:"増築されたばかりの舎。最初の一頭が入りました。", videos:[], blogs:[]}
+  ];
+
+  /* ================= storage ================= */
+  var LS_ZUKAN="shiko-zukan", LS_STREAK="shiko-streak",
+      LS_SUBS="shiko-subs", LS_ALL="shiko-all",
+      LS_POSTS="cms-posts", LS_PASS="cms-pass";
+  function load(k,d){ try{ return JSON.parse(localStorage.getItem(k)) || d; }catch(e){ return d; } }
+  function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+
+  var collected = load(LS_ZUKAN, []);
+  var subs = load(LS_SUBS, []);
+  var allAccess = load(LS_ALL, false);
+  var cmsPosts = load(LS_POSTS, []);
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function isSubbed(id){ return allAccess || subs.indexOf(id) >= 0; }
+
+  /* ================= streak ================= */
+  function today(){ return new Date().toLocaleDateString("sv"); }
+  function bumpStreak(){
+    var s = load(LS_STREAK, {last:null,count:0});
+    var t = today();
+    if(s.last === t) return s.count;
+    var y = new Date(Date.now()-864e5).toLocaleDateString("sv");
+    s.count = (s.last === y) ? s.count+1 : 1;
+    s.last = t; save(LS_STREAK, s);
+    return s.count;
+  }
+  function streakCount(){ var s = load(LS_STREAK,{last:null,count:0}); return s.last?s.count:0; }
+
+  /* ================= series ================= */
+  var tabsEl = document.getElementById("seriesTabs");
+  var panelEl = document.getElementById("seriesPanel");
+  var activeSeries = SERIES[0].id;
+
+  function allSha(){
+    var extra = YOTEI.filter(function(y){
+      return cmsPosts.some(function(p){ return p.side === "omote" && p.series === y.id; });
+    });
+    return SERIES.concat(extra);
+  }
+
+  function renderTabs(){
+    tabsEl.innerHTML = "";
+    allSha().forEach(function(s){
+      var b = document.createElement("button");
+      b.className = "series-tab " + s.color + (s.id===activeSeries ? " active":"");
+      b.setAttribute("role","tab");
+      b.innerHTML = '<span class="dot'+(isSubbed(s.id)?'':' off')+'"></span>' + s.name;
+      b.addEventListener("click", function(){ activeSeries = s.id; renderTabs(); renderPanel(); });
+      tabsEl.appendChild(b);
+    });
+  }
+
+  function videoCard(v, unlocked){
+    var open = unlocked || v.free;
+    var card = document.createElement("div");
+    card.className = "vcard" + (open ? "" : " locked");
+    var badge = v.free ? '<span class="badge">無料公開</span>' : (open ? '' : '<span class="badge grey">観覧パスで開く</span>');
+    card.innerHTML =
+      '<div class="vthumb"><span class="play"></span><span class="dur">'+v.dur+'</span></div>'+
+      '<div class="vtitle">'+badge+'<div>'+v.t+'</div></div>';
+    if(open){
+      var thumb = card.querySelector(".vthumb");
+      thumb.addEventListener("click", function(){
+        thumb.innerHTML = '<p class="embed-note">▶ 実サイトでは、ここに YouTube 限定公開 / Vimeo の<br>プレイヤーが埋め込まれます（'+v.dur+'）</p>';
+      });
+    }
+    return card;
+  }
+
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function inlineFmt(s){
+    return s
+      .replace(/\[特大\]([\s\S]*?)\[\/特大\]/g, '<span style="font-size:1.6em; font-weight:800; line-height:1.6">$1</span>')
+      .replace(/\[大\]([\s\S]*?)\[\/大\]/g, '<span style="font-size:1.25em; font-weight:700">$1</span>')
+      .replace(/\[小\]([\s\S]*?)\[\/小\]/g, '<span style="font-size:.85em; opacity:.8">$1</span>')
+      .replace(/\[赤\]([\s\S]*?)\[\/赤\]/g, '<span style="color:#e35b4f; font-weight:700">$1</span>')
+      .replace(/\[青\]([\s\S]*?)\[\/青\]/g, '<span style="color:#3f97d8; font-weight:700">$1</span>')
+      .replace(/\[緑\]([\s\S]*?)\[\/緑\]/g, '<span style="color:#3f9e68; font-weight:700">$1</span>')
+      .replace(/\[マーカー\]([\s\S]*?)\[\/マーカー\]/g, '<mark>$1</mark>');
+  }
+
+  function formatBody(body){
+    var imgs = load("cms-images", {});
+    return String(body).split(/\n\s*\n/).map(function(p){
+      var m = p.trim().match(/^\[画像[:：]([^\]]+)\]$/);
+      if(m){
+        var src = imgs[m[1]] || m[1];
+        return '<img src="'+src.replace(/"/g,"&quot;")+'" alt="" style="max-width:100%; border-radius:10px; margin:12px 0 0; display:block">';
+      }
+      return '<p style="margin:10px 0 0">'+inlineFmt(esc(p)).replace(/\n/g,"<br>")+'</p>';
+    }).join('');
+  }
+  function formatPost(t, body){
+    return '<strong>'+esc(t)+'</strong>' + formatBody(body);
+  }
+
+  function blogRow(b, unlocked){
+    var open = unlocked || b.free;
+    var row = document.createElement("div");
+    row.className = "brow" + (open ? "" : " locked");
+    row.innerHTML =
+      '<span class="bmeta">読了 '+b.min+'分</span>'+
+      '<span class="btitle">'+esc(b.t)+'</span>'+
+      (b.free ? '<span class="badge">無料公開</span>' : (open ? '' : '<span class="lockmark">🔒</span>'));
+    if(open){
+      row.addEventListener("click", function(){
+        var note = row.parentElement.parentElement.querySelector(".reader-note");
+        if(b.body){
+          note.innerHTML = formatPost(b.t, b.body);
+        }else{
+          note.textContent = "「"+b.t+"」——実サイトではここで記事本文ページへ移動します。音声読み上げ版も同じページに付きます。";
+        }
+        note.classList.add("show");
+      });
+    }
+    return row;
+  }
+
+  function renderPanel(){
+    var s = allSha().filter(function(x){return x.id===activeSeries;})[0];
+    if(!s){ activeSeries = SERIES[0].id; s = SERIES[0]; }
+    var subbed = isSubbed(s.id);
+    panelEl.innerHTML = "";
+
+    var head = document.createElement("div");
+    head.className = "series-head";
+    head.innerHTML =
+      '<div><h3>'+s.name+'</h3><p class="desc">'+s.desc+'</p>'+
+      '<div class="plate"><span>学名</span><b>'+s.plate.g+'</b><span>食性</span><b>'+s.plate.s+'</b><span>生息地</span><b>'+s.plate.h+'</b></div></div>'+
+      '<div class="series-sub">'+
+        '<span class="price">¥980 <small>/ 月</small></span>'+
+        (subbed
+          ? '<span class="sub-state">'+(allAccess?'✓ 全園パスで見放題':'✓ 観覧パスで入舎中')+'</span>'+
+            (allAccess?'':'<button class="btn btn-sm" id="subBtn">券を返す（デモ）</button>')
+          : '<button class="btn btn-primary btn-sm" id="subBtn">観覧パスを買う（デモ）</button>')+
+      '</div>';
+    panelEl.appendChild(head);
+
+    if(s.videos.length){
+      var vHead = document.createElement("div");
+      vHead.className = "part-head";
+      vHead.innerHTML = '<span class="part-title">🎬 観る回</span><span class="part-note">観たい気分の日はこちら</span>';
+      panelEl.appendChild(vHead);
+      var vg = document.createElement("div");
+      vg.className = "vgrid";
+      s.videos.forEach(function(v){ vg.appendChild(videoCard(v, subbed)); });
+      panelEl.appendChild(vg);
+    }
+
+    var bHead = document.createElement("div");
+    bHead.className = "part-head";
+    bHead.innerHTML = '<span class="part-title">📖 読む回</span><span class="part-note">読みたい気分の日はこちら</span>';
+    panelEl.appendChild(bHead);
+    var wrap = document.createElement("div");
+    var br = document.createElement("div");
+    br.className = "brows";
+    s.blogs.forEach(function(b){ br.appendChild(blogRow(b, subbed)); });
+    cmsPosts.filter(function(p){ return p.side === "omote" && p.series === s.id; })
+      .forEach(function(p){
+        br.appendChild(blogRow({t:p.title, min:p.min, free:p.free, body:p.body}, subbed));
+      });
+    wrap.appendChild(br);
+    var note = document.createElement("div");
+    note.className = "reader-note";
+    wrap.appendChild(note);
+    panelEl.appendChild(wrap);
+
+    var subBtn = document.getElementById("subBtn");
+    if(subBtn){
+      subBtn.addEventListener("click", function(){
+        var i = subs.indexOf(s.id);
+        if(i>=0) subs.splice(i,1); else subs.push(s.id);
+        save(LS_SUBS, subs);
+        renderTabs(); renderPanel();
+      });
+    }
+  }
+
+  /* ================= sticker book ================= */
+  var grid = document.getElementById("zukanGrid");
+  function renderZukan(){
+    grid.innerHTML = "";
+    LENSES.forEach(function(l){
+      var isPremium = l.tier === "premium";
+      var got = collected.indexOf(l.id) >= 0 || (isPremium && allAccess);
+      var card = document.createElement("div");
+      card.className = "card" + (isPremium ? " premium-card":"") +
+        (isPremium && !got ? " locked" : (!got ? " sealed" : ""));
+      card.innerHTML =
+        '<span class="tag">'+(isPremium?"✨金のスタンプ":"スタンプ")+'</span>' +
+        '<h3>'+l.name+'</h3><p class="q">'+l.q+'</p>' +
+        (got ? '<span class="got">GET!</span>' : '') +
+        (!got ? '<div class="lock"><span class="key">'+(isPremium?"🔒":"❓")+'</span><span>'+
+          (isPremium?"全園パス限定":"週替わりの観察でGET")+'</span></div>' : '');
+      grid.appendChild(card);
+    });
+    var lensCount = LENSES.filter(function(l){
+      return collected.indexOf(l.id)>=0 || (l.tier==="premium" && allAccess);
+    }).length;
+    document.getElementById("lensNum").textContent = lensCount;
+    document.getElementById("streakNum").textContent = streakCount();
+  }
+
+  /* ================= all access ================= */
+  var allBtn = document.getElementById("allBtn");
+  function renderAllBtn(){
+    allBtn.textContent = allAccess ? "全園パスを返す（デモ）" : "全園パスを買う（デモ）";
+    allBtn.classList.toggle("btn-primary", !allAccess);
+  }
+  allBtn.addEventListener("click", function(){
+    allAccess = !allAccess;
+    save(LS_ALL, allAccess);
+    renderAllBtn(); renderTabs(); renderPanel(); renderZukan();
+  });
+
+  /* ================= 今週の一頭（概念の放飼） ================= */
+  var LS_WATCH="zoo-"+WEEK.id+"-watched", LS_DONE="zoo-"+WEEK.id+"-done";
+  var watched = load(LS_WATCH, []);
+  var dojoDone = load(LS_DONE, false);
+
+  var body = document.getElementById("stageBody");
+  var listenBtn = document.getElementById("listenBtn");
+  var chipsEl = document.getElementById("demoChips");
+  var playArea = document.getElementById("playArea");
+  var tryBox = document.getElementById("tryBox");
+  var counterEl = document.getElementById("counter");
+  var current = null, playing = false;
+
+  function updateCounter(){
+    counterEl.textContent = "観察 " + watched.length + " / " + WEEK.observations.length;
+  }
+
+  function renderChips(){
+    chipsEl.innerHTML = "";
+    WEEK.observations.forEach(function(o,i){
+      var b = document.createElement("button");
+      var done = watched.indexOf(i) >= 0;
+      b.className = "demo-chip" + (done ? " watched":"");
+      b.textContent = (done ? "✓ " : "▶ ") + o.label;
+      b.addEventListener("click", function(){ playObs(i); });
+      chipsEl.appendChild(b);
+    });
+  }
+
+  function playObs(i){
+    if(playing) return;
+    playing = true;
+    listenBtn.hidden = true;
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    var o = WEEK.observations[i];
+    current = {steps:[o.label, o.text]};
+    playArea.innerHTML =
+      '<div class="slot"><span class="cell">'+WEEK.name+'</span>'+
+      '<span class="x">·</span><span class="cell">'+o.label+'</span></div>'+
+      '<div class="slot-label">生態の観察 — 柊渚の原文から</div>'+
+      '<div class="steps" id="steps"></div>';
+    var stepsEl = document.getElementById("steps");
+    var el = document.createElement("div");
+    el.className = "step";
+    el.innerHTML = '<span class="no">'+"①②③".charAt(i)+'</span><p>'+o.text+'</p>';
+    stepsEl.appendChild(el);
+    setTimeout(function(){ el.classList.add("show"); }, reduced?0:300);
+    setTimeout(function(){
+      if(watched.indexOf(i) < 0){ watched.push(i); save(LS_WATCH, watched); }
+      renderChips(); updateCounter(); renderTry();
+      playing = false;
+      if(window.speechSynthesis) listenBtn.hidden = false;
+    }, reduced?50:1400);
+  }
+
+  function revealTry(collect){
+    if(playing) return;
+    playing = true;
+    listenBtn.hidden = true;
+    if(window.speechSynthesis) speechSynthesis.cancel();
+    current = {steps:[WEEK.question, WEEK.hitokoto]};
+    playArea.innerHTML =
+      '<div class="slot-label">エサやり — 問い</div>'+
+      '<div class="punch show" style="margin-top:4px"><span>'+WEEK.question+'</span></div>'+
+      '<div class="steps" id="steps" style="margin-top:28px"></div>';
+    var stepsEl = document.getElementById("steps");
+    var el = document.createElement("div");
+    el.className = "step";
+    el.innerHTML = '<span class="no">渚</span><p>'+WEEK.hitokoto+'</p>';
+    stepsEl.appendChild(el);
+    setTimeout(function(){ el.classList.add("show"); }, reduced?0:2400);
+    setTimeout(function(){
+      if(collect && !dojoDone){
+        dojoDone = true; save(LS_DONE, true);
+        if(collected.indexOf(WEEK.lens) < 0){ collected.push(WEEK.lens); save(LS_ZUKAN, collected); }
+        bumpStreak();
+        renderZukan();
+        confettiBurst();
+      }
+      renderTry();
+      playing = false;
+      if(window.speechSynthesis) listenBtn.hidden = false;
+    }, reduced?80:3600);
+  }
+
+  function renderTry(){
+    if(dojoDone){
+      tryBox.className = "try-box done";
+      tryBox.innerHTML = '<span class="try-label">エサやり — 問い</span>'+
+        '<p class="try-topic">「'+WEEK.question+'」</p>'+
+        '<p class="try-msg">エサやり完了！「'+WEEK.name+'」のスタンプは帳面に押してあります。来週の一頭もお楽しみに。</p>'+
+        '<button class="btn btn-sm" id="tryBtn">もう一度みる</button>';
+      document.getElementById("tryBtn").addEventListener("click", function(){ revealTry(false); });
+      return;
+    }
+    if(watched.length < WEEK.observations.length){
+      tryBox.className = "try-box locked";
+      tryBox.innerHTML = '<span class="try-label">エサやり — 問い</span>'+
+        '<p class="try-msg">🔒 生態を3つ観察すると、あなたのエサやりの番が来ます。</p>';
+      return;
+    }
+    tryBox.className = "try-box ready";
+    tryBox.innerHTML = '<span class="try-label">エサやり — 問い</span>'+
+      '<p class="try-topic">「'+WEEK.question+'」</p>'+
+      '<p class="try-msg">声に出さなくていい。<strong>10秒だけ考えてから</strong>、開けてください。</p>'+
+      '<button class="btn btn-primary" id="tryBtn">渚のひとことを聞く</button>';
+    document.getElementById("tryBtn").addEventListener("click", function(){ revealTry(true); });
+  }
+
+  function confettiBurst(){
+    if(reduced) return;
+    var glyphs = ["🎉","✨","⭐","🎈","💡"];
+    for(var i=0;i<10;i++){
+      var sp = document.createElement("span");
+      sp.className = "confetti";
+      sp.textContent = glyphs[i % glyphs.length];
+      sp.style.left = (8 + Math.random()*84) + "%";
+      sp.style.animationDelay = (Math.random()*0.5) + "s";
+      body.appendChild(sp);
+      setTimeout(function(el){ return function(){ el.remove(); }; }(sp), 2400);
+    }
+  }
+
+  function listen(){
+    if(!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    var text = "今週の一頭、" + WEEK.name + "。定義。" + WEEK.teigi
+      + (current ? "。" + current.steps.join("。") : "");
+    var u = new SpeechSynthesisUtterance(text);
+    u.lang = "ja-JP"; u.rate = 0.95;
+    var v = speechSynthesis.getVoices().filter(function(v){ return v.lang && v.lang.indexOf("ja") === 0; })[0];
+    if(v) u.voice = v;
+    speechSynthesis.speak(u);
+  }
+
+  listenBtn.addEventListener("click", listen);
+
+  /* ================= omote / ura / admin routing ================= */
+  var omoteEl = document.getElementById("omote");
+  var uraEl = document.getElementById("ura");
+  var adminEl = document.getElementById("admin");
+  var prevMode = null;
+  function route(){
+    var h = location.hash;
+    var mode = (h === "#admin") ? "admin" : (h.indexOf("#ura") === 0 ? "ura" : "omote");
+    omoteEl.hidden = mode !== "omote";
+    uraEl.hidden = mode !== "ura";
+    adminEl.hidden = mode !== "admin";
+    document.body.classList.toggle("ura-mode", mode === "ura");
+    document.title = mode === "ura" ? "still life" : (mode === "admin" ? "管理室" : "柊渚の思考動物園");
+    if(mode !== prevMode && (mode === "ura" || mode === "admin")){
+      window.scrollTo(0,0);
+      if(window.speechSynthesis) speechSynthesis.cancel();
+    }
+    prevMode = mode;
+  }
+  window.addEventListener("hashchange", route);
+  route();
+
+  var taizaApply = document.getElementById("taizaApply");
+  var taizaNote = document.getElementById("taizaNote");
+  if(taizaApply){
+    taizaApply.addEventListener("click", function(e){
+      e.preventDefault();
+      taizaNote.hidden = !taizaNote.hidden;
+    });
+  }
+
+  /* ================= ura: 目録と水底ゼミ ================= */
+  var meirokuNote = document.getElementById("meirokuNote");
+  document.querySelectorAll(".prod").forEach(function(card){
+    card.addEventListener("click", function(){
+      meirokuNote.textContent = card.getAttribute("data-note");
+      meirokuNote.hidden = false;
+    });
+  });
+
+  var zemiApply = document.getElementById("zemiApply");
+  var zemiNote = document.getElementById("zemiNote");
+  if(zemiApply){
+    zemiApply.addEventListener("click", function(e){
+      e.preventDefault();
+      zemiNote.hidden = !zemiNote.hidden;
+    });
+  }
+
+  var shokaNote = document.getElementById("shokaNote");
+  document.querySelectorAll(".shoka-row").forEach(function(row){
+    row.addEventListener("click", function(e){
+      e.preventDefault();
+      var t = row.querySelector(".s-title").textContent;
+      var tag = row.querySelector(".s-tag");
+      var isPass = tag && tag.textContent.indexOf("全園パス") >= 0;
+      shokaNote.textContent = isPass
+        ? "「"+t+"」——全園パスの方だけが開けます。実サイトでは、ここに会員判定が入ります。"
+        : "「"+t+"」——実サイトでは、ここで全文ページへ。";
+      shokaNote.hidden = false;
+    });
+  });
+
+  /* ================= 裏書架へのCMS投稿の差し込み ================= */
+  var shokaList = document.getElementById("shokaList");
+  function renderShokaCms(){
+    shokaList.querySelectorAll(".cms-row").forEach(function(n){ n.remove(); });
+    var posts = cmsPosts.filter(function(p){ return p.side === "ura"; });
+    for(var i = 0; i < posts.length; i++){ (function(p){
+      var a = document.createElement("a");
+      a.className = "shoka-row cms-row";
+      a.href = "#ura-shoka";
+      a.innerHTML =
+        '<span class="s-date">'+p.date+'</span>'+
+        '<span class="s-title">'+esc(p.title)+'</span>'+
+        '<span class="s-min">'+p.body.length.toLocaleString()+'字</span>'+
+        '<span class="s-tag">'+(p.free ? "公開" : "全園パス")+'</span>';
+      a.addEventListener("click", function(e){
+        e.preventDefault();
+        if(p.free || allAccess){
+          shokaNote.innerHTML = formatPost(p.title, p.body);
+        }else{
+          shokaNote.textContent = "「"+p.title+"」——全園パスの方だけが開けます。";
+        }
+        shokaNote.hidden = false;
+      });
+      shokaList.insertBefore(a, shokaList.firstChild);
+    })(posts[i]); }
+  }
+
+  /* ================= 園内マップ画像（絵地図への差し替え） ================= */
+  var LS_MAPIMG = "zoo-map-img";
+  var mapSvg = document.getElementById("mapSvg");
+  var mapPhoto = document.getElementById("mapPhoto");
+  var MAP_HOTSPOTS = [
+    {href:"#series",   l:17, t:8,  w:28, h:40, label:"飼育舎エリア"},
+    {href:"#machine",  l:60, t:5,  w:32, h:31, label:"今週の一頭"},
+    {href:"#zukan",    l:70, t:38, w:22, h:30, label:"スタンプ帳"},
+    {href:"#kinkyo",   l:7,  t:46, w:20, h:34, label:"渚観察日誌"},
+    {href:"#nyumon",   l:26, t:60, w:19, h:32, label:"入園案内"},
+    {href:"#watashi",  l:58, t:62, w:16, h:30, label:"柊渚"},
+    {href:"#page-top", l:40, t:70, w:17, h:29, label:"入口"},
+    {href:"#ura",      l:3,  t:4,  w:19, h:22, label:"閉園後（池の底）", moon:true}
+  ];
+  function showMapPhoto(src){
+    mapSvg.hidden = true;
+    mapPhoto.hidden = false;
+    var html = '<img src="'+src+'" alt="園内マップ" id="mapPhotoImg">';
+    MAP_HOTSPOTS.forEach(function(h){
+      html += '<a class="hot" href="'+h.href+'" aria-label="'+h.label+'"'+
+        ' style="left:'+h.l+'%; top:'+h.t+'%; width:'+h.w+'%; height:'+h.h+'%">'+
+        (h.moon ? '<span class="hot-moon">🌘</span>' : '')+'</a>';
+    });
+    mapPhoto.innerHTML = html;
+  }
+  function showMapSvg(){
+    mapSvg.hidden = false;
+    mapPhoto.hidden = true;
+    mapPhoto.innerHTML = "";
+  }
+  function renderMap(){
+    var img = load(LS_MAPIMG, null);
+    if(img){ showMapPhoto(img); return; }
+    // リポジトリに map.jpg が同梱されていれば、それを既定の園内マップにする
+    var probe = new Image();
+    probe.onload = function(){ if(!load(LS_MAPIMG, null)) showMapPhoto("map.jpg"); };
+    probe.onerror = showMapSvg;
+    probe.src = "map.jpg";
+    showMapSvg();
+  }
+
+  /* ================= 渚観察日誌へのCMS投稿の差し込み ================= */
+  var kinkyoList = document.getElementById("kinkyoList");
+  function jpDate(d){
+    var m = String(d).match(/(\d{1,2})\.(\d{1,2})$/);
+    return m ? (+m[1])+"月"+(+m[2])+"日" : d;
+  }
+  function renderKinkyo(){
+    kinkyoList.querySelectorAll(".cms-ki").forEach(function(n){ n.remove(); });
+    cmsPosts.filter(function(p){ return p.side === "diary"; }).forEach(function(p){
+      var div = document.createElement("div");
+      div.className = "ki cms-ki";
+      div.innerHTML = '<span class="hi">'+jpDate(p.date)+'</span>'+
+        '<div class="ki-body">'+formatBody(p.body)+'</div>';
+      kinkyoList.insertBefore(div, kinkyoList.firstChild);
+    });
+  }
+
+  /* ================= 管理室（デモCMS） ================= */
+  var adminLoginEl = document.getElementById("adminLogin");
+  var adminPanelEl = document.getElementById("adminPanel");
+  var admPass = document.getElementById("admPass");
+  var admErr = document.getElementById("admErr");
+  var pSide = document.getElementById("pSide");
+  var pSeries = document.getElementById("pSeries");
+  var pTitle = document.getElementById("pTitle");
+  var pMin = document.getElementById("pMin");
+  var pFree = document.getElementById("pFree");
+  var pBody = document.getElementById("pBody");
+  var pSaveBtn = document.getElementById("pSaveBtn");
+  var pCancelBtn = document.getElementById("pCancelBtn");
+  var postListEl = document.getElementById("postList");
+  var editingId = null;
+
+  function cmsPassword(){ return load(LS_PASS, "nagisa"); }
+  var authed = false;
+  try{ authed = sessionStorage.getItem("cms-auth") === "1"; }catch(e){}
+
+  function renderAdmin(){
+    adminLoginEl.hidden = authed;
+    adminPanelEl.hidden = !authed;
+    if(authed) renderPostList();
+  }
+
+  SERIES.forEach(function(s){
+    var o = document.createElement("option");
+    o.value = s.id; o.textContent = "舎: " + s.name;
+    pSeries.appendChild(o);
+  });
+  YOTEI.forEach(function(y){
+    var o = document.createElement("option");
+    o.value = y.id; o.textContent = "予定地: " + y.name + "（投稿すると開舎）";
+    pSeries.appendChild(o);
+  });
+  pSide.addEventListener("change", function(){ pSeries.disabled = pSide.value !== "omote"; });
+
+  document.getElementById("admLoginBtn").addEventListener("click", function(){
+    if(admPass.value === cmsPassword()){
+      authed = true;
+      try{ sessionStorage.setItem("cms-auth","1"); }catch(e){}
+      admErr.hidden = true; admPass.value = "";
+      renderAdmin();
+    }else{
+      admErr.hidden = false;
+    }
+  });
+  admPass.addEventListener("keydown", function(e){
+    if(e.key === "Enter") document.getElementById("admLoginBtn").click();
+  });
+  document.getElementById("admLogoutBtn").addEventListener("click", function(){
+    authed = false;
+    try{ sessionStorage.removeItem("cms-auth"); }catch(e){}
+    renderAdmin();
+  });
+  document.getElementById("admPwBtn").addEventListener("click", function(){
+    var row = document.getElementById("pwRow");
+    row.hidden = !row.hidden;
+  });
+  document.getElementById("admNewPassBtn").addEventListener("click", function(){
+    var np = document.getElementById("admNewPass").value.trim();
+    if(np){
+      save(LS_PASS, np);
+      document.getElementById("admNewPass").value = "";
+      document.getElementById("pwRow").hidden = true;
+    }
+  });
+
+  function clearForm(){
+    editingId = null;
+    pTitle.value = ""; pBody.value = ""; pMin.value = 5; pFree.checked = true;
+    pSaveBtn.textContent = "公開する";
+    pCancelBtn.hidden = true;
+  }
+
+  function refreshSite(){
+    renderTabs();
+    renderPanel();
+    renderShokaCms();
+    renderKinkyo();
+    renderPostList();
+  }
+
+  pSaveBtn.addEventListener("click", function(){
+    var title = pTitle.value.trim();
+    var bodyTx = pBody.value.trim();
+    if(pSide.value === "diary"){
+      if(!bodyTx){ alert("日誌の本文を入れてください。"); return; }
+      if(!title) title = "観察記録";
+    }else if(!title || !bodyTx){ alert("タイトルと本文を入れてください。"); return; }
+    if(editingId !== null){
+      cmsPosts.forEach(function(p){
+        if(p.id === editingId){
+          p.side = pSide.value; p.series = pSeries.value;
+          p.title = title; p.min = +pMin.value || 5;
+          p.free = pFree.checked; p.body = bodyTx;
+        }
+      });
+    }else{
+      cmsPosts.push({
+        id: Date.now(),
+        side: pSide.value, series: pSeries.value,
+        title: title, min: +pMin.value || 5,
+        free: pFree.checked, body: bodyTx,
+        date: new Date().toLocaleDateString("sv").replace(/-/g,".")
+      });
+    }
+    save(LS_POSTS, cmsPosts);
+    clearForm();
+    refreshSite();
+  });
+  pCancelBtn.addEventListener("click", clearForm);
+
+  document.getElementById("fmtBar").addEventListener("click", function(e){
+    var btn = e.target.closest ? e.target.closest(".fmt-btn") : null;
+    if(!btn) return;
+    var tag = btn.getAttribute("data-tag");
+    var st = pBody.selectionStart, en = pBody.selectionEnd;
+    if(st === en){
+      alert("装飾したい部分を、先にドラッグで選択してください。");
+      pBody.focus();
+      return;
+    }
+    var v = pBody.value;
+    pBody.value = v.slice(0, st) + "[" + tag + "]" + v.slice(st, en) + "[/" + tag + "]" + v.slice(en);
+    pBody.focus();
+    pBody.setSelectionRange(st, en + tag.length * 2 + 5);
+  });
+
+  var mapImgFile = document.getElementById("mapImgFile");
+  document.getElementById("mapImgBtn").addEventListener("click", function(){ mapImgFile.click(); });
+  mapImgFile.addEventListener("change", function(){
+    var f = mapImgFile.files && mapImgFile.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      var im = new Image();
+      im.onload = function(){
+        var maxW = 1400;
+        var w = im.width, h = im.height;
+        if(w > maxW){ h = Math.round(h * maxW / w); w = maxW; }
+        var cv = document.createElement("canvas");
+        cv.width = w; cv.height = h;
+        cv.getContext("2d").drawImage(im, 0, 0, w, h);
+        var data;
+        try{ data = cv.toDataURL("image/jpeg", 0.82); }catch(e){
+          alert("この画像は読み込めませんでした。別の形式（PNG/JPG）でお試しください。");
+          return;
+        }
+        try{
+          localStorage.setItem(LS_MAPIMG, JSON.stringify(data));
+        }catch(e){
+          alert("圧縮しても保存領域に入りませんでした。もう少し小さい画像でお試しください。");
+          return;
+        }
+        renderMap();
+        mapImgFile.value = "";
+        alert("園内マップを差し替えました！「← 動物園へもどる」で確認できます。");
+      };
+      im.onerror = function(){ alert("この画像は読み込めませんでした。別の形式（PNG/JPG）でお試しください。"); };
+      im.src = r.result;
+    };
+    r.readAsDataURL(f);
+  });
+  document.getElementById("mapImgReset").addEventListener("click", function(){
+    try{ localStorage.removeItem(LS_MAPIMG); }catch(e){}
+    renderMap();
+    alert("元の地図（頭の中マップ）に戻しました。");
+  });
+
+  var pImgFile = document.getElementById("pImgFile");
+  document.getElementById("pImgBtn").addEventListener("click", function(){ pImgFile.click(); });
+  pImgFile.addEventListener("change", function(){
+    var f = pImgFile.files && pImgFile.files[0];
+    if(!f) return;
+    var r = new FileReader();
+    r.onload = function(){
+      var imgs = load("cms-images", {});
+      var id = "i" + Date.now();
+      imgs[id] = r.result;
+      try{ save("cms-images", imgs); }catch(e){ alert("画像が大きすぎて保存できませんでした（デモの保存領域の都合です）。小さめの画像でお試しください。"); return; }
+      var token = "\n\n[画像:" + id + "]\n\n";
+      var pos = (typeof pBody.selectionStart === "number") ? pBody.selectionStart : pBody.value.length;
+      pBody.value = pBody.value.slice(0, pos) + token + pBody.value.slice(pos);
+      pImgFile.value = "";
+    };
+    r.readAsDataURL(f);
+  });
+
+  function renderPostList(){
+    postListEl.innerHTML = "";
+    if(!cmsPosts.length){
+      postListEl.innerHTML = '<p class="adm-note">まだ投稿はありません。</p>';
+      return;
+    }
+    cmsPosts.slice().reverse().forEach(function(p){
+      var d = document.createElement("div");
+      d.className = "post-item";
+      var sName = "";
+      SERIES.concat(YOTEI).forEach(function(s){ if(s.id === p.series) sName = s.name; });
+      d.innerHTML =
+        '<span class="pi-side">'+(p.side === "ura" ? "裏・書架" : (p.side === "diary" ? "観察日誌" : "表・"+sName))+'</span>'+
+        '<span class="pi-title">'+esc(p.title)+(p.free ? '' : ' 🔒')+'</span>'+
+        '<span class="pi-date">'+p.date+'</span>';
+      var eb = document.createElement("button");
+      eb.className = "btn btn-sm"; eb.textContent = "編集";
+      eb.addEventListener("click", function(){
+        editingId = p.id;
+        pSide.value = p.side; pSeries.value = p.series || SERIES[0].id;
+        pSeries.disabled = p.side === "ura";
+        pTitle.value = p.title; pMin.value = p.min;
+        pFree.checked = p.free; pBody.value = p.body;
+        pSaveBtn.textContent = "更新する";
+        pCancelBtn.hidden = false;
+        window.scrollTo(0,0);
+      });
+      var db = document.createElement("button");
+      db.className = "btn btn-sm"; db.textContent = "削除";
+      db.addEventListener("click", function(){
+        if(!confirm("「"+p.title+"」を削除しますか？")) return;
+        cmsPosts = cmsPosts.filter(function(x){ return x.id !== p.id; });
+        save(LS_POSTS, cmsPosts);
+        refreshSite();
+      });
+      d.appendChild(eb); d.appendChild(db);
+      postListEl.appendChild(d);
+    });
+  }
+
+  renderAdmin();
+
+  /* ================= 入園ゲート（チケット） ================= */
+  (function(){
+    var entered = false;
+    try{ entered = sessionStorage.getItem("zoo-entered") === "1"; }catch(e){}
+    var notOmote = location.hash.indexOf("#ura") === 0 || location.hash === "#admin";
+    if(entered || notOmote) return;
+    var ov = document.createElement("div");
+    ov.id = "gateOverlay";
+    ov.innerHTML =
+      '<div class="gate-inner">'+
+        '<div class="ticket" id="ticketEl">'+
+          '<div class="t-main">'+
+            '<div class="t-zoo">HIIRAGI NAGISA — THINKING ZOO</div>'+
+            '<div class="t-title">入 園 券</div>'+
+            '<div class="t-sub">柊渚の思考動物園 ｜ おとな・こども共通</div>'+
+          '</div>'+
+          '<div class="t-stub"><span class="paw">🐾</span>¥0</div>'+
+        '</div>'+
+        '<div class="gate-hint">チケットをちぎって、入園</div>'+
+        '<button class="gate-skip" id="gateSkip">そっと入る</button>'+
+      '</div>';
+    document.body.appendChild(ov);
+    function enter(){
+      try{ sessionStorage.setItem("zoo-entered","1"); }catch(e){}
+      ov.classList.add("leave");
+      setTimeout(function(){ ov.remove(); }, 700);
+    }
+    document.getElementById("ticketEl").addEventListener("click", enter);
+    document.getElementById("gateSkip").addEventListener("click", enter);
+  })();
+
+  /* ================= init ================= */
+  renderTabs();
+  renderPanel();
+  renderZukan();
+  renderAllBtn();
+  renderChips();
+  updateCounter();
+  renderTry();
+  renderShokaCms();
+  renderKinkyo();
+  renderMap();
+})();
+</script>
+
+</html>
