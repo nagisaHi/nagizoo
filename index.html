@@ -822,25 +822,51 @@
     transition:top .85s cubic-bezier(.5,.05,.25,1);
   }
   @keyframes orbit-spin{to{transform:rotate(360deg)}}
-  /* 増殖する光球（触れるほど増える） */
-  #ura .orbiters{position:absolute; inset:0; pointer-events:none; z-index:5}
-  #ura .orb-wrap{position:absolute; inset:0; animation:orbit-spin var(--dur,7s) linear infinite}
-  #ura .orb-wrap.rev{animation-direction:reverse}
-  #ura .orb-dot{
-    position:absolute; left:50%; top:calc(50% - var(--r,40%));
-    width:var(--sz,6px); height:var(--sz,6px); transform:translate(-50%,-50%);
-    border-radius:50%;
-    background:radial-gradient(circle at 36% 32%, #f2f9ff, #9fcbe8 55%, #3a6f96 90%);
-    box-shadow:0 0 7px rgba(170,214,246,.8), 0 0 16px rgba(127,179,213,.4);
+  /* === 立体化: 同心円を消し、ひとつの球体に === */
+  #ura .ovum .ring{display:none}
+  #ura .ovum-body{
+    inset:8%;
+    background:
+      radial-gradient(circle at 34% 27%, rgba(226,243,253,.44), rgba(150,196,224,.16) 33%, rgba(40,74,102,.20) 60%, rgba(8,16,24,.30) 84%, rgba(3,7,11,.55) 100%),
+      radial-gradient(circle at 70% 80%, rgba(0,0,0,.5), transparent 46%);
+    box-shadow:
+      inset -22px -28px 64px rgba(0,0,0,.72),
+      inset 22px 20px 52px rgba(160,205,235,.13),
+      0 20px 54px rgba(0,0,0,.5),
+      0 0 64px rgba(127,179,213,.12);
   }
-  #ura .orb-dot.birth{animation:orb-in 1s ease}
+  #ura .ovum-zona{inset:6%; border-color:rgba(198,228,246,.13); box-shadow:0 0 26px rgba(127,179,213,.14), inset 0 0 30px rgba(127,179,213,.06)}
+  #ura .nucleus{
+    position:absolute; left:50%; top:50%; width:22%; height:22%;
+    transform:translate(-50%,-50%); border-radius:50%; z-index:4; pointer-events:none;
+    background:radial-gradient(circle at 38% 33%, rgba(214,238,251,.6), rgba(96,156,196,.30) 54%, rgba(28,58,84,.24) 86%);
+    box-shadow:0 0 30px rgba(127,179,213,.5), inset -5px -7px 16px rgba(0,0,0,.5), inset 5px 5px 14px rgba(200,230,248,.22);
+    animation:nuc-breathe 5s ease-in-out infinite;
+  }
+  @keyframes nuc-breathe{50%{transform:translate(-50%,-50%) scale(1.09)}}
+  /* === 増殖する光球（本物の3D軌道・遠近つき） === */
+  #ura .orbiters{position:absolute; inset:0; pointer-events:none; z-index:5; perspective:720px; transform-style:preserve-3d}
+  #ura .orb3{position:absolute; inset:0; transform-style:preserve-3d; transform:rotateX(var(--tx,0deg)) rotateZ(var(--tz,0deg))}
+  #ura .orb-spin{position:absolute; inset:0; transform-style:preserve-3d; animation:orb3-spin var(--dur,8s) linear infinite}
+  #ura .orb-spin.rev{animation-direction:reverse}
+  @keyframes orb3-spin{to{transform:rotateY(360deg)}}
+  #ura .orb-dot{
+    position:absolute; left:50%; top:50%; width:var(--sz,7px); height:var(--sz,7px);
+    margin:calc(var(--sz,7px) / -2) 0 0 calc(var(--sz,7px) / -2); border-radius:50%;
+    transform:translateZ(var(--r,120px));
+    background:radial-gradient(circle at 36% 32%, #f6fbff, #a3cdea 55%, #37678c 90%);
+    box-shadow:0 0 8px rgba(170,214,246,.85), 0 0 18px rgba(127,179,213,.45);
+    animation:orb-depth var(--dur,8s) ease-in-out infinite;
+  }
+  @keyframes orb-depth{0%,100%{opacity:1}50%{opacity:.2}}
+  #ura .orb-dot.birth{animation:orb-depth var(--dur,8s) ease-in-out infinite, orb-in 1.1s ease}
   @keyframes orb-in{from{opacity:0}to{opacity:1}}
   @media (prefers-reduced-motion: reduce){
     #ura .furrow{animation:none; display:none}
     #ura .blasto .cell{transition:opacity .01ms}
-    #ura .orbit,#ura .orb-wrap{animation:none}
+    #ura .orbit,#ura .orb-spin,#ura .nucleus{animation:none}
     #ura .orbiter{transition:none}
-    #ura .orb-dot.birth{animation:none}
+    #ura .orb-dot{animation:none}
   }
   @media (prefers-reduced-motion: reduce){#ura .nm-pulse{animation:none; opacity:0}}
   /* --- 保管庫と深度チャンバー（モーダル） --- */
@@ -1530,6 +1556,7 @@
         <div class="ovum-glow" aria-hidden="true"></div>
         <div class="ovum-body" aria-hidden="true"></div>
         <div class="blasto" id="blasto" aria-hidden="true"></div>
+        <div class="nucleus" aria-hidden="true"></div>
         <div class="ovum-zona" aria-hidden="true"></div>
         <span class="nm-pulse" aria-hidden="true"></span>
         <span class="nm-pulse p2" aria-hidden="true"></span>
@@ -2517,17 +2544,26 @@
     var MAXORB = 48;
     function spawnOrb(birth){
       if(!orbiters || orbiters.children.length >= MAXORB) return;
-      var w = document.createElement("div");
-      w.className = "orb-wrap" + (Math.random() < 0.5 ? " rev" : "");
-      var dur = (5 + Math.random()*8).toFixed(1);
-      w.style.setProperty("--dur", dur + "s");
-      w.style.animationDelay = "-" + (Math.random()*dur).toFixed(1) + "s";
+      var rect = ovum.getBoundingClientRect();
+      var base = (rect.width || 360) / 2;
+      var rad = (0.30 + Math.random()*0.44) * base;      // 球面をつくる軌道半径(px)
+      var dur = (6 + Math.random()*9).toFixed(1);
+      var delay = "-" + (Math.random()*dur).toFixed(1) + "s";
+      var o3 = document.createElement("div");
+      o3.className = "orb3";
+      o3.style.setProperty("--tx", Math.floor(Math.random()*180) + "deg");
+      o3.style.setProperty("--tz", Math.floor(Math.random()*360) + "deg");
+      var sp = document.createElement("div");
+      sp.className = "orb-spin" + (Math.random() < 0.5 ? " rev" : "");
+      sp.style.setProperty("--dur", dur + "s");
+      sp.style.animationDelay = delay;
       var d = document.createElement("span");
       d.className = "orb-dot" + (birth ? " birth" : "");
-      d.style.setProperty("--r", (10 + Math.random()*38).toFixed(1) + "%");
+      d.style.setProperty("--r", rad.toFixed(0) + "px");
       d.style.setProperty("--sz", (4 + Math.random()*6).toFixed(1) + "px");
-      w.appendChild(d);
-      orbiters.appendChild(w);
+      d.style.setProperty("--dur", dur + "s");
+      d.style.animationDelay = delay;
+      sp.appendChild(d); o3.appendChild(sp); orbiters.appendChild(o3);
     }
     var initN = Math.min(cnt(), MAXORB);
     for(var q=0; q<initN; q++) spawnOrb(false);
