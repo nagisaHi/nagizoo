@@ -867,28 +867,26 @@
     from{transform:translateZ(var(--r0,140px))}
     to{transform:translateZ(var(--rmin,40px))}
   }
-  /* === 3Dダイブ: タップで球の中へ飛び込み、中心へ === */
+  /* === 3Dダイブ: タップで球の中へ潜り、その深さに留まって少しずつ中心へ === */
   #ura{overflow-x:clip}
-  #ura .ovum{transform-origin:50% 50%}
-  #ura .ovum.diving{animation:ovum-dive .95s cubic-bezier(.45,0,.72,1) forwards; z-index:20}
-  @keyframes ovum-dive{
-    0%{transform:scale(1); filter:none}
-    55%{filter:brightness(1.45)}
-    100%{transform:scale(3.6); filter:brightness(1.95)}
+  #ura .ovum-port{position:absolute; inset:0; border-radius:50%; overflow:hidden; z-index:2}
+  #ura .ovum-cam{
+    position:absolute; inset:0; transform-origin:50% 50%; will-change:transform;
+    transition:transform 1.05s cubic-bezier(.42,0,.68,1);
   }
   #ura .dive-burst{
     position:absolute; left:50%; top:50%; width:38%; height:38%; margin:-19% 0 0 -19%;
     border-radius:50%; pointer-events:none; opacity:0; z-index:6;
     background:radial-gradient(circle, rgba(220,240,252,.92), rgba(127,179,213,.35) 42%, transparent 72%);
   }
-  #ura .ovum.diving .dive-burst{animation:dive-burst .95s ease-out}
-  @keyframes dive-burst{0%{opacity:.85; transform:scale(.3)}100%{opacity:0; transform:scale(4.2)}}
+  #ura .ovum.flash .dive-burst{animation:dive-burst .85s ease-out}
+  @keyframes dive-burst{0%{opacity:.8; transform:scale(.3)}100%{opacity:0; transform:scale(3.4)}}
   @media (prefers-reduced-motion: reduce){
     #ura .furrow{animation:none; display:none}
     #ura .blasto .cell{transition:opacity .01ms}
     #ura .nucleus{animation:none}
     #ura .orb-dot{animation:none}
-    #ura .ovum.diving{animation:none}
+    #ura .ovum-cam{transition:none}
     #ura .dive-burst{display:none}
   }
   @media (prefers-reduced-motion: reduce){#ura .nm-pulse{animation:none; opacity:0}}
@@ -1577,10 +1575,14 @@
       <p class="ura-oneline">ここは Still life。何を愛し、何を失い、何を恐れて生きてきたか——輪郭を切り取る場所。</p>
       <div class="namimon ovum" id="ovum" role="navigation" aria-label="裏の見取り図（卵子）">
         <div class="ovum-glow" aria-hidden="true"></div>
-        <div class="ovum-body" aria-hidden="true"></div>
-        <div class="blasto" id="blasto" aria-hidden="true"></div>
-        <div class="nucleus" aria-hidden="true"></div>
-        <div class="dive-burst" aria-hidden="true"></div>
+        <div class="ovum-port" aria-hidden="true">
+          <div class="ovum-cam" id="ovumCam">
+            <div class="ovum-body"></div>
+            <div class="blasto" id="blasto"></div>
+            <div class="nucleus"></div>
+            <div class="dive-burst"></div>
+          </div>
+        </div>
         <div class="ovum-zona" aria-hidden="true"></div>
         <span class="nm-pulse" aria-hidden="true"></span>
         <span class="nm-pulse p2" aria-hidden="true"></span>
@@ -2581,16 +2583,23 @@
       }, 3400);
     }
 
-    // 触れて層をひらく：球の中へ飛び込み、一層ずつ核へ
-    var diving = false;
+    // 触れて層をひらく：潜った深さに留まり、少しずつ中心へ
+    var ovumCam = document.getElementById("ovumCam");
+    var busy = false;
     var SEQ = [
-      {key:"ronko",   label:"論考・書架"},
-      {key:"cho",     label:"夜の帳面"},
-      {key:"meiroku", label:"目録"},
-      {key:"zemi",    label:"水底ゼミ"},
-      {key:"dive",    label:"核 / Dive"}
+      {key:"ronko",   label:"論考・書架", scale:1.7},
+      {key:"cho",     label:"夜の帳面",   scale:2.5},
+      {key:"meiroku", label:"目録",       scale:3.6},
+      {key:"zemi",    label:"水底ゼミ",   scale:5.2},
+      {key:"dive",    label:"核 / Dive",  scale:8.0}
     ];
     var step = 0;
+    function camScale(s, fast){
+      if(!ovumCam) return;
+      if(fast) ovumCam.style.transition = "transform .5s ease";
+      else ovumCam.style.transition = "";
+      ovumCam.style.transform = "scale(" + s + ")";
+    }
 
     // 触れる：分裂（細胞を増やし、分裂線を走らせる）
     ovum.addEventListener("pointerdown", function(){
@@ -2604,24 +2613,26 @@
       setTimeout(function(){ f.remove(); }, 900);
     });
 
-    // 触れる：球の中へダイブしてから、いまの層をひらく
+    // 触れる：いまの深さまで潜り込み、その層をひらく（位置はそのまま留まる）
     ovum.addEventListener("click", function(){
-      if(diving) return;
+      if(busy) return;
+      var last = SEQ.length - 1;
       var cur = SEQ[step];
       var openIt = function(){ if(typeof openRing === "function") openRing(cur.key); };
       if(reduced2){
         openIt();
       }else{
-        diving = true;
-        ovum.classList.add("diving");
-        setTimeout(openIt, 620);
-        setTimeout(function(){ ovum.classList.remove("diving"); diving = false; }, 1000);
+        camScale(cur.scale);           // その深さへ潜り、そのまま留まる
+        ovum.classList.add("flash");
+        busy = true;
+        setTimeout(function(){ ovum.classList.remove("flash"); busy = false; }, 720);
+        setTimeout(openIt, 660);
       }
       if(cap){
-        if(step === SEQ.length - 1) cap.textContent = "核まで潜った。ここが Dive。もう一度ふれると、また外から。";
-        else cap.textContent = "『" + cur.label + "』の層まで潜った。核まで、あと " + (SEQ.length - 1 - step) + " 層。";
+        if(step === last) cap.textContent = "核まで潜った。ここが Dive。もう一度ふれると、水面へ戻ってやり直し。";
+        else cap.textContent = "『" + cur.label + "』まで潜った。閉じて、もう一度ふれると、さらに奥へ。";
       }
-      step = (step + 1) % SEQ.length;
+      step = (step + 1) % SEQ.length;   // 最深の次は 0 に戻り、次のタップで水面近くへ浮上して再開
     });
   })();
 
