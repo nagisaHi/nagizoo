@@ -635,6 +635,33 @@
   .drop-ov .rp3{animation-delay:.9s}
   @keyframes rip{0%{opacity:.9; transform:scale(1) scaleY(.45)}100%{opacity:0; transform:scale(22) scaleY(.45)}}
 
+  /* ==================== 夜の扉（22:00–2:00） ==================== */
+  #yoruDoor{
+    position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
+    z-index:60; display:flex; gap:12px; align-items:center; white-space:nowrap;
+    background:#14121f; color:#cfd8ea; text-decoration:none;
+    border:2.5px solid var(--outline); border-radius:999px; padding:11px 24px;
+    font-weight:800; font-size:13.5px;
+    box-shadow:0 6px 24px rgba(0,0,0,.45), 0 0 18px rgba(127,179,213,.35);
+    animation:door-glow 3.2s ease-in-out infinite;
+  }
+  #yoruDoor span{font-family:var(--mono); font-size:10px; color:#7fb3d5; letter-spacing:.15em}
+  #yoruDoor:hover{color:#ffffff}
+  @keyframes door-glow{50%{box-shadow:0 6px 24px rgba(0,0,0,.45), 0 0 34px rgba(127,179,213,.65)}}
+  body.ura-mode #yoruDoor{display:none}
+  #yoruDoor[hidden]{display:none}
+
+  /* ---------- 閉園後への正規の扉 ---------- */
+  .fukami-link{text-align:right}
+  .fukami-link a{
+    font-size:13px; font-weight:800; color:var(--muted); text-decoration:none;
+    border-bottom:2px dotted var(--faint); padding-bottom:2px;
+  }
+  .fukami-link a:hover{color:var(--ink)}
+  .series-deep{margin:26px 0 0; font-size:12.5px; font-weight:700; color:var(--faint); text-align:right}
+  .series-deep a{color:inherit; text-decoration:none; border-bottom:2px dotted var(--faint); padding-bottom:2px}
+  .series-deep a:hover{color:var(--ink)}
+
   /* ==================== 管理室（デモCMS） ==================== */
   #admin{min-height:100vh}
   .admin-wrap{max-width:720px; margin:0 auto; padding:56px 24px 100px}
@@ -777,6 +804,43 @@
   #uraModal .um-body .ura-sec:last-child{margin-bottom:0}
   @media (prefers-reduced-motion: reduce){#uraModal .um-panel{animation:none}}
   @media (max-width:560px){#uraModal{padding:10px} #uraModal .um-body{padding:24px 18px 40px}}
+  /* --- 高額導線の部品 --- */
+  #ura .ronko-cta{
+    margin:44px 0 0; font-family:var(--min); font-size:14px; letter-spacing:.06em;
+    color:#8b8a92; text-align:right;
+  }
+  #ura .ronko-cta a{
+    color:#bcd9ea; text-decoration:none; border-bottom:1px solid #3a4a5a;
+    margin-left:12px; padding-bottom:2px; transition:color .3s;
+  }
+  #ura .ronko-cta a:hover{color:#ffffff}
+  #ura .heien-box{margin:38px auto 0; max-width:430px; text-align:center}
+  #ura .heien-lead{font-family:var(--mono); font-size:10.5px; letter-spacing:.18em; color:#5b5a63; margin:0 0 12px}
+  #ura .heien-row{display:flex; gap:10px; justify-content:center}
+  #ura .heien-row input{
+    flex:1; min-width:0; background:#101014; border:1px solid #2e2e36; border-radius:2px;
+    color:#e3e1dc; font-family:var(--mono); font-size:12px; padding:10px 14px;
+  }
+  #ura .heien-row input:focus{outline:1px solid #7fb3d5}
+  #ura .heien-row button{
+    appearance:none; flex:none; background:none; border:1px solid #8b8a92; color:#e3e1dc;
+    font-family:var(--mono); font-size:11px; letter-spacing:.15em; padding:10px 18px; cursor:pointer;
+    transition:background .3s, color .3s;
+  }
+  #ura .heien-row button:hover{background:#e3e1dc; color:#0b0b0c}
+  #ura .heien-note{font-family:var(--mono); font-size:10px; letter-spacing:.08em; color:#7fb3d5; margin:12px 0 0}
+  #ura .yakusoku{border-left:1px solid #3a3a42; padding-left:22px; margin:0 0 30px}
+  #ura .yakusoku .yk-h{font-family:var(--mono); font-size:10.5px; letter-spacing:.25em; color:#5b5a63; margin:0 0 10px}
+  #ura .yakusoku p{font-family:var(--min); font-size:13.5px; line-height:2.2; color:#c9c7c1; margin:0 0 10px; max-width:34em}
+  #ura .zemi-shelf-h{font-family:var(--mono); font-size:10.5px; letter-spacing:.25em; color:#5b5a63; margin:36px 0 8px}
+  #ura .zemi-shelf-note{font-family:var(--min); font-size:13.5px; line-height:2.2; color:#8b8a92; margin:0}
+  #uraModal .um-next{text-align:center; padding:28px 0 8px}
+  #uraModal .um-next button{
+    appearance:none; background:none; border:1px solid #4a4952; color:#bcd9ea; cursor:pointer;
+    font-family:var(--mono); font-size:11px; letter-spacing:.3em; text-indent:.3em; padding:12px 32px;
+    transition:background .3s, color .3s;
+  }
+  #uraModal .um-next button:hover{background:#e3e1dc; color:#0b0b0c}
   #ura .ura-sec{margin:0 0 96px}
   #ura .ura-h{
     font-size:12px; font-weight:700; letter-spacing:.3em; color:#9a98a0;
@@ -1009,7 +1073,7 @@
 
 <div class="hoso" aria-hidden="true">
   <span class="hoso-label">📢 園内放送</span>
-  <div class="hoso-track"><span>本日の放飼は「羊水」です　◦　お帰りの際は、エサやり（問い）をお忘れなく　◦　閉園間際にだけ開く扉がある、という噂があります　◦　迷子のお知らせ：「じぶん」をお探しのお客様が、園内に多数いらっしゃいます　◦　哲学の確度、上がっていますか</span></div>
+  <div class="hoso-track"><span>本日の放飼は「羊水」です　◦　お帰りの際は、エサやり（問い）をお忘れなく　◦　夜10時になると、閉園後の扉がみんなの前にあらわれます（2時に閉まります）　◦　迷子のお知らせ：「じぶん」をお探しのお客様が、園内に多数いらっしゃいます　◦　哲学の確度、上がっていますか</span></div>
 </div>
 
 <div class="gate wrap">
@@ -1207,6 +1271,7 @@
         <p><mark>入園はずっと無料です。</mark>今週の一頭も、各舎の無料公開回も、いくら眺めてもタダ。それで十分楽しければ、それでよし！</p>
         <p>気に入った舎があれば「観覧パス」でその舎が見放題。全部の舎と金のスタンプと、僕に直接質問できる席がほしい人は「全園パス」をどうぞ。</p>
         <p>どの席でも、約束はひとつだけ。<mark><strong>あなたの哲学の確度を上げること。</strong></mark></p>
+        <p class="fukami-link"><a href="#ura">もっと深いものは、閉園後に。→</a></p>
       </div>
       <div class="seki">
         <div class="seki-row">
@@ -1319,6 +1384,8 @@
 </footer>
 </div><!-- /#omote -->
 
+<a id="yoruDoor" href="#ura" hidden>🌘 閉園後の扉が、いまひらいています<span>OPEN 22:00 – 2:00</span></a>
+
 <div id="ura" hidden>
   <div class="ura-inner">
     <div class="ura-head">
@@ -1340,6 +1407,14 @@
         <a href="#ura-manifesto" data-ring="manifesto">Still life とは</a>　／
         <a href="#ura-nagisa" data-ring="nagisa">いちばん深いところに、柊渚がいます</a>
       </p>
+      <div class="heien-box">
+        <p class="heien-lead">閉園通知 — 週にいちど、今週の一頭と「閉園後の鍵」を送ります</p>
+        <div class="heien-row">
+          <input type="email" id="heienMail" placeholder="メールアドレス">
+          <button id="heienBtn">通知を受けとる</button>
+        </div>
+        <p class="heien-note" id="heienNote" hidden></p>
+      </div>
     </div>
 
     <div id="uraVault" hidden>
@@ -1391,6 +1466,7 @@
           <p>＊1　ガチ文化祭：年に一度、僕が主催している三日間の祭り。開発と集客を大人が本気でやる。</p>
           <p>＊2　stilllife：この裏ページの名前の由来。二〇二三年の絵に書いた言葉で、僕の哲学の屋号のようなもの。</p>
         </div>
+        <p class="ronko-cta">ここまでを、あなたの人生でやるのが Dive です。<a href="#ura-dive" data-ring="dive">中心へ →</a></p>
       </article>
 
       <h2 class="ura-h" style="margin-top:80px"><span class="no">対</span>対になる論考 — 死の側</h2>
@@ -1421,6 +1497,7 @@
         <div class="footnotes">
           <p>（後編に続く。「循環」の設計——余命を決め、自分を転生させる方法——は、次の論考で。）</p>
         </div>
+        <p class="ronko-cta">死を受け入れる作業を、ひとりでやらなくていい。<a href="#ura-dive" data-ring="dive">中心へ →</a></p>
       </article>
     </div>
 
@@ -1434,6 +1511,8 @@
         <a class="shoka-row" href="#ura-shoka"><span class="s-date">2026.05.17</span><span class="s-title">輪廻の回数が、人生の厚さを決める</span><span class="s-min">12,600字</span><span class="s-tag">全園パス</span></a>
         <a class="shoka-row" href="#ura-shoka"><span class="s-date">2026.05.03</span><span class="s-title">水底の質量 — 思考が言葉になる前の物理</span><span class="s-min">14,200字</span><span class="s-tag">全園パス</span></a>
       </div>
+      <p class="zemi-shelf-h">ゼミ生の書架</p>
+      <p class="zemi-shelf-note">期を終えた人の論考が、ここに並びます。あなたの一本が、次の誰かの水底に光を当てる。（一期生、募集中）</p>
       <div class="shoka-note" id="shokaNote" hidden></div>
     </div>
 
@@ -1491,7 +1570,7 @@
           <h3>Dive（深層セッション）</h3>
           <span class="p-en">deep dive · 1 on 1</span>
           <p class="p-desc">九十分、二人で水底まで。圧縮前の思考を引き上げる潜水。</p>
-          <div class="p-foot"><span class="p-price">¥15,000 <small>/ 回</small></span><span class="p-status">今月 残一席</span></div>
+          <div class="p-foot"><span class="p-price">¥15,000 <small>/ 回</small></span><span class="p-status" id="p6status">今月 残1席</span></div>
         </div>
         <div class="prod" data-note="「レンズの型紙」——八レンズの問いの型と練習三十問のPDF。いま乾かしています。">
           <span class="p-no">P-07</span>
@@ -1524,9 +1603,11 @@
       <p>期の終わりに、自分の哲学を一本、論考の形で書き上げてもらいます。それがあなたの、一回分の転生です。書けたものは、希望があればこの書架に並べます。</p>
       <ul class="taiza-meta">
         <li>定員六名、次期は九月</li>
-        <li>三ヶ月・全六回、98,000円</li>
+        <li>三ヶ月・全六回、98,000円（内訳 — 九十分×六回＋論考の編集伴走＋書架への掲載）</li>
+        <li>Dive（15,000円）から来た人は、その分を差し引きます</li>
         <li>オンライン、夜間</li>
       </ul>
+      <p>値段の意味は、ひとつだけ。<em>人生の厚さ、一回分。</em></p>
       <a class="taiza-apply" href="#ura-zemi" id="zemiApply">入塾の手紙を書く</a>
       <p class="taiza-note" id="zemiNote" hidden>——実サイトでは、ここから応募フォームへ。「いま測りたい水底」を数行添えてもらい、こちらから返事をします。</p>
     </div>
@@ -1537,10 +1618,25 @@
       <p>これは面談ではなく、潜水です。九十分かけて、あなたの深層心理——ふだんは自分でも触れられない水底まで、二人で潜っていきます。仕事の決断でも、書きかけの思想でも、名前のつかない違和感でも。いちばん重くて沈んでいるものを、一緒に見に行きます。</p>
       <p>僕が持っていくのは、光の当て方（レンズ）だけです。答えは持っていきません。あなたの水底から何かを引き上げ、名前をつけて、水面まで連れて帰る。九十分の抑圧、そのあとの一呼吸——出てくるときに、酸素を吸ってもらいます。</p>
       <ul class="taiza-meta">
-        <li>ひと月に、二名まで</li>
+        <li>ひと月に二名まで — <span id="diveSeatsTxt">残り1席</span></li>
         <li>一回九十分、15,000円</li>
+        <li>水底ゼミへ進む場合、この15,000円はそのまま充当します（実質、ゼミの入学面談です）</li>
         <li>オンライン、夜間</li>
       </ul>
+      <div class="yakusoku">
+        <p class="yk-h">約束すること／しないこと</p>
+        <p>約束します——九十分後、あなたの哲学の確度が上がっていること。まだ言葉になっていなかったものに、名前がひとつ付いていること。</p>
+        <p>約束しません——成功、合格、正解。それはあなたの領分です。合わないと感じたら、最初の二十分以内は全額お返しします。</p>
+      </div>
+      <div class="yakusoku">
+        <p class="yk-h">来てほしい人／来ないでほしい人</p>
+        <p>来てほしい——決断の手前で止まっている人。書きかけの思想を抱えている人。自分が何者か、そろそろ知りたい人。</p>
+        <p>来ないでほしい——正解を買いに来る人。急いでいる人。潜るのはあなたで、僕は光を当てるだけなので。</p>
+      </div>
+      <div class="yakusoku">
+        <p class="yk-h">引き上げたものの記録</p>
+        <p>潜った人の声は、本人の許可を得て、ここに一行ずつ標本にしていきます。（まだ、水の中）</p>
+      </div>
       <a class="taiza-apply" href="#ura-dive" id="taizaApply">潜る前の手紙を書く</a>
       <p class="taiza-note" id="taizaNote" hidden>——実サイトでは、ここから予約フォームへ。「いま水底に沈んでいる気がするもの」を数行添えてもらい、こちらから返事をします。</p>
     </div>
@@ -1640,6 +1736,13 @@
         <button class="btn btn-sm" id="mapImgBtn">マップ画像を差し替える</button>
         <button class="btn btn-sm" id="mapImgReset">元の地図に戻す</button>
         <span class="adm-note" style="margin:0; flex:1">アップした絵地図が園内マップになり、絵の上の各エリアを押すとその場所へ飛びます。</span>
+      </div>
+
+      <h3 class="adm-h">🪑 Diveの残席</h3>
+      <div class="adm-row">
+        <label class="adm-check">今月の残席 <input id="diveSeatsInput" class="adm-input" type="number" min="0" max="9" style="max-width:90px; flex:none"></label>
+        <button class="btn btn-sm" id="diveSeatsSave">保存</button>
+        <span class="adm-note" style="margin:0; flex:1">0にすると「満席・予約待ち」表示に切り替わります。サイト上の残席表示は常にこの実数と連動します。</span>
       </div>
 
       <h3 class="adm-h">📚 投稿一覧</h3>
@@ -1918,6 +2021,11 @@
     wrap.appendChild(note);
     panelEl.appendChild(wrap);
 
+    var deep = document.createElement("p");
+    deep.className = "series-deep";
+    deep.innerHTML = 'この続きの深さは、<a href="#ura">閉園後</a>にあります。';
+    panelEl.appendChild(deep);
+
     var subBtn = document.getElementById("subBtn");
     if(subBtn){
       subBtn.addEventListener("click", function(){
@@ -2161,6 +2269,9 @@
   var umBody = document.getElementById("umBody");
   var umTitle = document.getElementById("umTitle");
 
+  var NEXT_RING = {manifesto:"ronko", ronko:"cho", cho:"meiroku", meiroku:"zemi", zemi:"dive", dive:"nagisa"};
+  var NEXT_LABEL = {ronko:"次の深さへ — 帳面", cho:"次の深さへ — 目録", meiroku:"次の深さへ — ゼミ", zemi:"さらに深く — 中心（Dive）", dive:"水底へ — 柊渚", nagisa:""};
+
   function openRing(key){
     var def = URA_RINGS[key];
     if(!def) return;
@@ -2170,11 +2281,20 @@
       var el = document.getElementById(id);
       if(el) umBody.appendChild(el);
     });
+    var nx = NEXT_RING[key];
+    if(nx){
+      var nd = document.createElement("div");
+      nd.className = "um-next";
+      nd.innerHTML = '<button data-ring="'+nx+'">'+(NEXT_LABEL[key] || "次の深さへ")+' ↓</button>';
+      umBody.appendChild(nd);
+    }
     uraModal.hidden = false;
     document.body.classList.add("um-open");
     umBody.scrollTop = 0;
   }
   function closeRing(){
+    var nx = umBody.querySelector(".um-next");
+    if(nx) nx.remove();
     while(umBody.firstChild){ uraVault.appendChild(umBody.firstChild); }
     uraModal.hidden = true;
     document.body.classList.remove("um-open");
@@ -2194,6 +2314,49 @@
   window.addEventListener("hashchange", function(){
     if(location.hash.indexOf("#ura") !== 0) closeRing();
   });
+
+  /* ================= 夜の扉（22:00–2:00） ================= */
+  var yoruDoor = document.getElementById("yoruDoor");
+  function updateYoruDoor(){
+    var h = new Date().getHours();
+    yoruDoor.hidden = !(h >= 22 || h < 2);
+  }
+  updateYoruDoor();
+  setInterval(updateYoruDoor, 60000);
+
+  /* ================= 閉園通知（メール登録・デモ） ================= */
+  document.getElementById("heienBtn").addEventListener("click", function(){
+    var input = document.getElementById("heienMail");
+    var note = document.getElementById("heienNote");
+    var m = input.value.trim();
+    if(m.indexOf("@") < 1){
+      note.textContent = "メールアドレスの形をしていないようです。";
+      note.hidden = false;
+      return;
+    }
+    var list = load("heien-list", []);
+    list.push({m:m, d:Date.now()});
+    save("heien-list", list);
+    input.value = "";
+    note.textContent = "受けつけました。——実サイトでは、ここが配信スタンドにつながります。";
+    note.hidden = false;
+  });
+
+  /* ================= Dive残席（実数連動） ================= */
+  var LS_SEATS = "dive-seats";
+  function seatCount(){
+    var n = parseInt(load(LS_SEATS, 1), 10);
+    return isNaN(n) ? 1 : n;
+  }
+  function renderSeats(){
+    var n = seatCount();
+    var t = document.getElementById("diveSeatsTxt");
+    if(t) t.textContent = n > 0 ? ("残り " + n + " 席") : "満席";
+    var p6 = document.getElementById("p6status");
+    if(p6) p6.textContent = n > 0 ? ("今月 残" + n + "席") : "満席・予約待ち";
+    var ta = document.getElementById("taizaApply");
+    if(ta) ta.textContent = n > 0 ? "潜る前の手紙を書く" : "次の枠の予約待ちに、名を残す";
+  }
 
   var taizaApply = document.getElementById("taizaApply");
   var taizaNote = document.getElementById("taizaNote");
@@ -2451,6 +2614,16 @@
     pBody.setSelectionRange(st, en + tag.length * 2 + 5);
   });
 
+  var diveSeatsInput = document.getElementById("diveSeatsInput");
+  diveSeatsInput.value = seatCount();
+  document.getElementById("diveSeatsSave").addEventListener("click", function(){
+    var v = parseInt(diveSeatsInput.value, 10);
+    if(isNaN(v) || v < 0){ alert("0以上の数を入れてください。"); return; }
+    save(LS_SEATS, v);
+    renderSeats();
+    alert("残席を更新しました（サイト表示に反映済み）。");
+  });
+
   var mapImgFile = document.getElementById("mapImgFile");
   document.getElementById("mapImgBtn").addEventListener("click", function(){ mapImgFile.click(); });
   mapImgFile.addEventListener("change", function(){
@@ -2595,6 +2768,7 @@
   renderShokaCms();
   renderKinkyo();
   renderMap();
+  renderSeats();
 })();
 </script>
 
