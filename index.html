@@ -822,11 +822,25 @@
     transition:top .85s cubic-bezier(.5,.05,.25,1);
   }
   @keyframes orbit-spin{to{transform:rotate(360deg)}}
+  /* 増殖する光球（触れるほど増える） */
+  #ura .orbiters{position:absolute; inset:0; pointer-events:none; z-index:5}
+  #ura .orb-wrap{position:absolute; inset:0; animation:orbit-spin var(--dur,7s) linear infinite}
+  #ura .orb-wrap.rev{animation-direction:reverse}
+  #ura .orb-dot{
+    position:absolute; left:50%; top:calc(50% - var(--r,40%));
+    width:var(--sz,6px); height:var(--sz,6px); transform:translate(-50%,-50%);
+    border-radius:50%;
+    background:radial-gradient(circle at 36% 32%, #f2f9ff, #9fcbe8 55%, #3a6f96 90%);
+    box-shadow:0 0 7px rgba(170,214,246,.8), 0 0 16px rgba(127,179,213,.4);
+  }
+  #ura .orb-dot.birth{animation:orb-in 1s ease}
+  @keyframes orb-in{from{opacity:0}to{opacity:1}}
   @media (prefers-reduced-motion: reduce){
     #ura .furrow{animation:none; display:none}
     #ura .blasto .cell{transition:opacity .01ms}
-    #ura .orbit{animation:none}
+    #ura .orbit,#ura .orb-wrap{animation:none}
     #ura .orbiter{transition:none}
+    #ura .orb-dot.birth{animation:none}
   }
   @media (prefers-reduced-motion: reduce){#ura .nm-pulse{animation:none; opacity:0}}
   /* --- 保管庫と深度チャンバー（モーダル） --- */
@@ -1524,6 +1538,7 @@
         <div class="ring r3" data-key="meiroku"><b>目録</b></div>
         <div class="ring r2" data-key="zemi"><b>ゼミ</b></div>
         <div class="ring r1" data-key="dive"><b>核 / Dive</b></div>
+        <div class="orbiters" id="orbiters" aria-hidden="true"></div>
         <div class="orbit" id="orbit" aria-hidden="true"><span class="orbiter"></span></div>
       </div>
       <p class="nm-cap" id="ovumCap">外の層から。ふれるたび、ひと層ずつ、核へ。</p>
@@ -2497,6 +2512,26 @@
     renderCells();
     var reduced2 = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    // 増殖する光球：触れるほど、核のまわりを回る光が増える
+    var orbiters = document.getElementById("orbiters");
+    var MAXORB = 48;
+    function spawnOrb(birth){
+      if(!orbiters || orbiters.children.length >= MAXORB) return;
+      var w = document.createElement("div");
+      w.className = "orb-wrap" + (Math.random() < 0.5 ? " rev" : "");
+      var dur = (5 + Math.random()*8).toFixed(1);
+      w.style.setProperty("--dur", dur + "s");
+      w.style.animationDelay = "-" + (Math.random()*dur).toFixed(1) + "s";
+      var d = document.createElement("span");
+      d.className = "orb-dot" + (birth ? " birth" : "");
+      d.style.setProperty("--r", (10 + Math.random()*38).toFixed(1) + "%");
+      d.style.setProperty("--sz", (4 + Math.random()*6).toFixed(1) + "px");
+      w.appendChild(d);
+      orbiters.appendChild(w);
+    }
+    var initN = Math.min(cnt(), MAXORB);
+    for(var q=0; q<initN; q++) spawnOrb(false);
+
     // 軌道体：外周から核へ、一層ずつ螺旋降下
     var SEQ = [
       {key:"ronko",   rad:"46%", label:"論考・書架"},
@@ -2519,6 +2554,7 @@
     ovum.addEventListener("pointerdown", function(){
       save(LS, cnt()+1);
       renderCells();
+      spawnOrb(true);
       if(reduced2) return;
       var f = document.createElement("span");
       f.className = "furrow";
