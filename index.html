@@ -733,43 +733,83 @@
     text-decoration:none; border-bottom:1px solid transparent; padding-bottom:3px;
   }
   #ura .ura-nav a:hover,#ura .ura-nav a:focus-visible{color:#e3e1dc; border-color:#8b8a92}
-  /* --- 波紋の見取り図（同心円ナビ） --- */
-  #ura .namimon{position:relative; width:min(88vw,500px); aspect-ratio:1/1; margin:44px auto 4px}
-  #ura .namimon .ring{
-    position:absolute; border:1px solid rgba(127,179,213,.26); border-radius:50%;
+  /* --- 卵子の見取り図（球体・触れると分裂） --- */
+  #ura .ovum{position:relative; width:min(84vw,460px); aspect-ratio:1/1; margin:46px auto 6px; touch-action:manipulation}
+  #ura .ovum-glow{
+    position:absolute; inset:-14%; border-radius:50%; pointer-events:none;
+    background:radial-gradient(circle at 50% 46%, rgba(127,179,213,.16), transparent 62%);
+  }
+  #ura .ovum-body{
+    position:absolute; inset:4%; border-radius:50%; pointer-events:none;
+    background:
+      radial-gradient(circle at 37% 30%, rgba(198,228,246,.30), rgba(96,156,196,.12) 40%, rgba(34,66,92,.16) 66%, rgba(10,20,30,.04) 82%),
+      radial-gradient(circle at 50% 50%, rgba(127,179,213,.05), transparent 72%);
+    box-shadow:
+      inset -26px -34px 62px rgba(0,0,0,.55),
+      inset 18px 18px 54px rgba(127,179,213,.07),
+      0 0 50px rgba(127,179,213,.10);
+  }
+  #ura .ovum-zona{
+    position:absolute; inset:0; border-radius:50%; pointer-events:none;
+    border:2px solid rgba(198,228,246,.16);
+    box-shadow:0 0 22px rgba(127,179,213,.16), inset 0 0 26px rgba(127,179,213,.08);
+  }
+  /* 分裂した細胞（割球） */
+  #ura .blasto{position:absolute; inset:4%; border-radius:50%; overflow:hidden; pointer-events:none}
+  #ura .blasto .cell{
+    position:absolute; transform:translate(-50%,-50%) scale(.2); border-radius:50%;
+    background:radial-gradient(circle at 36% 32%, rgba(210,236,250,.5), rgba(110,164,200,.16) 52%, rgba(30,58,82,.12) 80%);
+    box-shadow:inset -3px -4px 8px rgba(0,0,0,.4), 0 0 6px rgba(127,179,213,.14);
+    opacity:0; transition:opacity 1s ease, transform 1s cubic-bezier(.34,1.4,.6,1);
+  }
+  #ura .blasto .cell.on{opacity:1; transform:translate(-50%,-50%) scale(1)}
+  /* 分裂線（触れるたびに走る） */
+  #ura .furrow{
+    position:absolute; left:50%; top:50%; width:92%; height:2px; pointer-events:none;
+    transform:translate(-50%,-50%) rotate(var(--ang,0deg)) scaleX(0);
+    background:linear-gradient(90deg, transparent, rgba(224,240,250,.85), transparent);
+    animation:furrow 850ms ease-out forwards;
+  }
+  @keyframes furrow{0%{transform:translate(-50%,-50%) rotate(var(--ang,0deg)) scaleX(0); opacity:0}
+    30%{opacity:1}100%{transform:translate(-50%,-50%) rotate(var(--ang,0deg)) scaleX(1); opacity:0}}
+  #ura .ovum .ring{
+    position:absolute; border:1px solid rgba(127,179,213,.22); border-radius:50%;
     text-decoration:none; transition:border-color .3s ease, background .3s ease;
   }
-  #ura .namimon .ring:hover,#ura .namimon .ring:focus-visible{border-color:rgba(191,224,244,.9)}
-  #ura .namimon .ring b{
+  #ura .ovum .ring:hover,#ura .ovum .ring:focus-visible{border-color:rgba(198,228,246,.9)}
+  #ura .ovum .ring b{
     position:absolute; top:-9px; left:50%; transform:translateX(-50%);
     background:#0b0b0c; padding:0 12px; font-family:var(--mono); font-weight:400;
-    font-size:11px; letter-spacing:.3em; text-indent:.3em; color:#8b8a92; white-space:nowrap;
+    font-size:11px; letter-spacing:.3em; text-indent:.3em; color:#a3b3c0; white-space:nowrap;
   }
-  #ura .namimon .ring:hover b,#ura .namimon .ring:focus-visible b{color:#e3e1dc}
-  #ura .namimon .r5{inset:0}
-  #ura .namimon .r4{inset:12%}
-  #ura .namimon .r3{inset:24%}
-  #ura .namimon .r2{inset:36%}
-  #ura .namimon .r1{
-    inset:44.5%; display:flex; align-items:center; justify-content:center;
-    background:rgba(127,179,213,.07); border-color:rgba(127,179,213,.5);
+  #ura .ovum .ring:hover b,#ura .ovum .ring:focus-visible b{color:#eaf3fb}
+  #ura .ovum .r5{inset:0}
+  #ura .ovum .r4{inset:12%}
+  #ura .ovum .r3{inset:24%}
+  #ura .ovum .r2{inset:36%}
+  #ura .ovum .r1{
+    inset:43%; display:flex; align-items:center; justify-content:center;
+    background:radial-gradient(circle at 40% 36%, rgba(160,205,235,.34), rgba(60,110,150,.16) 70%);
+    border-color:rgba(198,228,246,.55);
+    box-shadow:0 0 20px rgba(127,179,213,.35), inset 0 0 12px rgba(127,179,213,.2);
   }
-  #ura .namimon .r1:hover{background:rgba(127,179,213,.16)}
-  #ura .namimon .r1 b{position:static; transform:none; background:none; padding:0; color:#bcd9ea}
+  #ura .ovum .r1:hover{background:radial-gradient(circle at 40% 36%, rgba(190,224,244,.5), rgba(70,120,160,.24) 70%)}
+  #ura .ovum .r1 b{position:static; transform:none; background:none; padding:0; color:#eaf3fb; letter-spacing:.15em}
   #ura .nm-pulse{
     position:absolute; inset:46%; border-radius:50%; pointer-events:none;
-    border:1px solid rgba(127,179,213,.45);
+    border:1px solid rgba(127,179,213,.4);
     animation:nm-pulse 5.5s ease-out infinite;
   }
   #ura .nm-pulse.p2{animation-delay:2.7s}
-  @keyframes nm-pulse{0%{transform:scale(.15); opacity:.8}100%{transform:scale(4.4); opacity:0}}
+  @keyframes nm-pulse{0%{transform:scale(.2); opacity:.75}100%{transform:scale(4.2); opacity:0}}
   #ura .nm-cap{
-    text-align:center; font-family:var(--mono); font-size:10.5px; letter-spacing:.25em;
-    color:#5b5a63; margin:16px 0 0;
+    text-align:center; font-family:var(--mono); font-size:10.5px; letter-spacing:.22em;
+    color:#7f8a95; margin:18px 0 0; min-height:1.4em;
   }
   #ura .nm-sub{text-align:center; margin:10px 0 0; font-family:var(--mono); font-size:10px; letter-spacing:.2em}
   #ura .nm-sub a{color:#5b5a63; text-decoration:none; border-bottom:1px solid #2a2a30; padding-bottom:2px}
   #ura .nm-sub a:hover{color:#e3e1dc}
+  @media (prefers-reduced-motion: reduce){#ura .furrow{animation:none; display:none} #ura .blasto .cell{transition:opacity .01ms}}
   @media (prefers-reduced-motion: reduce){#ura .nm-pulse{animation:none; opacity:0}}
   /* --- 保管庫と深度チャンバー（モーダル） --- */
   #uraVault{display:none}
@@ -1454,16 +1494,20 @@
       <div class="ura-title">still life</div>
       <p class="ura-sub">人間の静物画 — 柊渚</p>
       <p class="ura-oneline">ここは Still life。何を愛し、何を失い、何を恐れて生きてきたか——輪郭を切り取る場所。</p>
-      <div class="namimon" role="navigation" aria-label="裏の見取り図（同心円）">
+      <div class="namimon ovum" id="ovum" role="navigation" aria-label="裏の見取り図（卵子）">
+        <div class="ovum-glow" aria-hidden="true"></div>
+        <div class="ovum-body" aria-hidden="true"></div>
+        <div class="blasto" id="blasto" aria-hidden="true"></div>
+        <div class="ovum-zona" aria-hidden="true"></div>
         <span class="nm-pulse" aria-hidden="true"></span>
         <span class="nm-pulse p2" aria-hidden="true"></span>
         <a class="ring r5" href="#ura-ronko" data-ring="ronko"><b>論考・書架</b></a>
         <a class="ring r4" href="#ura-cho" data-ring="cho"><b>帳面</b></a>
         <a class="ring r3" href="#ura-meiroku" data-ring="meiroku"><b>目録</b></a>
         <a class="ring r2" href="#ura-zemi" data-ring="zemi"><b>ゼミ</b></a>
-        <a class="ring r1" href="#ura-dive" data-ring="dive"><b>Dive</b></a>
+        <a class="ring r1" href="#ura-dive" data-ring="dive"><b>核 / Dive</b></a>
       </div>
-      <p class="nm-cap">環にふれると、その深さの部屋がひらきます。外から、中心へ。</p>
+      <p class="nm-cap" id="ovumCap">卵に触れてください。触れるほど、細胞は分裂します。</p>
       <p class="nm-sub">
         <a href="#ura-manifesto" data-ring="manifesto">Still life とは</a>　／
         <a href="#ura-nagisa" data-ring="nagisa">いちばん深いところに、柊渚がいます</a>
@@ -2408,6 +2452,46 @@
   window.addEventListener("hashchange", function(){
     if(location.hash.indexOf("#ura") !== 0) closeRing();
   });
+
+  /* ================= 卵子: 触れるほど細胞分裂 ================= */
+  (function(){
+    var ovum = document.getElementById("ovum");
+    var blasto = document.getElementById("blasto");
+    var cap = document.getElementById("ovumCap");
+    if(!ovum || !blasto) return;
+    var TOTAL = 18, seed = 7;
+    function rnd(){ seed = (seed*9301+49297) % 233280; return seed/233280; }
+    var html = "";
+    for(var i=0;i<TOTAL;i++){
+      var a = rnd()*Math.PI*2, rr = Math.sqrt(rnd())*33;
+      var x = 50 + Math.cos(a)*rr, y = 50 + Math.sin(a)*rr, sz = 6 + rnd()*5;
+      html += '<span class="cell" style="left:'+x.toFixed(1)+'%;top:'+y.toFixed(1)+'%;width:'+sz.toFixed(1)+'%;height:'+sz.toFixed(1)+'%"></span>';
+    }
+    blasto.innerHTML = html;
+    var cells = blasto.querySelectorAll(".cell");
+    var LS = "ura-div";
+    function cnt(){ var n = parseInt(load(LS,0),10); return isNaN(n)?0:n; }
+    function render(){
+      var n = Math.min(cnt(), TOTAL);
+      for(var i=0;i<cells.length;i++){ cells[i].classList.toggle("on", i<n); }
+      if(!cap) return;
+      if(cnt()===0) cap.textContent = "卵に触れてください。触れるほど、細胞は分裂します。";
+      else if(n>=TOTAL) cap.textContent = "卵は満ちた。——ここから先の分裂は、あなたの中で。";
+      else cap.textContent = "分裂 " + cnt() + " 回。ふれるほど、卵は割れていく。";
+    }
+    render();
+    var reduced2 = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    ovum.addEventListener("pointerdown", function(){
+      save(LS, cnt()+1);
+      render();
+      if(reduced2) return;
+      var f = document.createElement("span");
+      f.className = "furrow";
+      f.style.setProperty("--ang", Math.floor(rnd()*180) + "deg");
+      ovum.appendChild(f);
+      setTimeout(function(){ f.remove(); }, 900);
+    });
+  })();
 
   /* ================= 夜の扉（22:00–2:00） ================= */
   var yoruDoor = document.getElementById("yoruDoor");
