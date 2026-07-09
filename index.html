@@ -608,6 +608,33 @@
   }
   .uraguchi:hover,.uraguchi:focus-visible{opacity:1; filter:none}
 
+  /* ==================== 表→裏: 表が崩れ、水滴が落ちる ==================== */
+  body.crumbling #omote{pointer-events:none}
+  body.crumbling #omote > *{animation:crumble 1.15s ease-in forwards}
+  body.crumbling #omote > *:nth-child(odd){animation-delay:.08s}
+  body.crumbling #omote > *:nth-child(even){animation-delay:.18s}
+  @keyframes crumble{
+    30%{opacity:1; transform:translateY(-6px) rotate(-.4deg)}
+    100%{opacity:0; transform:translateY(70px) rotate(1.6deg); filter:blur(4px)}
+  }
+  .drop-ov{position:fixed; inset:0; z-index:130; pointer-events:none; animation:dark-in 1.5s ease forwards}
+  @keyframes dark-in{0%,55%{background:rgba(11,11,12,0)}100%{background:rgba(11,11,12,1)}}
+  .drop-ov .drop{
+    position:absolute; left:50%; top:-40px; width:15px; height:22px; margin-left:-8px;
+    background:#7fb3d5; border-radius:50% 50% 62% 62% / 42% 42% 58% 58%;
+    animation:dropfall .6s cubic-bezier(.5,0,1,.4) forwards;
+  }
+  @keyframes dropfall{to{top:46%}}
+  .drop-ov .ripple{
+    position:absolute; left:50%; top:47.5%; width:12px; height:12px; margin:-6px 0 0 -6px;
+    border:2px solid #7fb3d5; border-radius:50%; opacity:0;
+    animation:rip 1s ease-out forwards;
+  }
+  .drop-ov .rp1{animation-delay:.58s}
+  .drop-ov .rp2{animation-delay:.74s}
+  .drop-ov .rp3{animation-delay:.9s}
+  @keyframes rip{0%{opacity:.9; transform:scale(1) scaleY(.45)}100%{opacity:0; transform:scale(22) scaleY(.45)}}
+
   /* ==================== 管理室（デモCMS） ==================== */
   #admin{min-height:100vh}
   .admin-wrap{max-width:720px; margin:0 auto; padding:56px 24px 100px}
@@ -679,6 +706,44 @@
     text-decoration:none; border-bottom:1px solid transparent; padding-bottom:3px;
   }
   #ura .ura-nav a:hover,#ura .ura-nav a:focus-visible{color:#e3e1dc; border-color:#8b8a92}
+  /* --- 波紋の見取り図（同心円ナビ） --- */
+  #ura .namimon{position:relative; width:min(82vw,400px); aspect-ratio:1/1; margin:40px auto 4px}
+  #ura .namimon .ring{
+    position:absolute; border:1px solid rgba(127,179,213,.26); border-radius:50%;
+    text-decoration:none; transition:border-color .3s ease, background .3s ease;
+  }
+  #ura .namimon .ring:hover,#ura .namimon .ring:focus-visible{border-color:rgba(191,224,244,.9)}
+  #ura .namimon .ring b{
+    position:absolute; top:-9px; left:50%; transform:translateX(-50%);
+    background:#0b0b0c; padding:0 12px; font-family:var(--mono); font-weight:400;
+    font-size:11px; letter-spacing:.3em; text-indent:.3em; color:#8b8a92; white-space:nowrap;
+  }
+  #ura .namimon .ring:hover b,#ura .namimon .ring:focus-visible b{color:#e3e1dc}
+  #ura .namimon .r5{inset:0}
+  #ura .namimon .r4{inset:12%}
+  #ura .namimon .r3{inset:24%}
+  #ura .namimon .r2{inset:36%}
+  #ura .namimon .r1{
+    inset:44.5%; display:flex; align-items:center; justify-content:center;
+    background:rgba(127,179,213,.07); border-color:rgba(127,179,213,.5);
+  }
+  #ura .namimon .r1:hover{background:rgba(127,179,213,.16)}
+  #ura .namimon .r1 b{position:static; transform:none; background:none; padding:0; color:#bcd9ea}
+  #ura .nm-pulse{
+    position:absolute; inset:46%; border-radius:50%; pointer-events:none;
+    border:1px solid rgba(127,179,213,.45);
+    animation:nm-pulse 5.5s ease-out infinite;
+  }
+  #ura .nm-pulse.p2{animation-delay:2.7s}
+  @keyframes nm-pulse{0%{transform:scale(.15); opacity:.8}100%{transform:scale(4.4); opacity:0}}
+  #ura .nm-cap{
+    text-align:center; font-family:var(--mono); font-size:10.5px; letter-spacing:.25em;
+    color:#5b5a63; margin:16px 0 0;
+  }
+  #ura .nm-sub{text-align:center; margin:10px 0 0; font-family:var(--mono); font-size:10px; letter-spacing:.2em}
+  #ura .nm-sub a{color:#5b5a63; text-decoration:none; border-bottom:1px solid #2a2a30; padding-bottom:2px}
+  #ura .nm-sub a:hover{color:#e3e1dc}
+  @media (prefers-reduced-motion: reduce){#ura .nm-pulse{animation:none; opacity:0}}
   #ura .ura-sec{margin:0 0 96px}
   #ura .ura-h{
     font-size:12px; font-weight:700; letter-spacing:.3em; color:#9a98a0;
@@ -1227,14 +1292,17 @@
       <svg width="56" height="56" viewBox="0 0 64 64" aria-hidden="true"><use href="#leaf-still"/></svg>
       <div class="ura-title">still life</div>
       <p class="ura-sub">人間の静物画 — 柊渚</p>
-      <nav class="ura-nav">
-        <a href="#ura-ronko">論考</a>
-        <a href="#ura-meiroku">目録</a>
-        <a href="#ura-zemi">ゼミ</a>
-        <a href="#ura-dive">Dive</a>
-        <a href="#ura-cho">帳面</a>
-        <a href="#ura-nagisa">柊渚</a>
-      </nav>
+      <div class="namimon" role="navigation" aria-label="裏の見取り図（同心円）">
+        <span class="nm-pulse" aria-hidden="true"></span>
+        <span class="nm-pulse p2" aria-hidden="true"></span>
+        <a class="ring r5" href="#ura-ronko"><b>論考・書架</b></a>
+        <a class="ring r4" href="#ura-cho"><b>帳面</b></a>
+        <a class="ring r3" href="#ura-meiroku"><b>目録</b></a>
+        <a class="ring r2" href="#ura-zemi"><b>ゼミ</b></a>
+        <a class="ring r1" href="#ura-dive"><b>Dive</b></a>
+      </div>
+      <p class="nm-cap">外の環から、読みはじめてください。深いものほど、まんなかに。</p>
+      <p class="nm-sub"><a href="#ura-nagisa">いちばん深いところに、柊渚がいます</a></p>
     </div>
 
     <div class="ura-sec">
@@ -1248,7 +1316,7 @@
     </div>
 
     <div class="ura-sec" id="ura-ronko">
-      <h2 class="ura-h"><span class="no">00</span>最新の論考</h2>
+      <h2 class="ura-h"><span class="no">環一</span>最新の論考</h2>
       <article class="ronko">
         <div class="ronko-meta">
           <span>2026.07.08</span><span class="t">論考</span><span>ガチ文化祭・三日目の夜に</span>
@@ -1319,7 +1387,7 @@
     </div>
 
     <div class="ura-sec" id="ura-shoka">
-      <h2 class="ura-h"><span class="no">01</span>書架 — 過去の論考</h2>
+      <h2 class="ura-h"><span class="no">環一・続</span>書架 — 過去の論考</h2>
       <p class="ura-lead">どれも長い。短くする気がないので。最新の一本は常に公開、書架は全園パスの領分。</p>
       <div class="shoka" id="shokaList">
         <a class="shoka-row" href="#ura-shoka"><span class="s-date">2026.06.28</span><span class="s-title">余命を決めるという生き方のススメ</span><span class="s-min">10,900字</span><span class="s-tag">公開</span></a>
@@ -1331,8 +1399,18 @@
       <div class="shoka-note" id="shokaNote" hidden></div>
     </div>
 
+    <div class="ura-sec" id="ura-cho">
+      <h2 class="ura-h"><span class="no">環二</span>夜の帳面</h2>
+      <p class="ura-lead">表の日記と同じ日付。書かなかったほうの行。</p>
+      <div class="ura-diary">
+        <div class="uki"><span>07.08</span><p>文化祭三日目。三六二日ぶんを、三日で回収した。今年の収穫は「転生」。</p></div>
+        <div class="uki"><span>07.05</span><p>誕生の定義が、やっと降りてきた。一週間かかった。</p></div>
+        <div class="uki"><span>07.02</span><p>病むのは仕様。確度が上がっている音がする。</p></div>
+      </div>
+    </div>
+
     <div class="ura-sec" id="ura-meiroku">
-      <h2 class="ura-h"><span class="no">02</span>目録 — 柊渚の商品</h2>
+      <h2 class="ura-h"><span class="no">環三</span>目録 — 柊渚の商品</h2>
       <p class="ura-lead">売り物の全部。上から浅い順。奥のものほど、席が少ない。</p>
       <div class="meiroku">
         <div class="prod" data-note="表へどうぞ。ページ最下部の「おもてへ」から戻れます。">
@@ -1403,7 +1481,7 @@
     </div>
 
     <div class="ura-sec taiza" id="ura-zemi">
-      <h2 class="ura-h"><span class="no">03</span>水底ゼミ — 少人数私塾</h2>
+      <h2 class="ura-h"><span class="no">環四</span>水底ゼミ — 少人数私塾</h2>
       <p>六名だけの羊水です。三ヶ月、隔週九十分を六回。ここでやるのは勉強ではなく、座標の設計——「どこに自分を置けば、勝手に変わるのか」を三ヶ月かけて突き止めます。</p>
       <p>期の終わりに、自分の哲学を一本、論考の形で書き上げてもらいます。それがあなたの、一回分の転生です。書けたものは、希望があればこの書架に並べます。</p>
       <ul class="taiza-meta">
@@ -1416,7 +1494,7 @@
     </div>
 
     <div class="ura-sec taiza" id="ura-dive">
-      <h2 class="ura-h"><span class="no">04</span>Dive — 深層へ潜るセッション</h2>
+      <h2 class="ura-h"><span class="no">中心</span>Dive — 深層へ潜るセッション</h2>
       <p class="ura-lead">deep dive — 90分、二人で水底まで</p>
       <p>これは面談ではなく、潜水です。九十分かけて、あなたの深層心理——ふだんは自分でも触れられない水底まで、二人で潜っていきます。仕事の決断でも、書きかけの思想でも、名前のつかない違和感でも。いちばん重くて沈んでいるものを、一緒に見に行きます。</p>
       <p>僕が持っていくのは、光の当て方（レンズ）だけです。答えは持っていきません。あなたの水底から何かを引き上げ、名前をつけて、水面まで連れて帰る。九十分の抑圧、そのあとの一呼吸——出てくるときに、酸素を吸ってもらいます。</p>
@@ -1429,18 +1507,8 @@
       <p class="taiza-note" id="taizaNote" hidden>——実サイトでは、ここから予約フォームへ。「いま水底に沈んでいる気がするもの」を数行添えてもらい、こちらから返事をします。</p>
     </div>
 
-    <div class="ura-sec" id="ura-cho">
-      <h2 class="ura-h"><span class="no">05</span>夜の帳面</h2>
-      <p class="ura-lead">表の日記と同じ日付。書かなかったほうの行。</p>
-      <div class="ura-diary">
-        <div class="uki"><span>07.08</span><p>文化祭三日目。三六二日ぶんを、三日で回収した。今年の収穫は「転生」。</p></div>
-        <div class="uki"><span>07.05</span><p>誕生の定義が、やっと降りてきた。一週間かかった。</p></div>
-        <div class="uki"><span>07.02</span><p>病むのは仕様。確度が上がっている音がする。</p></div>
-      </div>
-    </div>
-
     <div class="ura-sec" id="ura-nagisa">
-      <h2 class="ura-h"><span class="no">06</span>裏の柊渚</h2>
+      <h2 class="ura-h"><span class="no">水底</span>裏の柊渚</h2>
       <p>中二の春、授業を復習装置に作り変えて、成績が倍になった。あのとき知ったことを、いまも考え続けています——自分を変えるのは意志ではなく、環境の設計だということ。授業を装置に変えた中学生は、いま、羊水を設計する大人になりました。</p>
       <p>表の僕は明るい。あれも本当です。ここの僕も本当です。人は、入口をふたつ持っていい。</p>
       <div class="ura-qa">
@@ -2006,6 +2074,27 @@
   }
   window.addEventListener("hashchange", route);
   route();
+
+  /* ================= 表→裏: 水滴の遷移（表が崩れて落ちる） ================= */
+  document.addEventListener("click", function(e){
+    var a = e.target.closest ? e.target.closest('a[href="#ura"]') : null;
+    if(!a) return;
+    if(location.hash.indexOf("#ura") === 0) return;
+    if(reduced) return;
+    if(document.body.classList.contains("crumbling")){ e.preventDefault(); return; }
+    e.preventDefault();
+    var ov = document.createElement("div");
+    ov.className = "drop-ov";
+    ov.innerHTML = '<span class="drop"></span>'+
+      '<span class="ripple rp1"></span><span class="ripple rp2"></span><span class="ripple rp3"></span>';
+    document.body.appendChild(ov);
+    document.body.classList.add("crumbling");
+    setTimeout(function(){
+      location.hash = "#ura";
+      document.body.classList.remove("crumbling");
+      setTimeout(function(){ ov.remove(); }, 400);
+    }, 1450);
+  });
 
   var taizaApply = document.getElementById("taizaApply");
   var taizaNote = document.getElementById("taizaNote");
