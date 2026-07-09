@@ -637,15 +637,15 @@
 
   /* ==================== 夜の扉（22:00–2:00） ==================== */
   #yoruDoor{
-    position:fixed; left:50%; bottom:22px; transform:translateX(-50%);
-    z-index:60; display:flex; gap:12px; align-items:center; white-space:nowrap;
+    display:flex; gap:14px; align-items:center; justify-content:center; flex-wrap:wrap;
+    width:100%; margin:0 0 28px; text-align:center;
     background:#14121f; color:#cfd8ea; text-decoration:none;
-    border:2.5px solid var(--outline); border-radius:999px; padding:11px 24px;
-    font-weight:800; font-size:13.5px;
-    box-shadow:0 6px 24px rgba(0,0,0,.45), 0 0 18px rgba(127,179,213,.35);
+    border:2.5px solid var(--outline); border-radius:16px; padding:18px 24px;
+    font-weight:800; font-size:15px;
+    box-shadow:var(--hard-sm), 0 0 18px rgba(127,179,213,.28);
     animation:door-glow 3.2s ease-in-out infinite;
   }
-  #yoruDoor span{font-family:var(--mono); font-size:10px; color:#7fb3d5; letter-spacing:.15em}
+  #yoruDoor span{font-family:var(--mono); font-size:11px; color:#7fb3d5; letter-spacing:.15em}
   #yoruDoor:hover{color:#ffffff}
   @keyframes door-glow{50%{box-shadow:0 6px 24px rgba(0,0,0,.45), 0 0 34px rgba(127,179,213,.65)}}
   body.ura-mode #yoruDoor{display:none}
@@ -1432,6 +1432,7 @@
 
 <footer>
   <div class="wrap">
+    <a id="yoruDoor" href="#ura" hidden>🌘 閉園後の扉が、いまひらいています<span>OPEN 22:00 – 2:00</span></a>
     <div>
       <p>柊渚の思考動物園（試作品）。「観覧パス」「全園パス」ボタンはデモで、この端末の表示が切り替わるだけです。実運用では決済と会員認証がこの裏に入ります。動画枠には YouTube 限定公開 / Vimeo の埋め込みが入ります。</p>
       <p>スタンプ帳と連続記録は、あなたの端末にだけ保存されます。</p>
@@ -1445,8 +1446,6 @@
   </div>
 </footer>
 </div><!-- /#omote -->
-
-<a id="yoruDoor" href="#ura" hidden>🌘 閉園後の扉が、いまひらいています<span>OPEN 22:00 – 2:00</span></a>
 
 <div id="ura" hidden>
   <div class="ura-inner">
