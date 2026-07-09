@@ -707,7 +707,7 @@
   }
   #ura .ura-nav a:hover,#ura .ura-nav a:focus-visible{color:#e3e1dc; border-color:#8b8a92}
   /* --- 波紋の見取り図（同心円ナビ） --- */
-  #ura .namimon{position:relative; width:min(82vw,400px); aspect-ratio:1/1; margin:40px auto 4px}
+  #ura .namimon{position:relative; width:min(88vw,500px); aspect-ratio:1/1; margin:44px auto 4px}
   #ura .namimon .ring{
     position:absolute; border:1px solid rgba(127,179,213,.26); border-radius:50%;
     text-decoration:none; transition:border-color .3s ease, background .3s ease;
@@ -744,6 +744,39 @@
   #ura .nm-sub a{color:#5b5a63; text-decoration:none; border-bottom:1px solid #2a2a30; padding-bottom:2px}
   #ura .nm-sub a:hover{color:#e3e1dc}
   @media (prefers-reduced-motion: reduce){#ura .nm-pulse{animation:none; opacity:0}}
+  /* --- 保管庫と深度チャンバー（モーダル） --- */
+  #uraVault{display:none}
+  body.um-open{overflow:hidden}
+  #ura .ura-oneline{
+    text-align:center; font-family:var(--min); font-size:15px; letter-spacing:.12em;
+    color:#c9c7c1; margin:8px 0 0;
+  }
+  #uraModal{position:fixed; inset:0; z-index:80; display:flex; align-items:center; justify-content:center; padding:20px}
+  #uraModal[hidden]{display:none}
+  #uraModal .um-back{position:absolute; inset:0; background:rgba(5,5,6,.84)}
+  #uraModal .um-panel{
+    position:relative; width:min(94vw,760px); max-height:88vh; display:flex; flex-direction:column;
+    background:#0e0e10; border:1px solid #2e2e36; border-radius:4px;
+    box-shadow:0 0 0 1px rgba(127,179,213,.08), 0 30px 80px rgba(0,0,0,.65);
+    animation:um-rise .5s ease;
+  }
+  @keyframes um-rise{from{opacity:0; transform:translateY(28px)}to{opacity:1; transform:none}}
+  #uraModal .um-bar{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    padding:14px 20px; border-bottom:1px solid #232329; flex:none;
+    font-family:var(--mono); font-size:11px; letter-spacing:.25em; color:#8b8a92;
+  }
+  #uraModal .um-bar button{
+    appearance:none; background:none; border:1px solid #3a3a42; color:#8b8a92;
+    font-size:13px; width:30px; height:30px; border-radius:50%; cursor:pointer; flex:none;
+    transition:color .3s, border-color .3s;
+  }
+  #uraModal .um-bar button:hover{color:#e3e1dc; border-color:#8b8a92}
+  #uraModal .um-body{overflow-y:auto; padding:34px 30px 50px}
+  #uraModal .um-body .ura-sec{margin:0 0 70px}
+  #uraModal .um-body .ura-sec:last-child{margin-bottom:0}
+  @media (prefers-reduced-motion: reduce){#uraModal .um-panel{animation:none}}
+  @media (max-width:560px){#uraModal{padding:10px} #uraModal .um-body{padding:24px 18px 40px}}
   #ura .ura-sec{margin:0 0 96px}
   #ura .ura-h{
     font-size:12px; font-weight:700; letter-spacing:.3em; color:#9a98a0;
@@ -1292,20 +1325,25 @@
       <svg width="56" height="56" viewBox="0 0 64 64" aria-hidden="true"><use href="#leaf-still"/></svg>
       <div class="ura-title">still life</div>
       <p class="ura-sub">人間の静物画 — 柊渚</p>
+      <p class="ura-oneline">ここは Still life。何を愛し、何を失い、何を恐れて生きてきたか——輪郭を切り取る場所。</p>
       <div class="namimon" role="navigation" aria-label="裏の見取り図（同心円）">
         <span class="nm-pulse" aria-hidden="true"></span>
         <span class="nm-pulse p2" aria-hidden="true"></span>
-        <a class="ring r5" href="#ura-ronko"><b>論考・書架</b></a>
-        <a class="ring r4" href="#ura-cho"><b>帳面</b></a>
-        <a class="ring r3" href="#ura-meiroku"><b>目録</b></a>
-        <a class="ring r2" href="#ura-zemi"><b>ゼミ</b></a>
-        <a class="ring r1" href="#ura-dive"><b>Dive</b></a>
+        <a class="ring r5" href="#ura-ronko" data-ring="ronko"><b>論考・書架</b></a>
+        <a class="ring r4" href="#ura-cho" data-ring="cho"><b>帳面</b></a>
+        <a class="ring r3" href="#ura-meiroku" data-ring="meiroku"><b>目録</b></a>
+        <a class="ring r2" href="#ura-zemi" data-ring="zemi"><b>ゼミ</b></a>
+        <a class="ring r1" href="#ura-dive" data-ring="dive"><b>Dive</b></a>
       </div>
-      <p class="nm-cap">外の環から、読みはじめてください。深いものほど、まんなかに。</p>
-      <p class="nm-sub"><a href="#ura-nagisa">いちばん深いところに、柊渚がいます</a></p>
+      <p class="nm-cap">環にふれると、その深さの部屋がひらきます。外から、中心へ。</p>
+      <p class="nm-sub">
+        <a href="#ura-manifesto" data-ring="manifesto">Still life とは</a>　／
+        <a href="#ura-nagisa" data-ring="nagisa">いちばん深いところに、柊渚がいます</a>
+      </p>
     </div>
 
-    <div class="ura-sec">
+    <div id="uraVault" hidden>
+    <div class="ura-sec" id="ura-manifesto">
       <p class="ura-greeting">ここは Still life。<br>人間の静物画を描く場所。</p>
       <p>多くの人は「自分らしく生きている」と言う。しかし実際は、親や学校や会社やSNSが用意したレールの上を歩いているだけかもしれない。好きなものも、夢も、価値観も、本当に自分で選んだと言い切れる人は少ない。Still life は、その人の肩書きや実績ではなく——<em>何を愛し、何を失い、何を恐れて生きてきたのか</em>という、人生の輪郭を見つける試みだ。</p>
       <p>人はいつか必ず死ぬ。それなのに多くの人は、自分だけはまだ先だと思いながら生きている。だから本音を後回しにし、やりたいことを先延ばしにし、他人の期待に人生を使う。Still life は「どう生きるか」を教える活動ではない。<em>「どうせ死ぬなら、お前は何者として生きるのか」</em>を問い続ける活動である。</p>
@@ -1441,14 +1479,14 @@
           <p class="p-desc">一万字級の論考の保管庫。最新は常に公開。</p>
           <div class="p-foot"><span class="p-price">全園パスに含む</span><span class="p-status open">公開中</span></div>
         </div>
-        <div class="prod" data-note="「水底ゼミ」——詳細はこの下の 03 に。次期は九月開講。">
+        <div class="prod" data-note="「水底ゼミ」——ひとつ内側の環（環四）に、くわしく。次期は九月開講。">
           <span class="p-no">P-05</span>
           <h3>水底ゼミ（少人数私塾）</h3>
           <span class="p-en">private seminar</span>
           <p class="p-desc">六名、三ヶ月の羊水。期の終わりに、一度だけ転生する。</p>
           <div class="p-foot"><span class="p-price">¥98,000 <small>/ 期</small></span><span class="p-status">次期 九月</span></div>
         </div>
-        <div class="prod" data-note="「Dive」——詳細はこの下の 04 に。今月の残席は一。">
+        <div class="prod" data-note="「Dive」——波紋の中心に、くわしく。今月の残席は一。">
           <span class="p-no">P-06</span>
           <h3>Dive（深層セッション）</h3>
           <span class="p-en">deep dive · 1 on 1</span>
@@ -1516,9 +1554,21 @@
         <p class="ua">病みます。でも三六二日病んでも、三日で回収できる設計にしてあります。病みは、哲学の確度が上がっている音なので。</p>
       </div>
     </div>
+    </div><!-- /uraVault -->
 
     <p class="ura-close">表は入口、裏は奥。<br>奥のものほど、静かに売っています。</p>
     <a class="omote-link" href="#">おもてへ</a>
+
+    <div id="uraModal" hidden>
+      <div class="um-back" id="umBack"></div>
+      <div class="um-panel" role="dialog" aria-modal="true" aria-labelledby="umTitle">
+        <div class="um-bar">
+          <span id="umTitle"></span>
+          <button id="umClose" aria-label="とじる">✕</button>
+        </div>
+        <div class="um-body" id="umBody"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -2094,6 +2144,55 @@
       document.body.classList.remove("crumbling");
       setTimeout(function(){ ov.remove(); }, 400);
     }, 1450);
+  });
+
+  /* ================= 裏: 深度チャンバー（環→ポップアップ） ================= */
+  var URA_RINGS = {
+    manifesto:{title:"Still life — 宣言", ids:["ura-manifesto"]},
+    ronko:{title:"環一 — 論考・書架", ids:["ura-ronko","ura-shoka"]},
+    cho:{title:"環二 — 夜の帳面", ids:["ura-cho"]},
+    meiroku:{title:"環三 — 目録", ids:["ura-meiroku"]},
+    zemi:{title:"環四 — 水底ゼミ", ids:["ura-zemi"]},
+    dive:{title:"中心 — Dive", ids:["ura-dive"]},
+    nagisa:{title:"水底 — 柊渚", ids:["ura-nagisa"]}
+  };
+  var uraVault = document.getElementById("uraVault");
+  var uraModal = document.getElementById("uraModal");
+  var umBody = document.getElementById("umBody");
+  var umTitle = document.getElementById("umTitle");
+
+  function openRing(key){
+    var def = URA_RINGS[key];
+    if(!def) return;
+    closeRing();
+    umTitle.textContent = def.title;
+    def.ids.forEach(function(id){
+      var el = document.getElementById(id);
+      if(el) umBody.appendChild(el);
+    });
+    uraModal.hidden = false;
+    document.body.classList.add("um-open");
+    umBody.scrollTop = 0;
+  }
+  function closeRing(){
+    while(umBody.firstChild){ uraVault.appendChild(umBody.firstChild); }
+    uraModal.hidden = true;
+    document.body.classList.remove("um-open");
+  }
+  document.addEventListener("click", function(e){
+    var r = e.target.closest ? e.target.closest("[data-ring]") : null;
+    if(r){
+      e.preventDefault();
+      openRing(r.getAttribute("data-ring"));
+    }
+  });
+  document.getElementById("umClose").addEventListener("click", closeRing);
+  document.getElementById("umBack").addEventListener("click", closeRing);
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && !uraModal.hidden) closeRing();
+  });
+  window.addEventListener("hashchange", function(){
+    if(location.hash.indexOf("#ura") !== 0) closeRing();
   });
 
   var taizaApply = document.getElementById("taizaApply");
