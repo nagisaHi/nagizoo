@@ -762,7 +762,7 @@
     border-radius:50%;
     background:radial-gradient(circle at 36% 32%, rgba(214,238,251,.62), rgba(110,164,200,.22) 52%, rgba(30,58,82,.14) 82%);
     box-shadow:inset -3px -4px 8px rgba(0,0,0,.4), 0 0 8px rgba(127,179,213,.2);
-    opacity:0; transition:opacity 1.1s ease, transform 3.2s ease-in-out;
+    opacity:0; transition:opacity 1.1s ease, transform 4.4s ease-in-out;
   }
   #ura .blasto .cell.on{opacity:1; --sc:1}
   /* 分裂線（触れるたびに走る） */
@@ -2538,9 +2538,9 @@
     function cnt(){ var n = parseInt(load(LS,0),10); return isNaN(n)?0:n; }
     var reduced2 = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // 乱雑な動き：中心のまわりの一定範囲に、ランダムな行き先を与え続ける
+    // 乱雑な動き：球体の外縁いっぱいまで、ランダムな行き先を与え続ける
     var wanderR = 40;
-    function measure(){ wanderR = (ovum.getBoundingClientRect().width || 360) * 0.14; }
+    function measure(){ wanderR = (ovum.getBoundingClientRect().width || 360) * 0.37; }
     measure();
     window.addEventListener("resize", measure);
     function wanderOne(c){
@@ -2560,7 +2560,7 @@
     if(!reduced2){
       setInterval(function(){
         for(var i=0;i<cells.length;i++){ if(cells[i].classList.contains("on")) wanderOne(cells[i]); }
-      }, 2600);
+      }, 3400);
     }
 
     // 触れて層をひらく：外から核へ、一層ずつ
