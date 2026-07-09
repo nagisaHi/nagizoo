@@ -809,7 +809,25 @@
   #ura .nm-sub{text-align:center; margin:10px 0 0; font-family:var(--mono); font-size:10px; letter-spacing:.2em}
   #ura .nm-sub a{color:#5b5a63; text-decoration:none; border-bottom:1px solid #2a2a30; padding-bottom:2px}
   #ura .nm-sub a:hover{color:#e3e1dc}
-  @media (prefers-reduced-motion: reduce){#ura .furrow{animation:none; display:none} #ura .blasto .cell{transition:opacity .01ms}}
+  #ura .ovum{cursor:pointer}
+  #ura .ovum .ring{pointer-events:none}
+  #ura .ovum .ring.active{border-color:rgba(198,228,246,.85); box-shadow:0 0 14px rgba(127,179,213,.28)}
+  #ura .ovum .ring.active b{color:#eaf3fb}
+  #ura .orbit{position:absolute; inset:0; pointer-events:none; z-index:6; animation:orbit-spin 7s linear infinite}
+  #ura .orbiter{
+    position:absolute; left:50%; top:calc(50% - var(--rad,46%));
+    width:15px; height:15px; margin:-7.5px 0 0 -7.5px; border-radius:50%;
+    background:radial-gradient(circle at 36% 32%, #f2f9ff, #9fcbe8 52%, #3a6f96 88%);
+    box-shadow:0 0 12px rgba(170,214,246,.9), 0 0 26px rgba(127,179,213,.55);
+    transition:top .85s cubic-bezier(.5,.05,.25,1);
+  }
+  @keyframes orbit-spin{to{transform:rotate(360deg)}}
+  @media (prefers-reduced-motion: reduce){
+    #ura .furrow{animation:none; display:none}
+    #ura .blasto .cell{transition:opacity .01ms}
+    #ura .orbit{animation:none}
+    #ura .orbiter{transition:none}
+  }
   @media (prefers-reduced-motion: reduce){#ura .nm-pulse{animation:none; opacity:0}}
   /* --- 保管庫と深度チャンバー（モーダル） --- */
   #uraVault{display:none}
@@ -1501,13 +1519,14 @@
         <div class="ovum-zona" aria-hidden="true"></div>
         <span class="nm-pulse" aria-hidden="true"></span>
         <span class="nm-pulse p2" aria-hidden="true"></span>
-        <a class="ring r5" href="#ura-ronko" data-ring="ronko"><b>論考・書架</b></a>
-        <a class="ring r4" href="#ura-cho" data-ring="cho"><b>帳面</b></a>
-        <a class="ring r3" href="#ura-meiroku" data-ring="meiroku"><b>目録</b></a>
-        <a class="ring r2" href="#ura-zemi" data-ring="zemi"><b>ゼミ</b></a>
-        <a class="ring r1" href="#ura-dive" data-ring="dive"><b>核 / Dive</b></a>
+        <div class="ring r5" data-key="ronko"><b>論考・書架</b></div>
+        <div class="ring r4" data-key="cho"><b>帳面</b></div>
+        <div class="ring r3" data-key="meiroku"><b>目録</b></div>
+        <div class="ring r2" data-key="zemi"><b>ゼミ</b></div>
+        <div class="ring r1" data-key="dive"><b>核 / Dive</b></div>
+        <div class="orbit" id="orbit" aria-hidden="true"><span class="orbiter"></span></div>
       </div>
-      <p class="nm-cap" id="ovumCap">卵に触れてください。触れるほど、細胞は分裂します。</p>
+      <p class="nm-cap" id="ovumCap">外の層から。ふれるたび、ひと層ずつ、核へ。</p>
       <p class="nm-sub">
         <a href="#ura-manifesto" data-ring="manifesto">Still life とは</a>　／
         <a href="#ura-nagisa" data-ring="nagisa">いちばん深いところに、柊渚がいます</a>
@@ -2471,25 +2490,53 @@
     var cells = blasto.querySelectorAll(".cell");
     var LS = "ura-div";
     function cnt(){ var n = parseInt(load(LS,0),10); return isNaN(n)?0:n; }
-    function render(){
+    function renderCells(){
       var n = Math.min(cnt(), TOTAL);
       for(var i=0;i<cells.length;i++){ cells[i].classList.toggle("on", i<n); }
-      if(!cap) return;
-      if(cnt()===0) cap.textContent = "卵に触れてください。触れるほど、細胞は分裂します。";
-      else if(n>=TOTAL) cap.textContent = "卵は満ちた。——ここから先の分裂は、あなたの中で。";
-      else cap.textContent = "分裂 " + cnt() + " 回。ふれるほど、卵は割れていく。";
     }
-    render();
+    renderCells();
     var reduced2 = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // 軌道体：外周から核へ、一層ずつ螺旋降下
+    var SEQ = [
+      {key:"ronko",   rad:"46%", label:"論考・書架"},
+      {key:"cho",     rad:"38%", label:"夜の帳面"},
+      {key:"meiroku", rad:"27%", label:"目録"},
+      {key:"zemi",    rad:"16%", label:"水底ゼミ"},
+      {key:"dive",    rad:"6%",  label:"核 / Dive"}
+    ];
+    var step = 0;
+    var orbiter = ovum.querySelector(".orbiter");
+    var ringEls = {};
+    SEQ.forEach(function(s){ ringEls[s.key] = ovum.querySelector('.ring[data-key="'+s.key+'"]'); });
+    function paintOrbit(){
+      if(orbiter) orbiter.style.setProperty("--rad", SEQ[step].rad);
+      SEQ.forEach(function(s){ if(ringEls[s.key]) ringEls[s.key].classList.toggle("active", s.key===SEQ[step].key); });
+    }
+    paintOrbit();
+
+    // 触れる：分裂（血球を増やし、分裂線を走らせる）
     ovum.addEventListener("pointerdown", function(){
       save(LS, cnt()+1);
-      render();
+      renderCells();
       if(reduced2) return;
       var f = document.createElement("span");
       f.className = "furrow";
       f.style.setProperty("--ang", Math.floor(rnd()*180) + "deg");
       ovum.appendChild(f);
       setTimeout(function(){ f.remove(); }, 900);
+    });
+
+    // 触れる：いまの層をひらき、ひと層ぶん内へ降りる
+    ovum.addEventListener("click", function(){
+      var cur = SEQ[step];
+      if(typeof openRing === "function") openRing(cur.key);
+      if(cap){
+        if(step === SEQ.length - 1) cap.textContent = "核にふれた。ここが Dive。もう一度ふれると、また外から。";
+        else cap.textContent = "『" + cur.label + "』の層をひらいた。核まで、あと " + (SEQ.length - 1 - step) + " 層。";
+      }
+      step = (step + 1) % SEQ.length;
+      paintOrbit();
     });
   })();
 
