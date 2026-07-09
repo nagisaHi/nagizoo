@@ -757,12 +757,14 @@
   /* 分裂した細胞（割球） */
   #ura .blasto{position:absolute; inset:4%; border-radius:50%; overflow:hidden; pointer-events:none}
   #ura .blasto .cell{
-    position:absolute; transform:translate(-50%,-50%) scale(.2); border-radius:50%;
-    background:radial-gradient(circle at 36% 32%, rgba(210,236,250,.5), rgba(110,164,200,.16) 52%, rgba(30,58,82,.12) 80%);
-    box-shadow:inset -3px -4px 8px rgba(0,0,0,.4), 0 0 6px rgba(127,179,213,.14);
-    opacity:0; transition:opacity 1s ease, transform 1s cubic-bezier(.34,1.4,.6,1);
+    position:absolute; left:50%; top:50%;
+    transform:translate(calc(-50% + var(--wx,0px)), calc(-50% + var(--wy,0px))) scale(var(--sc,.2));
+    border-radius:50%;
+    background:radial-gradient(circle at 36% 32%, rgba(214,238,251,.62), rgba(110,164,200,.22) 52%, rgba(30,58,82,.14) 82%);
+    box-shadow:inset -3px -4px 8px rgba(0,0,0,.4), 0 0 8px rgba(127,179,213,.2);
+    opacity:0; transition:opacity 1.1s ease, transform 3.2s ease-in-out;
   }
-  #ura .blasto .cell.on{opacity:1; transform:translate(-50%,-50%) scale(1)}
+  #ura .blasto .cell.on{opacity:1; --sc:1}
   /* 分裂線（触れるたびに走る） */
   #ura .furrow{
     position:absolute; left:50%; top:50%; width:92%; height:2px; pointer-events:none;
@@ -841,9 +843,7 @@
     transform:translate(-50%,-50%); border-radius:50%; z-index:4; pointer-events:none;
     background:radial-gradient(circle at 38% 33%, rgba(214,238,251,.6), rgba(96,156,196,.30) 54%, rgba(28,58,84,.24) 86%);
     box-shadow:0 0 30px rgba(127,179,213,.5), inset -5px -7px 16px rgba(0,0,0,.5), inset 5px 5px 14px rgba(200,230,248,.22);
-    animation:nuc-breathe 5s ease-in-out infinite;
   }
-  @keyframes nuc-breathe{50%{transform:translate(-50%,-50%) scale(1.09)}}
   /* === 訪問者の光球（縦横の3D軌道＋徐々に核へ潜る） === */
   #ura .orbiters{position:absolute; inset:0; pointer-events:none; z-index:5; perspective:760px; transform-style:preserve-3d}
   #ura .orb-spin{
@@ -1571,8 +1571,6 @@
         <div class="ring r3" data-key="meiroku"><b>目録</b></div>
         <div class="ring r2" data-key="zemi"><b>ゼミ</b></div>
         <div class="ring r1" data-key="dive"><b>核 / Dive</b></div>
-        <div class="orbiters" id="orbiters" aria-hidden="true"></div>
-        <div class="orbit" id="orbit" aria-hidden="true"><span class="orbiter"></span></div>
       </div>
       <p class="nm-cap" id="ovumCap">外の層から。ふれるたび、ひと層ずつ、核へ。</p>
       <p class="nm-sub">
@@ -2528,81 +2526,57 @@
     if(!ovum || !blasto) return;
     var TOTAL = 18, seed = 7;
     function rnd(){ seed = (seed*9301+49297) % 233280; return seed/233280; }
+    // 核の中の細胞（触れるほど増え、中心のまわりを乱雑に動く）
     var html = "";
     for(var i=0;i<TOTAL;i++){
-      var a = rnd()*Math.PI*2, rr = Math.sqrt(rnd())*33;
-      var x = 50 + Math.cos(a)*rr, y = 50 + Math.sin(a)*rr, sz = 6 + rnd()*5;
-      html += '<span class="cell" style="left:'+x.toFixed(1)+'%;top:'+y.toFixed(1)+'%;width:'+sz.toFixed(1)+'%;height:'+sz.toFixed(1)+'%"></span>';
+      var sz = 6 + rnd()*5;
+      html += '<span class="cell" style="width:'+sz.toFixed(1)+'%;height:'+sz.toFixed(1)+'%"></span>';
     }
     blasto.innerHTML = html;
     var cells = blasto.querySelectorAll(".cell");
     var LS = "ura-div";
     function cnt(){ var n = parseInt(load(LS,0),10); return isNaN(n)?0:n; }
-    function renderCells(){
-      var n = Math.min(cnt(), TOTAL);
-      for(var i=0;i<cells.length;i++){ cells[i].classList.toggle("on", i<n); }
-    }
-    renderCells();
     var reduced2 = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    // 増殖する光球：触れるほど、核のまわりを回る光が増える
-    var orbiters = document.getElementById("orbiters");
-    var MAXORB = 48;
-    function spawnOrb(birth){
-      if(!orbiters || orbiters.children.length >= MAXORB) return;
-      var rect = ovum.getBoundingClientRect();
-      var base = (rect.width || 360) / 2;
-      var r0 = (0.42 + Math.random()*0.40) * base;       // 入口の軌道半径(px)
-      var rmin = (0.11 + Math.random()*0.14) * base;      // 核の近くに落ち着く半径
-      var dur = (7 + Math.random()*9).toFixed(1);         // 公転の周期
-      var delay = "-" + (Math.random()*dur).toFixed(1) + "s";
-      var ddur = (18 + Math.random()*18).toFixed(1);      // 内側へ潜る時間
-      // 初期表示は途中まで潜った状態から、触れて生まれたものは外から
-      var ddelay = birth ? "0s" : ("-" + (Math.random()*ddur*0.8).toFixed(1) + "s");
-      var sp = document.createElement("div");
-      sp.className = "orb-spin";
-      // 傾いた回転軸（ax,ay を振る）＝横にも縦にも回る
-      sp.style.setProperty("--ax", (Math.random()*2 - 1).toFixed(3));
-      sp.style.setProperty("--ay", (Math.random()*2 - 1).toFixed(3));
-      sp.style.setProperty("--dur", dur + "s");
-      sp.style.animationDelay = delay;
-      var d = document.createElement("span");
-      d.className = "orb-dot";
-      d.style.setProperty("--r0", r0.toFixed(0) + "px");
-      d.style.setProperty("--rmin", rmin.toFixed(0) + "px");
-      d.style.setProperty("--sz", (4 + Math.random()*6).toFixed(1) + "px");
-      d.style.setProperty("--dur", dur + "s");
-      d.style.setProperty("--ddur", ddur + "s");
-      d.style.animationDelay = delay + ", " + ddelay;    // 深度ゆらぎ, 潜行
-      sp.appendChild(d);
-      orbiters.appendChild(sp);
+    // 乱雑な動き：中心のまわりの一定範囲に、ランダムな行き先を与え続ける
+    var wanderR = 40;
+    function measure(){ wanderR = (ovum.getBoundingClientRect().width || 360) * 0.14; }
+    measure();
+    window.addEventListener("resize", measure);
+    function wanderOne(c){
+      var a = Math.random()*Math.PI*2, r = Math.sqrt(Math.random())*wanderR;
+      c.style.setProperty("--wx", (Math.cos(a)*r).toFixed(1) + "px");
+      c.style.setProperty("--wy", (Math.sin(a)*r).toFixed(1) + "px");
     }
-    var initN = Math.min(cnt(), MAXORB);
-    for(var q=0; q<initN; q++) spawnOrb(false);
+    function renderCells(){
+      var n = Math.min(cnt(), TOTAL);
+      for(var i=0;i<cells.length;i++){
+        var on = i < n;
+        if(on && !cells[i].classList.contains("on")) wanderOne(cells[i]);
+        cells[i].classList.toggle("on", on);
+      }
+    }
+    renderCells();
+    if(!reduced2){
+      setInterval(function(){
+        for(var i=0;i<cells.length;i++){ if(cells[i].classList.contains("on")) wanderOne(cells[i]); }
+      }, 2600);
+    }
 
-    // 軌道体：外周から核へ、一層ずつ螺旋降下
+    // 触れて層をひらく：外から核へ、一層ずつ
     var SEQ = [
-      {key:"ronko",   rad:"46%", label:"論考・書架"},
-      {key:"cho",     rad:"38%", label:"夜の帳面"},
-      {key:"meiroku", rad:"27%", label:"目録"},
-      {key:"zemi",    rad:"16%", label:"水底ゼミ"},
-      {key:"dive",    rad:"6%",  label:"核 / Dive"}
+      {key:"ronko",   label:"論考・書架"},
+      {key:"cho",     label:"夜の帳面"},
+      {key:"meiroku", label:"目録"},
+      {key:"zemi",    label:"水底ゼミ"},
+      {key:"dive",    label:"核 / Dive"}
     ];
     var step = 0;
-    var orbiter = ovum.querySelector(".orbiter");
-    var ringEls = {};
-    SEQ.forEach(function(s){ ringEls[s.key] = ovum.querySelector('.ring[data-key="'+s.key+'"]'); });
-    function paintOrbit(){
-      if(orbiter) orbiter.style.setProperty("--rad", SEQ[step].rad);
-      SEQ.forEach(function(s){ if(ringEls[s.key]) ringEls[s.key].classList.toggle("active", s.key===SEQ[step].key); });
-    }
-    paintOrbit();
 
-    // 触れる：分裂（血球を増やし、分裂線を走らせる）
+    // 触れる：分裂（細胞を増やし、分裂線を走らせる）
     ovum.addEventListener("pointerdown", function(){
       save(LS, cnt()+1);
       renderCells();
-      spawnOrb(true);
       if(reduced2) return;
       var f = document.createElement("span");
       f.className = "furrow";
@@ -2620,7 +2594,6 @@
         else cap.textContent = "『" + cur.label + "』の層をひらいた。核まで、あと " + (SEQ.length - 1 - step) + " 層。";
       }
       step = (step + 1) % SEQ.length;
-      paintOrbit();
     });
   })();
 
