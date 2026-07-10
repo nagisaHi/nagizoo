@@ -1213,6 +1213,82 @@
     #uraModal .um-bar{letter-spacing:.14em; font-size:10.5px}
     #ura .ronko-cta{font-size:13px; text-align:left; line-height:2.2}
   }
+
+  /* ==================== 来園カレンダー・語録ガチャ・窓口・マイページ ==================== */
+  .stamp-cal{
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:16px;
+    padding:16px 18px; box-shadow:var(--hard-sm); max-width:520px;
+  }
+  .cal-head{font-weight:900; font-size:14px; margin-bottom:10px; letter-spacing:.05em}
+  .cal-grid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px; text-align:center}
+  .cal-w{font-size:10px; font-weight:800; color:var(--faint); letter-spacing:.1em}
+  .cal-d{
+    aspect-ratio:1/1; display:flex; align-items:center; justify-content:center;
+    border-radius:10px; background:var(--panel2); font-size:12px; font-weight:800; color:var(--faint);
+  }
+  .cal-d.empty{background:transparent}
+  .cal-d.hit{background:var(--hi); font-size:15px}
+  .cal-d.today{outline:2.5px solid var(--zoo); outline-offset:-2.5px; color:var(--ink)}
+  .bonus-list{display:flex; flex-direction:column; gap:8px; margin:16px 0 0; max-width:520px}
+  .bonus-row{
+    font-size:13px; font-weight:700; color:var(--muted);
+    border:2px dashed var(--faint); border-radius:10px; padding:8px 14px;
+  }
+  .bonus-row.got{border:2px solid var(--outline); background:var(--panel); color:var(--ink); box-shadow:2px 2px 0 var(--outline)}
+  .vocab-h{font-size:16px; font-weight:900; margin:34px 0 4px}
+  .vocab-p{font-size:13px; font-weight:600; color:var(--muted); margin:0 0 16px}
+  .gq{max-width:34em; margin:26px auto; text-align:center}
+  .gq-text{
+    font-size:clamp(19px,3.2vw,25px); font-weight:900; line-height:2; margin:0 0 14px;
+    background:linear-gradient(transparent 60%, var(--hi) 60%);
+    display:inline; box-decoration-break:clone; -webkit-box-decoration-break:clone;
+  }
+  .gq-src{display:block; font-family:var(--mono); font-size:11.5px; color:var(--faint); letter-spacing:.1em; margin-top:18px}
+  /* 窓口・マイページ共通モーダル */
+  .bm-wrap{position:fixed; inset:0; z-index:95; display:flex; align-items:center; justify-content:center; padding:16px}
+  .bm-wrap[hidden]{display:none}
+  .bm-back{position:absolute; inset:0; background:rgba(35,30,22,.55)}
+  .bm-panel{
+    position:relative; width:min(94vw,680px); max-height:90vh; display:flex; flex-direction:column;
+    background:var(--bg); border:2.5px solid var(--outline); border-radius:20px; box-shadow:var(--hard);
+    overflow:hidden;
+  }
+  .bm-bar{
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+    background:var(--zoo); color:#fff; padding:12px 18px;
+    font-size:13.5px; font-weight:900; letter-spacing:.08em; border-bottom:2.5px solid var(--outline);
+  }
+  .bm-bar button{
+    appearance:none; background:var(--panel); border:2px solid var(--outline); border-radius:50%;
+    width:30px; height:30px; font-weight:900; cursor:pointer;
+  }
+  .bm-body{overflow-y:auto; padding:22px 22px 28px; display:flex; flex-direction:column; gap:16px}
+  .bm-cols{display:grid; grid-template-columns:1fr 1fr; gap:14px}
+  @media (max-width:560px){.bm-cols{grid-template-columns:1fr}}
+  .bm-col{
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:14px;
+    padding:18px; display:flex; flex-direction:column; gap:10px;
+  }
+  .bm-col.feature{background:var(--hi)}
+  .bm-col h3{margin:0; font-size:17px; font-weight:900}
+  .bm-col h3 small{font-size:12px; color:var(--muted); font-weight:700}
+  .bm-col ul{margin:0; padding-left:1.2em; font-size:13px; font-weight:600; color:var(--muted)}
+  .bm-col li{margin-bottom:4px}
+  .bm-select{
+    font-family:var(--sans); font-size:14px; font-weight:700; color:var(--ink);
+    background:var(--panel2); border:2.5px solid var(--outline); border-radius:10px; padding:9px 12px;
+  }
+  .bm-faq{font-size:13px; font-weight:600; color:var(--muted); line-height:1.9}
+  .bm-faq b{color:var(--ink)}
+  .bm-state{font-size:13px; font-weight:800; color:var(--zoo); margin:0; min-height:1.4em}
+  .bm-note{font-size:12px; font-weight:600; color:var(--faint); margin:0}
+  .my-stats{display:flex; flex-direction:column; gap:8px}
+  .my-row{
+    display:flex; gap:12px; align-items:baseline; padding:10px 14px;
+    background:var(--panel); border:2px solid var(--outline); border-radius:10px;
+    font-size:13.5px; font-weight:700;
+  }
+  .my-row .k{flex:none; width:9em; color:var(--faint); font-size:12px; font-weight:800}
 </style>
 
 <!-- 柊マスコット: 葉っぱに顔+波 -->
@@ -1249,6 +1325,7 @@
     <a href="#nyumon">入園案内</a>
     <a href="#watashi">柊渚</a>
     <a href="#machine">今週の一頭</a>
+    <a href="#" id="myPageLink">マイページ</a>
   </nav>
 </header>
 
@@ -1385,7 +1462,7 @@
     <span class="flag f-yellow">渚観察日誌</span>
     <div class="sec-head">
       <h2>渚観察日誌</h2>
-      <p>柊渚という一頭の、生態記録。この個体は、自分で自分を観察しています。</p>
+      <p>柊渚という一頭の、生態記録。決まりは三つ——<mark>①個体を三人称で観察する ②事実をひとつ、考察をひと言 ③よく生きた日も、病んだ日も、隠さず記す</mark>。生態をごまかさないのが、この日誌の芸です。</p>
     </div>
     <div class="kinkyo" id="kinkyoList">
       <div class="ki"><span class="hi">7月8日</span><p>個体、ガチ文化祭より生還。三六二日ぶんの病みを、三日で回収した模様。摂食・睡眠ともに回復傾向。今年の収穫は「転生」とのこと。</p></div>
@@ -1420,10 +1497,14 @@
   <div class="wrap">
     <span class="flag f-green">スタンプラリー</span>
     <div class="sec-head">
-      <h2>観察スタンプ帳</h2>
-      <p>今週の一頭を最後まで観察すると、その概念のスタンプが帳面にペタンと押されます。集まっていくのは、柊渚の哲学の語彙。金のスタンプ4個は、全園パスの人だけの観察記録。</p>
+      <h2>来園スタンプ帳</h2>
+      <p>来園した日に、カレンダーへ🐾がひとつ押されます。<mark>たまった来園日数で、鍵つきの「読む回」が順に開いていく</mark>——通うほど、園はあなたに開きます。</p>
     </div>
-    <div class="streak">🔥 連続観察 <b id="streakNum">0</b> 日目 / スタンプ <b id="lensNum">0</b>個</div>
+    <div class="streak">🐾 来園 <b id="visitTotal">0</b>日 / 連続 <b id="visitStreak">0</b>日 / 語彙スタンプ <b id="lensNum">0</b>個</div>
+    <div class="stamp-cal" id="stampCal"></div>
+    <div class="bonus-list" id="bonusList"></div>
+    <h3 class="vocab-h">🗝 あつめた語彙 — 柊渚の哲学スタンプ</h3>
+    <p class="vocab-p">下の「今週の一頭」を引くと、出てきた語彙のスタンプが押されます。金のスタンプは、全園パスの観察記録。</p>
     <div class="grid" id="zukanGrid"></div>
   </div>
 </section>
@@ -1454,7 +1535,7 @@
           <span class="seki-name">観覧パス</span>
           <span class="seki-price">¥980 <small>/ 月・舎</small></span>
           <span class="seki-desc">選んだ舎の動画・記事・音声版ぜんぶ。過去回込み。何枚でも。</span>
-          <button class="btn btn-sm" onclick="document.getElementById('series').scrollIntoView()">舎を選ぶ</button>
+          <button class="btn btn-sm" id="ticketWinBtn">チケット窓口へ</button>
         </div>
         <div class="seki-row feature">
           <span class="seki-name">全園パス</span>
@@ -1512,27 +1593,22 @@
   <div class="wrap">
     <span class="flag f-red">帰り際の一頭</span>
     <div class="sec-head">
-      <h2>今週の一頭 — 柊渚の哲学語録</h2>
-      <p>帰り際に、僕の哲学からひとつだけ連れて帰ってください。<mark>生態を3つ観察</mark>したら、締めはエサやり——あなたへの問いがひとつ。答えは要りません、10秒だけ。</p>
+      <h2>今週の一頭 — 柊渚の哲学語録ガチャ</h2>
+      <p>帰り際に、一頭連れて帰ってください。引くたびに、僕の文章から語録があらわれます。<mark>すべて原文からの引用</mark>——ここに、嘘の生き物はいません。</p>
     </div>
     <div class="stage">
       <div class="stage-bar">
-        <span>🐾 今週の一頭</span>
-        <span id="counter">観察 0 / 3</span>
+        <span>🐾 哲学語録ガチャ</span>
+        <span id="counter">引いた数 0</span>
       </div>
       <div class="stage-body" id="stageBody">
-        <div class="kata-card">
-          <span class="kata-label">今週の一頭</span>
-          <div class="kata-name">羊水</div>
-          <div class="kata-q">定義 「誕生とは、羊水からの解放である。」</div>
+        <div id="gachaArea">
+          <p class="idle-copy">レバーを引くと、僕の頭の中から一頭が出てきます。<br><strong>ぜんぶ、本人の文章からの引用です。</strong></p>
         </div>
-        <div class="demo-chips" id="demoChips"></div>
-        <div id="playArea"></div>
-        <div class="try-box" id="tryBox"></div>
       </div>
       <div class="stage-actions">
+        <button class="btn btn-primary" id="gachaBtn">一頭を引く</button>
         <button class="btn btn-yellow" id="listenBtn" hidden>🎧 耳で聞く</button>
-        <span class="next-week">来週の一頭：「座標」</span>
       </div>
     </div>
   </div>
@@ -1553,6 +1629,56 @@
     </div>
   </div>
 </footer>
+<div id="buyModal" class="bm-wrap" hidden>
+  <div class="bm-back" id="bmBack"></div>
+  <div class="bm-panel">
+    <div class="bm-bar"><span>🎫 チケット窓口</span><button id="bmClose" aria-label="とじる">✕</button></div>
+    <div class="bm-body">
+      <div class="bm-cols">
+        <div class="bm-col">
+          <h3>観覧パス <small>¥980 / 月・舎</small></h3>
+          <ul>
+            <li>選んだ舎の「観る回」「読む回」ぜんぶ</li>
+            <li>過去回アーカイブ・音声版つき</li>
+            <li>何枚でも。いつでも解約OK</li>
+          </ul>
+          <select id="bmSeries" class="bm-select"></select>
+          <button class="btn btn-primary" id="bmBuySeries">この舎の観覧パスを買う（デモ）</button>
+        </div>
+        <div class="bm-col feature">
+          <h3>全園パス <small>¥4,000 / 月</small></h3>
+          <ul>
+            <li>全部の舎、見放題</li>
+            <li>金のスタンプ4個＋裏の書架の全論考</li>
+            <li>全園パス組のDiscord・生放送への質問権</li>
+          </ul>
+          <button class="btn btn-primary" id="bmBuyAll">全園パスを買う（デモ）</button>
+        </div>
+      </div>
+      <p class="bm-state" id="bmState"></p>
+      <div class="bm-faq">
+        <p><b>Q. 途中でやめられますか？</b><br>A. いつでも。解約は入会と同じ手数でできます。企業の誠実さは出口に出る、と言った手前もあるので。</p>
+        <p><b>Q. 3つ以上の舎が気になります。</b><br>A. 観覧パス3枚で¥2,940、5枚で¥4,900。全園パスは¥4,000——3舎目からは、全園パスが得です。</p>
+        <p><b>Q. 支払い方法は？</b><br>A. 実サイトではカード決済（Stripe）が入ります。この試作では、この端末の表示が切り替わるだけです。</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="myModal" class="bm-wrap" hidden>
+  <div class="bm-back" id="myBack"></div>
+  <div class="bm-panel">
+    <div class="bm-bar"><span>🐾 マイページ — あなたの観察記録</span><button id="myClose" aria-label="とじる">✕</button></div>
+    <div class="bm-body">
+      <div class="adm-row">
+        <input id="myName" class="bm-select" style="flex:1; min-width:160px" placeholder="よびな（この端末にだけ保存）">
+        <button class="btn btn-sm" id="myNameSave">保存</button>
+      </div>
+      <div class="my-stats" id="myStats"></div>
+      <p class="bm-note">※この試作の「あなた」は、この端末のブラウザに宿る仮のあなたです。実サイトでは会員登録（メール＋パスワード）になり、どの端末でも同じ記録が続きます。</p>
+    </div>
+  </div>
+</div>
 </div><!-- /#omote -->
 
 <div id="ura" hidden>
@@ -1983,18 +2109,33 @@
     {id:"tensei", name:"転生",       q:"自分の脳内で人生を完遂し、新たに自分を誕生させること。", tier:"premium"}
   ];
 
-  /* 今週の一頭: 柊渚の哲学から、週替わりで概念をひとつ放し飼いにする。生態の原文は本人のもの */
-  var WEEK = {
-    id:"c1", lens:"yosui", name:"羊水",
-    teigi:"誕生とは、羊水からの解放である。",
-    observations:[
-      {label:"生態① 抑圧", text:"羊水の中では、五感は制限され、栄養だけが送り込まれ、生きることを強いられている。自我も芽生えないまま、息だけをし続けている——最大限の抑圧を受けている瞬間である。"},
-      {label:"生態② 解放", text:"そこから解放されて、酸素を吸い込んだとき、自分の人生が始まる。誕生とは場所の移動ではなく、抑圧からの解放のことだ。"},
-      {label:"生態③ 現代", text:"解放が当たり前になった時代には、抑圧や制限を強いられることがない。だからこそ——抑圧されることが、心地よくなる人が増えている。"}
-    ],
-    question:"あなたが、いま浸かっている羊水はなんですか。",
-    hitokoto:"見つからなくても大丈夫。それが見えた日が、あなたの二度目の誕生日です。——この一頭の全身は、閉園後の奥で飼っています。"
-  };
+  /* 哲学語録DB: すべて柊渚本人の文章からの引用（発明・改変禁止。句読点の軽微な整えのみ） */
+  var PHILO_DB = [
+    {q:"誕生とは、羊水からの解放である。", src:"誕生とは、羊水からの解放である", tags:["yosui"]},
+    {q:"人生の厚さは、輪廻の回数だと思っている。", src:"誕生とは、羊水からの解放である", tags:["rinne"]},
+    {q:"自分が変わるから環境が変わるのではなく、環境が自分を変える。", src:"誕生とは、羊水からの解放である", tags:["zahyo"]},
+    {q:"努力は必要ないかもしれないという仮説だ。", src:"誕生とは、羊水からの解放である", tags:["zahyo"]},
+    {q:"哲学の確度を上げるには、抑圧を受けないといけない。", src:"誕生とは、羊水からの解放である", tags:["kakudo"]},
+    {q:"制限されるからこそ、そこを飛び出たいという欲が湧く。", src:"誕生とは、羊水からの解放である", tags:["kakudo"]},
+    {q:"僕のアウトプットは、羊水を作ること。", src:"誕生とは、羊水からの解放である", tags:["yosui"]},
+    {q:"三六二日病んでも、三日で回収が可能なのだ。", src:"誕生とは、羊水からの解放である", tags:["tensei"]},
+    {q:"捨てることでしか得られないものだ。", src:"誕生とは、羊水からの解放である", tags:["rinkaku"]},
+    {q:"死を受け入れてこそ、人生のスタートなんだ。", src:"死を受け入れ、自分を循環させる", tags:["yomei"]},
+    {q:"人は無意識下で、想像以上に「生」を近づけ、「死」を遠ざけている。", src:"死を受け入れ、自分を循環させる", tags:["yomei"]},
+    {q:"死にたいと叫ぶのは、「生きたい！」の表れだ。", src:"死を受け入れ、自分を循環させる", tags:["yomei"]},
+    {q:"明日が無限に存在すると思っている。", src:"死を受け入れ、自分を循環させる", tags:["yomei"]},
+    {q:"頭は「生」に向かい、体は「死」に向かう。", src:"死を受け入れ、自分を循環させる", tags:["yomei"]},
+    {q:"どうせ死ぬなら、お前は何者として生きるのか。", src:"Still life — 宣言", tags:["rinkaku"]},
+    {q:"人間は二度死ぬ。二度目は、その人の存在を覚えている人がいなくなるときだ。", src:"Still life — 宣言", tags:["nidome"]},
+    {q:"Still life は、人生を良くするためではなく、人生を理解するために存在している。", src:"Still life — 宣言", tags:["rinkaku"]},
+    {q:"誰もが忘れられていく世界で、せめて「こう生きた」という痕跡だけは残したい。", src:"Still life — 宣言", tags:["nidome"]},
+    {q:"死を設定することで、生が始まる。", src:"stilllife の哲学", tags:["yomei"]},
+    {q:"全ての人が、全ての人で在り続ける社会。", src:"stilllife の哲学", tags:["rinkaku"]},
+    {q:"社長の頭の中を、会社の資産にする。", src:"Company of Stilllife", tags:[]},
+    {q:"カオスな経営を、再現可能な経営へ。", src:"Company of Stilllife", tags:[]},
+    {q:"生きることを芸術に戻す。", src:"stilllife の哲学", tags:[]},
+    {q:"毎回の授業までの準備も徹底的に行い、授業が反復する装置となるようにした。", src:"柊渚・中2の原体験", tags:["zahyo"]}
+  ];
 
   var SERIES = [
     {id:"mirai", name:"未来舎", color:"c-red",
@@ -2007,7 +2148,7 @@
      ],
      blogs:[
        {t:"二分後の世界年表——2040年までの思考実験", min:12, free:true},
-       {t:"AIに任せた瞬間、人間から消える能力のリスト", min:15}
+       {t:"AIに任せた瞬間、人間から消える能力のリスト", min:15, bonus:3}
      ]},
     {id:"uchu", name:"宇宙舎", color:"c-blue",
      plate:{g:"Universum silens", s:"問い", h:"頭上に、常に"},
@@ -2016,7 +2157,7 @@
        {t:"宇宙人は実在するのか——「いない」と言い切れない構造の話", dur:"24:30", free:true}
      ],
      blogs:[
-       {t:"フェルミのパラドックスを夜食で考える", min:9},
+       {t:"フェルミのパラドックスを夜食で考える", min:9, bonus:7},
        {t:"「会えない」と「いない」のあいだにある18の仮説", min:11}
      ]},
     {id:"bunmei", name:"文明舎", color:"c-green",
@@ -2037,7 +2178,7 @@
      ],
      blogs:[
        {t:"なぜ祭りのあとに、人は病むのか", min:8, free:true},
-       {t:"余命を決めると、人生が始まる（入門版）", min:9}
+       {t:"余命を決めると、人生が始まる（入門版）", min:9, bonus:14}
      ]},
     {id:"shinya", name:"夜行館", color:"c-yellow",
      plate:{g:"Nagisa nocturnus", s:"質問と夜食", h:"月に一度の深夜"},
@@ -2093,6 +2234,58 @@
     return s.count;
   }
   function streakCount(){ var s = load(LS_STREAK,{last:null,count:0}); return s.last?s.count:0; }
+
+  /* ================= 来園スタンプ（カレンダー＆来園ボーナス） ================= */
+  var LS_VISITS = "zoo-visits";
+  function visits(){ var v = load(LS_VISITS, []); return Array.isArray(v) ? v : []; }
+  function recordVisit(){
+    var v = visits(), t = today();
+    if(v.indexOf(t) < 0){ v.push(t); save(LS_VISITS, v); }
+  }
+  function visitDays(){ return visits().length; }
+  function visitStreakN(){
+    var v = visits(); if(!v.length) return 0;
+    var set = {}; v.forEach(function(d){ set[d] = 1; });
+    var n = 0, d = new Date();
+    while(set[d.toLocaleDateString("sv")]){ n++; d.setDate(d.getDate() - 1); }
+    return n;
+  }
+  var BONUSES = [
+    {days:3,  label:"『AIに任せた瞬間、人間から消える能力のリスト』が開く（未来舎）"},
+    {days:7,  label:"『フェルミのパラドックスを夜食で考える』が開く（宇宙舎）"},
+    {days:14, label:"『余命を決めると、人生が始まる（入門版）』が開く（人間舎）"}
+  ];
+  function renderCalendar(){
+    var cal = document.getElementById("stampCal");
+    if(!cal) return;
+    var now = new Date(), y = now.getFullYear(), m = now.getMonth();
+    var startDow = new Date(y, m, 1).getDay();
+    var dim = new Date(y, m + 1, 0).getDate();
+    var set = {}; visits().forEach(function(d){ set[d] = 1; });
+    var tstr = today();
+    var html = '<div class="cal-head">' + y + '年 ' + (m + 1) + '月 の来園記録</div><div class="cal-grid">';
+    ["日","月","火","水","木","金","土"].forEach(function(w){ html += '<span class="cal-w">' + w + '</span>'; });
+    for(var i = 0; i < startDow; i++) html += '<span class="cal-d empty"></span>';
+    for(var d = 1; d <= dim; d++){
+      var ds = y + "-" + ("0" + (m + 1)).slice(-2) + "-" + ("0" + d).slice(-2);
+      var cls = "cal-d" + (set[ds] ? " hit" : "") + (ds === tstr ? " today" : "");
+      html += '<span class="' + cls + '">' + (set[ds] ? "🐾" : d) + '</span>';
+    }
+    html += '</div>';
+    cal.innerHTML = html;
+    var vt = document.getElementById("visitTotal"), vs = document.getElementById("visitStreak");
+    if(vt) vt.textContent = visitDays();
+    if(vs) vs.textContent = visitStreakN();
+    var bl = document.getElementById("bonusList");
+    if(bl){
+      bl.innerHTML = BONUSES.map(function(b){
+        var got = visitDays() >= b.days;
+        return '<div class="bonus-row' + (got ? " got" : "") + '">' +
+          (got ? "✅ " : "🔒 ") + '来園' + b.days + '日 — ' + b.label + '</div>';
+      }).join("");
+    }
+  }
+  recordVisit();
 
   /* ================= series ================= */
   var tabsEl = document.getElementById("seriesTabs");
@@ -2180,13 +2373,19 @@
   }
 
   function blogRow(b, unlocked){
-    var open = unlocked || b.free;
+    var bonusOpen = !!(b.bonus && visitDays() >= b.bonus);
+    var open = unlocked || b.free || bonusOpen;
     var row = document.createElement("div");
     row.className = "brow" + (open ? "" : " locked");
+    var mark;
+    if(b.free) mark = '<span class="badge">無料公開</span>';
+    else if(bonusOpen) mark = '<span class="badge">来園ボーナスで解放中</span>';
+    else if(b.bonus && !open) mark = '<span class="badge grey">来園'+b.bonus+'日で解放</span>';
+    else if(open) mark = '';
+    else mark = '<span class="lockmark">🔒</span>';
     row.innerHTML =
       '<span class="bmeta">読了 '+b.min+'分</span>'+
-      '<span class="btitle">'+esc(b.t)+'</span>'+
-      (b.free ? '<span class="badge">無料公開</span>' : (open ? '' : '<span class="lockmark">🔒</span>'));
+      '<span class="btitle">'+esc(b.t)+'</span>'+ mark;
     if(open){
       row.addEventListener("click", function(){
         var note = row.parentElement.parentElement.querySelector(".reader-note");
@@ -2259,9 +2458,13 @@
     if(subBtn){
       subBtn.addEventListener("click", function(){
         var i = subs.indexOf(s.id);
-        if(i>=0) subs.splice(i,1); else subs.push(s.id);
-        save(LS_SUBS, subs);
-        renderTabs(); renderPanel();
+        if(i >= 0){
+          subs.splice(i, 1);
+          save(LS_SUBS, subs);
+          renderTabs(); renderPanel();
+        }else{
+          openBuy(s.id);   // 購入はチケット窓口で
+        }
       });
     }
   }
@@ -2288,7 +2491,6 @@
       return collected.indexOf(l.id)>=0 || (l.tier==="premium" && allAccess);
     }).length;
     document.getElementById("lensNum").textContent = lensCount;
-    document.getElementById("streakNum").textContent = streakCount();
   }
 
   /* ================= all access ================= */
@@ -2303,114 +2505,44 @@
     renderAllBtn(); renderTabs(); renderPanel(); renderZukan();
   });
 
-  /* ================= 今週の一頭（概念の放飼） ================= */
-  var LS_WATCH="zoo-"+WEEK.id+"-watched", LS_DONE="zoo-"+WEEK.id+"-done";
-  var watched = load(LS_WATCH, []);
-  var dojoDone = load(LS_DONE, false);
-
+  /* ================= 哲学語録ガチャ（今週の一頭） ================= */
+  var LS_GACHA = "zoo-gacha-n", LS_LASTQ = "zoo-gacha-last";
   var body = document.getElementById("stageBody");
   var listenBtn = document.getElementById("listenBtn");
-  var chipsEl = document.getElementById("demoChips");
-  var playArea = document.getElementById("playArea");
-  var tryBox = document.getElementById("tryBox");
+  var gachaArea = document.getElementById("gachaArea");
   var counterEl = document.getElementById("counter");
-  var current = null, playing = false;
+  var current = null;
 
-  function updateCounter(){
-    counterEl.textContent = "観察 " + watched.length + " / " + WEEK.observations.length;
-  }
+  function gachaCount(){ var n = parseInt(load(LS_GACHA, 0), 10); return isNaN(n) ? 0 : n; }
+  function renderGachaCount(){ if(counterEl) counterEl.textContent = "引いた数 " + gachaCount(); }
 
-  function renderChips(){
-    chipsEl.innerHTML = "";
-    WEEK.observations.forEach(function(o,i){
-      var b = document.createElement("button");
-      var done = watched.indexOf(i) >= 0;
-      b.className = "demo-chip" + (done ? " watched":"");
-      b.textContent = (done ? "✓ " : "▶ ") + o.label;
-      b.addEventListener("click", function(){ playObs(i); });
-      chipsEl.appendChild(b);
+  function pullGacha(){
+    var last = parseInt(load(LS_LASTQ, -1), 10), idx;
+    do{ idx = Math.floor(Math.random() * PHILO_DB.length); }while(PHILO_DB.length > 1 && idx === last);
+    save(LS_LASTQ, idx);
+    save(LS_GACHA, gachaCount() + 1);
+    var it = PHILO_DB[idx];
+    current = it;
+    // 出てきた語彙のスタンプを押す（金のスタンプは全園パスのみ）
+    (it.tags || []).forEach(function(tid){
+      var lens = null;
+      LENSES.forEach(function(l){ if(l.id === tid) lens = l; });
+      if(!lens) return;
+      if(lens.tier === "premium" && !allAccess) return;
+      if(collected.indexOf(tid) < 0){ collected.push(tid); save(LS_ZUKAN, collected); }
     });
+    bumpStreak();
+    renderZukan();
+    renderGachaCount();
+    gachaArea.innerHTML =
+      '<div class="gq">'+
+        '<p class="gq-text">「'+esc(it.q)+'」</p>'+
+        '<p class="gq-src">——『'+esc(it.src)+'』より</p>'+
+      '</div>';
+    confettiBurst();
+    if(window.speechSynthesis) listenBtn.hidden = false;
   }
-
-  function playObs(i){
-    if(playing) return;
-    playing = true;
-    listenBtn.hidden = true;
-    if(window.speechSynthesis) speechSynthesis.cancel();
-    var o = WEEK.observations[i];
-    current = {steps:[o.label, o.text]};
-    playArea.innerHTML =
-      '<div class="slot"><span class="cell">'+WEEK.name+'</span>'+
-      '<span class="x">·</span><span class="cell">'+o.label+'</span></div>'+
-      '<div class="slot-label">生態の観察 — 柊渚の原文から</div>'+
-      '<div class="steps" id="steps"></div>';
-    var stepsEl = document.getElementById("steps");
-    var el = document.createElement("div");
-    el.className = "step";
-    el.innerHTML = '<span class="no">'+"①②③".charAt(i)+'</span><p>'+o.text+'</p>';
-    stepsEl.appendChild(el);
-    setTimeout(function(){ el.classList.add("show"); }, reduced?0:300);
-    setTimeout(function(){
-      if(watched.indexOf(i) < 0){ watched.push(i); save(LS_WATCH, watched); }
-      renderChips(); updateCounter(); renderTry();
-      playing = false;
-      if(window.speechSynthesis) listenBtn.hidden = false;
-    }, reduced?50:1400);
-  }
-
-  function revealTry(collect){
-    if(playing) return;
-    playing = true;
-    listenBtn.hidden = true;
-    if(window.speechSynthesis) speechSynthesis.cancel();
-    current = {steps:[WEEK.question, WEEK.hitokoto]};
-    playArea.innerHTML =
-      '<div class="slot-label">エサやり — 問い</div>'+
-      '<div class="punch show" style="margin-top:4px"><span>'+WEEK.question+'</span></div>'+
-      '<div class="steps" id="steps" style="margin-top:28px"></div>';
-    var stepsEl = document.getElementById("steps");
-    var el = document.createElement("div");
-    el.className = "step";
-    el.innerHTML = '<span class="no">渚</span><p>'+WEEK.hitokoto+'</p>';
-    stepsEl.appendChild(el);
-    setTimeout(function(){ el.classList.add("show"); }, reduced?0:2400);
-    setTimeout(function(){
-      if(collect && !dojoDone){
-        dojoDone = true; save(LS_DONE, true);
-        if(collected.indexOf(WEEK.lens) < 0){ collected.push(WEEK.lens); save(LS_ZUKAN, collected); }
-        bumpStreak();
-        renderZukan();
-        confettiBurst();
-      }
-      renderTry();
-      playing = false;
-      if(window.speechSynthesis) listenBtn.hidden = false;
-    }, reduced?80:3600);
-  }
-
-  function renderTry(){
-    if(dojoDone){
-      tryBox.className = "try-box done";
-      tryBox.innerHTML = '<span class="try-label">エサやり — 問い</span>'+
-        '<p class="try-topic">「'+WEEK.question+'」</p>'+
-        '<p class="try-msg">エサやり完了！「'+WEEK.name+'」のスタンプは帳面に押してあります。来週の一頭もお楽しみに。</p>'+
-        '<button class="btn btn-sm" id="tryBtn">もう一度みる</button>';
-      document.getElementById("tryBtn").addEventListener("click", function(){ revealTry(false); });
-      return;
-    }
-    if(watched.length < WEEK.observations.length){
-      tryBox.className = "try-box locked";
-      tryBox.innerHTML = '<span class="try-label">エサやり — 問い</span>'+
-        '<p class="try-msg">🔒 生態を3つ観察すると、あなたのエサやりの番が来ます。</p>';
-      return;
-    }
-    tryBox.className = "try-box ready";
-    tryBox.innerHTML = '<span class="try-label">エサやり — 問い</span>'+
-      '<p class="try-topic">「'+WEEK.question+'」</p>'+
-      '<p class="try-msg">声に出さなくていい。<strong>10秒だけ考えてから</strong>、開けてください。</p>'+
-      '<button class="btn btn-primary" id="tryBtn">渚のひとことを聞く</button>';
-    document.getElementById("tryBtn").addEventListener("click", function(){ revealTry(true); });
-  }
+  document.getElementById("gachaBtn").addEventListener("click", pullGacha);
 
   function confettiBurst(){
     if(reduced) return;
@@ -2427,17 +2559,14 @@
   }
 
   function listen(){
-    if(!window.speechSynthesis) return;
+    if(!window.speechSynthesis || !current) return;
     speechSynthesis.cancel();
-    var text = "今週の一頭、" + WEEK.name + "。定義。" + WEEK.teigi
-      + (current ? "。" + current.steps.join("。") : "");
-    var u = new SpeechSynthesisUtterance(text);
+    var u = new SpeechSynthesisUtterance(current.q + "。——" + current.src + "、より。");
     u.lang = "ja-JP"; u.rate = 0.95;
     var v = speechSynthesis.getVoices().filter(function(v){ return v.lang && v.lang.indexOf("ja") === 0; })[0];
     if(v) u.voice = v;
     speechSynthesis.speak(u);
   }
-
   listenBtn.addEventListener("click", listen);
 
   /* ================= omote / ura / admin routing ================= */
@@ -2641,6 +2770,79 @@
       step = (step + 1) % SEQ.length;   // 最深の次は 0 に戻り、次のタップで水面近くへ浮上して再開
     });
   })();
+
+  /* ================= チケット窓口（購入ページ・デモ） ================= */
+  var buyModal = document.getElementById("buyModal");
+  var bmSeries = document.getElementById("bmSeries");
+  var bmState = document.getElementById("bmState");
+  function fillBmSeries(){
+    if(!bmSeries) return;
+    var cur = bmSeries.value;
+    bmSeries.innerHTML = "";
+    allSha().forEach(function(s){
+      var o = document.createElement("option");
+      o.value = s.id;
+      o.textContent = s.name + (isSubbed(s.id) ? "（購読中）" : "");
+      bmSeries.appendChild(o);
+    });
+    if(cur) bmSeries.value = cur;
+  }
+  function openBuy(seriesId){
+    fillBmSeries();
+    if(seriesId) bmSeries.value = seriesId;
+    bmState.textContent = "";
+    buyModal.hidden = false;
+    document.body.classList.add("um-open");
+  }
+  function closeBuy(){ buyModal.hidden = true; document.body.classList.remove("um-open"); }
+  document.getElementById("bmClose").addEventListener("click", closeBuy);
+  document.getElementById("bmBack").addEventListener("click", closeBuy);
+  document.getElementById("ticketWinBtn").addEventListener("click", function(){ openBuy(); });
+  document.getElementById("bmBuySeries").addEventListener("click", function(){
+    var id = bmSeries.value;
+    if(subs.indexOf(id) < 0){ subs.push(id); save(LS_SUBS, subs); }
+    refreshSite(); fillBmSeries();
+    bmState.textContent = "観覧パスを発行しました（デモ）。その舎の 🔒 が開いています。";
+  });
+  document.getElementById("bmBuyAll").addEventListener("click", function(){
+    allAccess = true; save(LS_ALL, true);
+    renderAllBtn(); refreshSite(); renderZukan(); fillBmSeries();
+    bmState.textContent = "全園パスを発行しました（デモ）。全部の舎と、金のスタンプが開いています。";
+  });
+
+  /* ================= マイページ（この端末の、仮のあなた） ================= */
+  var myModal = document.getElementById("myModal");
+  function renderMy(){
+    document.getElementById("myName").value = load("zoo-name", "");
+    var v = visits();
+    var passes = allAccess ? "全園パス" :
+      (subs.length ? subs.map(function(id){
+        var n = id;
+        allSha().forEach(function(s){ if(s.id === id) n = s.name; });
+        return n;
+      }).join("・") + " の観覧パス" : "ぶらり入園（無料）");
+    var name = load("zoo-name", "");
+    var rows = [
+      ["よびな", name || "（未設定）"],
+      ["はじめての来園", v.length ? v[0] : "きょう"],
+      ["来園", visitDays() + "日（連続 " + visitStreakN() + "日）"],
+      ["持っているパス", passes],
+      ["語彙スタンプ", collected.length + " 個"],
+      ["語録を引いた数", gachaCount() + " 回"]
+    ];
+    document.getElementById("myStats").innerHTML = rows.map(function(r){
+      return '<div class="my-row"><span class="k">' + r[0] + '</span><span>' + esc(String(r[1])) + '</span></div>';
+    }).join("");
+  }
+  function openMy(){ renderMy(); myModal.hidden = false; document.body.classList.add("um-open"); }
+  function closeMy(){ myModal.hidden = true; document.body.classList.remove("um-open"); }
+  document.getElementById("myPageLink").addEventListener("click", function(e){ e.preventDefault(); openMy(); });
+  document.getElementById("myClose").addEventListener("click", closeMy);
+  document.getElementById("myBack").addEventListener("click", closeMy);
+  document.getElementById("myNameSave").addEventListener("click", function(){
+    save("zoo-name", document.getElementById("myName").value.trim());
+    renderMy();
+  });
 
   /* ================= 夜の扉（22:00–2:00） ================= */
   var yoruDoor = document.getElementById("yoruDoor");
@@ -3092,9 +3294,8 @@
   renderYoteichi();
   renderZukan();
   renderAllBtn();
-  renderChips();
-  updateCounter();
-  renderTry();
+  renderGachaCount();
+  renderCalendar();
   renderShokaCms();
   renderKinkyo();
   renderMap();
