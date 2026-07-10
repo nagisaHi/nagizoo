@@ -221,12 +221,13 @@
   <defs>
     <g id="mascot">
       <circle cx="32" cy="32" r="28" fill="var(--panel, #fff)" stroke="var(--outline,#33291f)" stroke-width="3"/>
-      <path d="M32 11 C42 16 42 30 32 36 C22 30 22 16 32 11 Z" fill="#4cbf6b" stroke="var(--outline,#33291f)" stroke-width="2.5"/>
-      <circle cx="28.5" cy="23" r="1.8" fill="var(--outline,#33291f)"/>
-      <circle cx="35.5" cy="23" r="1.8" fill="var(--outline,#33291f)"/>
-      <path d="M28 27.5 q4 3.4 8 0" fill="none" stroke="var(--outline,#33291f)" stroke-width="2" stroke-linecap="round"/>
-      <path d="M14 45 q9 -8 18 0 t18 0" fill="none" stroke="#3aa7e8" stroke-width="3" stroke-linecap="round"/>
-      <path d="M19 52 q6.5 -6 13 0 t13 0" fill="none" stroke="#3aa7e8" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+      <circle cx="32" cy="32" r="23.5" fill="none" stroke="#3aa7e8" stroke-width="1.6" stroke-dasharray="3 5" opacity=".5"/>
+      <path d="M32 11 C38 19 44 25 44 33 A12 12 0 1 1 20 33 C20 25 26 19 32 11 Z" fill="#9fd8f5" stroke="var(--outline,#33291f)" stroke-width="2.5"/>
+      <ellipse cx="26.5" cy="27" rx="2.6" ry="4" fill="#ffffff" opacity=".65" transform="rotate(-20 26.5 27)"/>
+      <circle cx="28.5" cy="32" r="1.8" fill="var(--outline,#33291f)"/>
+      <circle cx="35.5" cy="32" r="1.8" fill="var(--outline,#33291f)"/>
+      <path d="M28 36.5 q4 3.4 8 0" fill="none" stroke="var(--outline,#33291f)" stroke-width="2" stroke-linecap="round"/>
+      <path d="M20 52 q6 -5 12 0 t12 0" fill="none" stroke="#3aa7e8" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>
     </g>
   </defs>
 </svg>
@@ -238,7 +239,7 @@
       <svg width="30" height="30" viewBox="0 0 64 64"><use href="#mascot"/></svg>
       鳴き声ひろば
     </div>
-    <a class="back-link" href="index.html">← 本園（柊渚の思考動物園）へ</a>
+    <a class="back-link" href="index.html">← 本園（あむに君の思考動物園）へ</a>
   </div>
 </header>
 
@@ -278,7 +279,7 @@
   </div>
   <div class="res-axes" id="resAxes"></div>
   <div class="res-quote">
-    <div class="rq-who"><svg width="22" height="22" viewBox="0 0 64 64"><use href="#mascot"/></svg> この個体へ、柊渚からひとこと（本人の文章より）</div>
+    <div class="rq-who"><svg width="22" height="22" viewBox="0 0 64 64"><use href="#mascot"/></svg> この個体へ、あむに君からひとこと（本人の文章より）</div>
     <p id="resQuote"></p>
   </div>
   <div class="res-entry" id="resEntry">
@@ -341,7 +342,7 @@
 
   /* ========== 診断データ ==========
      3軸×3問=9問。軸: A=頭の向き(観察I⇄表現E) / B=決め方(熟考T⇄直感F) / C=過ごし方(単独S⇄群れG)
-     ※質問と型の説明文は遊びの仮コピー。「柊渚からひとこと」だけは本人の逐語引用（発明しない）。 */
+     ※質問と型の説明文は遊びの仮コピー。「あむに君からひとこと」だけは本人の逐語引用（発明しない）。 */
   var QUESTIONS = [
     {axis:"A", text:"考えごとがまとまるのは、どっちのとき？",
      opts:[{t:"ひとりで歩いているとき", v:0},{t:"人にしゃべっているとき", v:1}]},
@@ -371,7 +372,7 @@
     "001":{emoji:"🐢", name:"ながいきリクガメ",
       copy:"あわてず、さぼらず、忘れず。まわりが走り出しても自分の歩幅を変えない、積み重ねの達人です。派手さはないのに、気づけばいちばん遠くまで来ているタイプ。仲間の帰る場所にもなります。",
       plate:{g:"Testudo perseverans", s:"積み重ねと、決まった手順", h:"いつもの席", t:"一歩ずつで、どこまでも行く"},
-      quote:"毎回の授業までの準備も徹底的に行い、授業が反復する装置となるようにした。", src:"柊渚・中2の原体験"},
+      quote:"毎回の授業までの準備も徹底的に行い、授業が反復する装置となるようにした。", src:"あむに君・中2の原体験"},
     "010":{emoji:"🦊", name:"きまぐれキツネ",
       copy:"地図にない小道を選んで、なぜか近道になっている。ひらめきで動く単独行の賢者です。説明はうまくできないのに当たる直感は、ひとりの時間にたっぷり観察を溜めているから。",
       plate:{g:"Vulpes intuens", s:"ひらめきと、寄り道", h:"地図にない小道", t:"正解への近道を嗅ぎ当てる"},
@@ -483,11 +484,11 @@
   function nkAll(){
     var arr = load(LS_NK, null);
     if(!arr){
-      /* 柊渚のシード投稿。哲学の文言は本人の逐語引用のみ（発明しない） */
+      /* あむに君のシード投稿。哲学の文言は本人の逐語引用のみ（発明しない） */
       arr = [
-        {id:"seed2", by:"nagisa", name:"柊渚", t:Date.now()-64*60000, paw:2,
+        {id:"seed2", by:"nagisa", name:"あむに君", t:Date.now()-64*60000, paw:2,
          text:"「どうせ死ぬなら、お前は何者として生きるのか。」——今週も、この問いから開園します。"},
-        {id:"seed1", by:"nagisa", name:"柊渚", t:Date.now()-180*60000, paw:3,
+        {id:"seed1", by:"nagisa", name:"あむに君", t:Date.now()-180*60000, paw:3,
          text:"ひろばを開きました。ここでは、来園者も鳴いていい。いま頭の中にいる生き物を、ひと鳴きどうぞ。"}
       ];
       save(LS_NK, arr);
