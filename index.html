@@ -1289,6 +1289,63 @@
     font-size:13.5px; font-weight:700;
   }
   .my-row .k{flex:none; width:9em; color:var(--faint); font-size:12px; font-weight:800}
+
+  /* ==================== 鳴き声ひろば ==================== */
+  .nk-composer{display:flex; gap:12px; align-items:flex-start; max-width:640px; margin-bottom:26px}
+  .nk-av{
+    appearance:none; flex:none; width:52px; height:52px; border-radius:50%; cursor:pointer;
+    background:var(--panel); border:2.5px solid var(--outline); box-shadow:var(--hard-sm);
+    font-size:26px; display:flex; align-items:center; justify-content:center; line-height:1;
+  }
+  .nk-av.big{width:64px; height:64px; font-size:34px}
+  .nk-cform{flex:1; min-width:0; display:flex; flex-direction:column; gap:8px}
+  .nk-name{max-width:220px}
+  .nk-ta{
+    font-family:var(--sans); font-size:14px; font-weight:600; color:var(--ink); line-height:1.8;
+    background:var(--panel2); border:2.5px solid var(--outline); border-radius:12px;
+    padding:10px 13px; min-height:74px; resize:vertical;
+  }
+  .nk-crow{display:flex; justify-content:space-between; align-items:center; gap:10px}
+  .nk-count{font-family:var(--mono); font-size:11.5px; color:var(--faint); letter-spacing:.06em}
+  .nk-feed{display:flex; flex-direction:column; gap:12px; max-width:640px}
+  .nk-post{
+    display:flex; gap:12px; align-items:flex-start; padding:14px 16px;
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:14px; box-shadow:var(--hard-sm);
+  }
+  .nk-post.nagisa{background:var(--hi)}
+  .nk-pav{
+    flex:none; width:40px; height:40px; border-radius:50%; background:var(--panel2);
+    border:2px solid var(--outline); display:flex; align-items:center; justify-content:center;
+    font-size:21px; line-height:1;
+  }
+  .nk-pmain{flex:1; min-width:0}
+  .nk-phead{display:flex; gap:9px; align-items:baseline; flex-wrap:wrap}
+  .nk-pname{font-weight:900; font-size:13.5px}
+  .nk-ptime{font-family:var(--mono); font-size:10.5px; color:var(--faint); letter-spacing:.06em}
+  .nk-ptext{margin:4px 0 9px; font-size:14px; font-weight:600; line-height:1.9; white-space:pre-wrap; overflow-wrap:break-word}
+  .nk-pact{display:flex; gap:10px; align-items:center}
+  .nk-paw{
+    appearance:none; cursor:pointer; font-family:var(--sans);
+    background:var(--panel2); border:2px solid var(--outline); border-radius:999px;
+    padding:3px 12px; font-size:12px; font-weight:800; color:var(--muted);
+  }
+  .nk-paw.did{background:var(--hi); color:var(--ink)}
+  .nk-post.nagisa .nk-paw{background:var(--panel)}
+  .nk-post.nagisa .nk-paw.did{background:#ffffff}
+  .nk-del{
+    appearance:none; cursor:pointer; background:none; border:none;
+    font-size:11.5px; font-weight:700; color:var(--faint); text-decoration:underline; padding:3px 2px;
+  }
+  .nk-empty{font-size:13px; font-weight:600; color:var(--faint)}
+  /* 個人ページ: IDカードと自分の鳴き声 */
+  .my-idcard{
+    display:flex; gap:14px; align-items:center; padding:14px 16px;
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:14px; box-shadow:var(--hard-sm);
+  }
+  .my-idcard .who{min-width:0}
+  .my-idcard .who b{font-size:16px; font-weight:900}
+  .my-idcard .who p{margin:3px 0 0; font-size:12px; font-weight:600; color:var(--muted); line-height:1.7}
+  .my-naki-h{font-size:13px; font-weight:900; letter-spacing:.06em; margin:4px 0 0}
 </style>
 
 <!-- 柊マスコット: 葉っぱに顔+波 -->
@@ -1320,6 +1377,7 @@
   </div>
   <nav>
     <a href="#kinkyo">観察日誌</a>
+    <a href="#hiroba">ひろば</a>
     <a href="#series">飼育舎</a>
     <a href="#zukan">スタンプ帳</a>
     <a href="#nyumon">入園案内</a>
@@ -1331,7 +1389,7 @@
 
 <div class="hoso" aria-hidden="true">
   <span class="hoso-label">📢 園内放送</span>
-  <div class="hoso-track"><span>本日の放飼は「羊水」です　◦　お帰りの際は、エサやり（問い）をお忘れなく　◦　夜10時になると、閉園後の扉がみんなの前にあらわれます（2時に閉まります）　◦　迷子のお知らせ：「じぶん」をお探しのお客様が、園内に多数いらっしゃいます　◦　哲学の確度、上がっていますか</span></div>
+  <div class="hoso-track"><span>本日の放飼は「羊水」です　◦　お帰りの際は、エサやり（問い）をお忘れなく　◦　夜10時になると、閉園後の扉がみんなの前にあらわれます（2時に閉まります）　◦　迷子のお知らせ：「じぶん」をお探しのお客様が、園内に多数いらっしゃいます　◦　中央のひろばでは、来園者の鳴き声を募集しています　◦　哲学の確度、上がっていますか</span></div>
 </div>
 
 <div class="gate wrap">
@@ -1373,8 +1431,11 @@
           <path d="M340 270 L280 338"/>
           <path d="M382 262 L442 318"/>
         </g>
-        <circle cx="355" cy="235" r="42" fill="#f6eed6" stroke="#e0d2ae" stroke-width="3" aria-hidden="true"/>
-        <text x="355" y="240" font-size="11" font-weight="800" fill="#a08a5f" text-anchor="middle" aria-hidden="true">ひろば</text>
+        <a href="#hiroba" aria-label="鳴き声ひろば"><g class="mzone">
+          <circle cx="355" cy="235" r="42" fill="#f6eed6" stroke="#e0d2ae" stroke-width="3"/>
+          <text x="355" y="231" font-size="11" font-weight="800" fill="#a08a5f" text-anchor="middle">ひろば</text>
+          <text x="355" y="252" font-size="13" text-anchor="middle">🐾</text>
+        </g></a>
         <!-- 池（閉園後の入口） -->
         <a href="#ura" aria-label="うらぐち（池の底）"><g class="mzone">
           <ellipse cx="100" cy="82" rx="48" ry="26" fill="#a9d8ef" stroke="#33291f" stroke-width="2.5"/>
@@ -1469,6 +1530,31 @@
       <div class="ki"><span class="hi">7月5日</span><p>個体、「AIで人類が二分する」の回を構想中。<small>「分かれ方は使う/使われるじゃない。もっと嫌な分かれ方」と、繰り返し鳴いている。</small></p></div>
       <div class="ki"><span class="hi">7月2日</span><p>宇宙人の資料で夜ふかし。「ロマンじゃなく、構造で詰めたい」。夜行性が強まっている。</p></div>
     </div>
+  </div>
+</section>
+
+<div class="junro" aria-hidden="true"><span>順路</span></div>
+
+<section id="hiroba">
+  <div class="wrap">
+    <span class="flag f-green">ひろば</span>
+    <div class="sec-head">
+      <h2>鳴き声ひろば</h2>
+      <p>園の中央にある、来園者の広場。ここでは<mark>あなたも展示個体のひとり</mark>です。いま頭の中にいる考えごとを、ひと鳴きしていってください。気に入っただれかの鳴き声には、🐾 の足あとを残せます。</p>
+    </div>
+    <div class="nk-composer">
+      <button class="nk-av" id="nkMyAv" title="あなたの個体ページをひらく">🐾</button>
+      <div class="nk-cform">
+        <input id="nkName" class="bm-select nk-name" placeholder="よびな（省略OK）">
+        <textarea id="nkText" class="nk-ta" maxlength="140" placeholder="いま、あなたの頭の中にいる生き物は？（140字まで）"></textarea>
+        <div class="nk-crow">
+          <span class="nk-count" id="nkCount">0 / 140</span>
+          <button class="btn btn-primary" id="nkPost">鳴く</button>
+        </div>
+      </div>
+    </div>
+    <div class="nk-feed" id="nkFeed"></div>
+    <p class="bm-note">※この試作では、あなたの鳴き声はこの端末にだけ保存されます。実サイトでは、園にいる来園者ぜんいんのタイムラインがここに流れます。</p>
   </div>
 </section>
 
@@ -1668,14 +1754,23 @@
 <div id="myModal" class="bm-wrap" hidden>
   <div class="bm-back" id="myBack"></div>
   <div class="bm-panel">
-    <div class="bm-bar"><span>🐾 マイページ — あなたの観察記録</span><button id="myClose" aria-label="とじる">✕</button></div>
+    <div class="bm-bar"><span>🐾 あなたの個体ページ — 観察記録</span><button id="myClose" aria-label="とじる">✕</button></div>
     <div class="bm-body">
+      <div class="my-idcard">
+        <button class="nk-av big" id="myAv" title="べつの動物に転生する">🐾</button>
+        <div class="who">
+          <b id="myIdName">名もなき来園者</b>
+          <p>この園でのあなたの姿です。押すと、<strong>べつの動物に転生</strong>します（輪廻の回数がひとつ増えます）。</p>
+        </div>
+      </div>
       <div class="adm-row">
         <input id="myName" class="bm-select" style="flex:1; min-width:160px" placeholder="よびな（この端末にだけ保存）">
         <button class="btn btn-sm" id="myNameSave">保存</button>
       </div>
       <div class="my-stats" id="myStats"></div>
-      <p class="bm-note">※この試作の「あなた」は、この端末のブラウザに宿る仮のあなたです。実サイトでは会員登録（メール＋パスワード）になり、どの端末でも同じ記録が続きます。</p>
+      <p class="my-naki-h">📣 あなたの鳴き声</p>
+      <div class="nk-feed" id="myNaki"></div>
+      <p class="bm-note">※この試作の「あなた」は、この端末のブラウザに宿る仮のあなたです。実サイトでは会員登録（メール＋パスワード）になり、どの端末でも同じ姿・同じ記録が続きます。</p>
     </div>
   </div>
 </div>
@@ -2822,17 +2917,23 @@
         return n;
       }).join("・") + " の観覧パス" : "ぶらり入園（無料）");
     var name = load("zoo-name", "");
+    var rinneN = parseInt(load("zoo-rinne", 0), 10) || 0;
     var rows = [
       ["よびな", name || "（未設定）"],
       ["はじめての来園", v.length ? v[0] : "きょう"],
       ["来園", visitDays() + "日（連続 " + visitStreakN() + "日）"],
       ["持っているパス", passes],
       ["語彙スタンプ", collected.length + " 個"],
-      ["語録を引いた数", gachaCount() + " 回"]
+      ["語録を引いた数", gachaCount() + " 回"],
+      ["鳴いた数", nkMine().length + " 回"],
+      ["転生した回数", rinneN + " 回"]
     ];
     document.getElementById("myStats").innerHTML = rows.map(function(r){
       return '<div class="my-row"><span class="k">' + r[0] + '</span><span>' + esc(String(r[1])) + '</span></div>';
     }).join("");
+    document.getElementById("myIdName").textContent = name || "名もなき来園者";
+    document.getElementById("myAv").textContent = myAvatar();
+    renderMyNaki();
   }
   function openMy(){ renderMy(); myModal.hidden = false; document.body.classList.add("um-open"); }
   function closeMy(){ myModal.hidden = true; document.body.classList.remove("um-open"); }
@@ -2841,8 +2942,120 @@
   document.getElementById("myBack").addEventListener("click", closeMy);
   document.getElementById("myNameSave").addEventListener("click", function(){
     save("zoo-name", document.getElementById("myName").value.trim());
+    document.getElementById("nkName").value = load("zoo-name", "");
     renderMy();
   });
+
+  /* ================= 鳴き声ひろば（共通タイムライン・試作） =================
+     鳴き声はlocalStorage保存＝この端末のみ。実サイトではこの読み書き
+     （nkAll / save(LS_NK,…)）をSupabase等のAPIに差し替えると全来園者共有になる。 */
+  var LS_NK = "hiroba-posts", LS_NKPAW = "hiroba-mypaw";
+  var AV_POOL = ["🦊","🦉","🐢","🦔","🐇","🐧","🦥","🦩","🐐","🦦","🐿️","🦜","🐺","🦚","🐑","🦅","🐸","🦌"];
+  function myAvatar(){
+    var a = load("zoo-avatar", "");
+    if(!a){ a = AV_POOL[Math.floor(Math.random()*AV_POOL.length)]; save("zoo-avatar", a); }
+    return a;
+  }
+  function nkAll(){
+    var arr = load(LS_NK, null);
+    if(!arr){
+      /* 柊渚のシード投稿。哲学の文言は本人の逐語引用のみ（発明しない） */
+      arr = [
+        {id:"seed2", by:"nagisa", name:"柊渚", t:Date.now()-64*60000, paw:2,
+         text:"「どうせ死ぬなら、お前は何者として生きるのか。」——今週も、この問いから開園します。"},
+        {id:"seed1", by:"nagisa", name:"柊渚", t:Date.now()-180*60000, paw:3,
+         text:"ひろばを開きました。ここでは、来園者も鳴いていい。いま頭の中にいる生き物を、ひと鳴きどうぞ。"}
+      ];
+      save(LS_NK, arr);
+    }
+    return arr;
+  }
+  function nkMine(){ return nkAll().filter(function(p){ return p.by === "me"; }); }
+  function nkAgo(t){
+    var s = Math.floor((Date.now() - t) / 1000);
+    if(s < 60) return "たった今";
+    if(s < 3600) return Math.floor(s/60) + "分前";
+    if(s < 86400) return Math.floor(s/3600) + "時間前";
+    return Math.floor(s/86400) + "日前";
+  }
+  function nkPostHtml(p){
+    var did = load(LS_NKPAW, []).indexOf(p.id) >= 0;
+    var av = p.by === "nagisa"
+      ? '<svg width="30" height="30" viewBox="0 0 64 64"><use href="#mascot"/></svg>'
+      : esc(p.av || "🐾");
+    return '<div class="nk-post' + (p.by === "nagisa" ? " nagisa" : "") + '">' +
+      '<div class="nk-pav">' + av + '</div>' +
+      '<div class="nk-pmain">' +
+        '<div class="nk-phead"><span class="nk-pname">' + esc(p.name) + '</span>' +
+        '<span class="nk-ptime">' + nkAgo(p.t) + '</span></div>' +
+        '<p class="nk-ptext">' + esc(p.text) + '</p>' +
+        '<div class="nk-pact">' +
+          '<button class="nk-paw' + (did ? " did" : "") + '" data-paw="' + p.id + '" title="足あとを残す">🐾 ' + (p.paw || 0) + '</button>' +
+          (p.by === "me" ? '<button class="nk-del" data-del="' + p.id + '">この鳴き声を消す</button>' : '') +
+        '</div>' +
+      '</div></div>';
+  }
+  var nkFeedEl = document.getElementById("nkFeed");
+  function renderNk(){
+    var arr = nkAll();
+    nkFeedEl.innerHTML = arr.length
+      ? arr.map(nkPostHtml).join("")
+      : '<p class="nk-empty">まだ誰も鳴いていません。</p>';
+    document.getElementById("nkMyAv").textContent = myAvatar();
+  }
+  function renderMyNaki(){
+    var mine = nkMine();
+    document.getElementById("myNaki").innerHTML = mine.length
+      ? mine.map(nkPostHtml).join("")
+      : '<p class="nk-empty">まだ鳴いていません。ひろばで、ひと鳴きどうぞ。</p>';
+  }
+  function nkHandleAction(e){
+    var t = e.target.closest ? e.target.closest("[data-paw],[data-del]") : null;
+    if(!t) return;
+    var arr = nkAll();
+    if(t.hasAttribute("data-paw")){
+      var id = t.getAttribute("data-paw");
+      var mine = load(LS_NKPAW, []);
+      var i = mine.indexOf(id);
+      arr.forEach(function(p){ if(p.id === id) p.paw = Math.max(0, (p.paw || 0) + (i >= 0 ? -1 : 1)); });
+      if(i >= 0) mine.splice(i, 1); else mine.push(id);
+      save(LS_NKPAW, mine); save(LS_NK, arr);
+    }else{
+      if(!confirm("この鳴き声を消しますか？")) return;
+      var del = t.getAttribute("data-del");
+      save(LS_NK, arr.filter(function(p){ return p.id !== del; }));
+    }
+    renderNk();
+    if(!myModal.hidden) renderMy();
+  }
+  nkFeedEl.addEventListener("click", nkHandleAction);
+  document.getElementById("myNaki").addEventListener("click", nkHandleAction);
+  var nkTextEl = document.getElementById("nkText");
+  var nkNameEl = document.getElementById("nkName");
+  var nkCountEl = document.getElementById("nkCount");
+  nkNameEl.value = load("zoo-name", "");
+  nkTextEl.addEventListener("input", function(){ nkCountEl.textContent = nkTextEl.value.length + " / 140"; });
+  document.getElementById("nkPost").addEventListener("click", function(){
+    var text = nkTextEl.value.trim();
+    if(!text){ nkTextEl.focus(); return; }
+    var name = nkNameEl.value.trim();
+    if(name) save("zoo-name", name); /* よびなは個体ページと共通 */
+    var arr = nkAll();
+    arr.unshift({id:"p" + Date.now() + Math.random().toString(36).slice(2,6), by:"me",
+                 name:name || "名もなき来園者", av:myAvatar(), t:Date.now(), paw:0, text:text});
+    save(LS_NK, arr);
+    nkTextEl.value = ""; nkCountEl.textContent = "0 / 140";
+    renderNk();
+  });
+  document.getElementById("nkMyAv").addEventListener("click", function(){ openMy(); });
+  document.getElementById("myAv").addEventListener("click", function(){
+    var cur = myAvatar(), next = cur;
+    while(next === cur){ next = AV_POOL[Math.floor(Math.random()*AV_POOL.length)]; }
+    save("zoo-avatar", next);
+    save("zoo-rinne", (parseInt(load("zoo-rinne", 0), 10) || 0) + 1);
+    renderMy(); renderNk();
+  });
+  renderNk();
 
   /* ================= 夜の扉（22:00–2:00） ================= */
   var yoruDoor = document.getElementById("yoruDoor");
