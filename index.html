@@ -1406,20 +1406,9 @@
     </div>
     <div class="series-tabs" id="seriesTabs" role="tablist"></div>
     <div class="series-panel" id="seriesPanel"></div>
-    <div class="yoteichi">
+    <div class="yoteichi" id="yoteichi">
       <div class="yoteichi-head">🚧 増築予定地 — これから建つ舎</div>
-      <div class="yoteichi-grid">
-        <div class="lot"><b>時間舎</b><span>Tempus fugiens ／ 食性: 明日</span></div>
-        <div class="lot"><b>座標舎</b><span>Locus mutans ／ 食性: 環境</span></div>
-        <div class="lot"><b>転生舎</b><span>Renatus quotidianus ／ 食性: 昨日の自分</span></div>
-        <div class="lot"><b>ことば舎</b><span>Verbum irrevocabile ／ 食性: 沈黙</span></div>
-        <div class="lot"><b>お金舎</b><span>Pecunia loquax ／ 食性: 欲望</span></div>
-        <div class="lot"><b>ひとり舎</b><span>Solitudo vulgaris ／ 食性: 通知</span></div>
-        <div class="lot"><b>祭舎</b><span>Festum breve ／ 食性: 三日間</span></div>
-        <div class="lot"><b>檻舎</b><span>Carcer amans ／ 食性: 自由</span></div>
-        <div class="lot"><b>鏡舎</b><span>Speculum verax ／ 食性: 視線</span></div>
-        <div class="lot"><b>忘却舎</b><span>Oblivio patiens ／ 食性: 思い出</span></div>
-      </div>
+      <div class="yoteichi-grid" id="yoteichiGrid"></div>
       <p class="yoteichi-note">※檻舎に入るのは、あなたのほうかもしれません。死生舎の扉は、閉園間際にだけ開くそうです。</p>
     </div>
   </div>
@@ -2110,11 +2099,28 @@
   var panelEl = document.getElementById("seriesPanel");
   var activeSeries = SERIES[0].id;
 
+  function isBuilt(yid){
+    return cmsPosts.some(function(p){ return p.side === "omote" && p.series === yid; });
+  }
   function allSha(){
-    var extra = YOTEI.filter(function(y){
-      return cmsPosts.some(function(p){ return p.side === "omote" && p.series === y.id; });
-    });
+    var extra = YOTEI.filter(function(y){ return isBuilt(y.id); });
     return SERIES.concat(extra);
+  }
+
+  // 増築予定地: まだ建っていない舎だけを並べる（建ったら飼育舎タブへ移る）
+  function renderYoteichi(){
+    var box = document.getElementById("yoteichi");
+    var grid = document.getElementById("yoteichiGrid");
+    if(!box || !grid) return;
+    var pending = YOTEI.filter(function(y){ return !isBuilt(y.id); });
+    grid.innerHTML = "";
+    pending.forEach(function(y){
+      var lot = document.createElement("div");
+      lot.className = "lot";
+      lot.innerHTML = '<b>'+y.name+'</b><span>'+y.plate.g+' ／ 食性: '+y.plate.s+'</span>';
+      grid.appendChild(lot);
+    });
+    box.style.display = pending.length ? "" : "none";
   }
 
   function renderTabs(){
@@ -2885,6 +2891,7 @@
   function refreshSite(){
     renderTabs();
     renderPanel();
+    renderYoteichi();
     renderShokaCms();
     renderKinkyo();
     renderPostList();
@@ -3082,6 +3089,7 @@
   /* ================= init ================= */
   renderTabs();
   renderPanel();
+  renderYoteichi();
   renderZukan();
   renderAllBtn();
   renderChips();
