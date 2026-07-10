@@ -1,0 +1,614 @@
+<!doctype html>
+<html lang="ja">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>鳴き声ひろば — あなたも、一頭になろう。</title>
+<style>
+  :root{
+    --bg:#fef7ec; --panel:#ffffff; --panel2:#fff3dc;
+    --ink:#33291f; --muted:#8a7a68; --faint:#bdae9c;
+    --outline:#33291f;
+    --red:#ff5a4e; --yellow:#ffc226; --blue:#3aa7e8; --green:#4cbf6b; --purple:#9b7ce0;
+    --zoo:#2f7d4f; --wood:#8a5a33;
+    --hi:rgba(255,194,38,.45);
+    --hard:4px 4px 0 var(--outline);
+    --hard-sm:3px 3px 0 var(--outline);
+    --sans:"Hiragino Maru Gothic ProN","HGMaruGothicMPRO","HG丸ｺﾞｼｯｸM-PRO","Yu Gothic","YuGothic","Meiryo",sans-serif;
+    --mono:"Consolas","Menlo",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#272038; --panel:#332b4a; --panel2:#3d3458;
+      --ink:#fdf3e0; --muted:#b5a9c9; --faint:#7d7295;
+      --outline:#171225;
+      --zoo:#3f9e68; --wood:#7a5233;
+      --hi:rgba(255,194,38,.3);
+    }
+  }
+  :root[data-theme="light"]{
+    --bg:#fef7ec; --panel:#ffffff; --panel2:#fff3dc;
+    --ink:#33291f; --muted:#8a7a68; --faint:#bdae9c;
+    --outline:#33291f; --hi:rgba(255,194,38,.45);
+    --zoo:#2f7d4f; --wood:#8a5a33;
+  }
+  :root[data-theme="dark"]{
+    --bg:#272038; --panel:#332b4a; --panel2:#3d3458;
+    --ink:#fdf3e0; --muted:#b5a9c9; --faint:#7d7295;
+    --outline:#171225; --hi:rgba(255,194,38,.3);
+    --zoo:#3f9e68; --wood:#7a5233;
+  }
+  *{box-sizing:border-box}
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  }
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:var(--sans); line-height:1.9; font-size:16px;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+  button{font-family:var(--sans); color:var(--ink)}
+  .wrap{max-width:680px; margin:0 auto; padding:0 20px}
+  mark{background:linear-gradient(transparent 55%, var(--hi) 55%); color:inherit; padding:0 2px}
+  .awning{
+    height:26px;
+    background:
+      radial-gradient(14px 14px at 14px 26px, var(--zoo) 13px, transparent 14px),
+      radial-gradient(14px 14px at 42px 26px, #fffdf6 13px, transparent 14px);
+    background-size:56px 26px; background-repeat:repeat-x;
+  }
+  header{padding:14px 0 4px}
+  .brand-row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:900; font-size:17px; letter-spacing:.04em}
+  .back-link{font-size:12.5px; font-weight:800; color:var(--muted); text-decoration:none; border-bottom:2px dashed var(--faint)}
+  .back-link:hover{color:var(--ink)}
+
+  .btn{
+    appearance:none; border:2.5px solid var(--outline); background:var(--panel);
+    font-size:14.5px; font-weight:800; letter-spacing:.06em;
+    padding:12px 28px; border-radius:14px; cursor:pointer;
+    box-shadow:var(--hard-sm); transition:transform .08s ease, box-shadow .08s ease;
+  }
+  .btn:hover{transform:translate(-1px,-1px); box-shadow:4px 4px 0 var(--outline)}
+  .btn:active{transform:translate(2px,2px); box-shadow:1px 1px 0 var(--outline)}
+  .btn:focus-visible{outline:3px solid var(--blue); outline-offset:2px}
+  .btn-primary{background:var(--zoo); color:#fff}
+  .btn-yellow{background:var(--yellow); color:#33291f}
+  .btn-sm{padding:8px 18px; font-size:13px}
+  .btn-ghost{background:none; border:none; box-shadow:none; text-decoration:underline; color:var(--muted); font-size:12.5px; font-weight:700; padding:6px 8px; cursor:pointer}
+  .btn-ghost:hover{transform:none; box-shadow:none; color:var(--ink)}
+
+  .in-field{
+    font-family:var(--sans); font-size:14px; font-weight:700; color:var(--ink);
+    background:var(--panel2); border:2.5px solid var(--outline); border-radius:10px; padding:9px 12px;
+  }
+  .note{font-size:12px; font-weight:600; color:var(--faint); margin:0}
+
+  /* ---------- 受付（ゲート） ---------- */
+  .gate{padding:36px 0 20px; text-align:center}
+  .gate .big-emoji{font-size:64px; line-height:1; letter-spacing:.1em}
+  .gate h1{font-size:clamp(30px,7vw,44px); font-weight:900; letter-spacing:.06em; line-height:1.5; margin:18px 0 6px}
+  .gate .lead{max-width:30em; margin:14px auto 0; font-size:15px; font-weight:600; color:var(--muted); text-align:left}
+  .gate .lead strong{color:var(--ink)}
+  .gate-board{
+    display:inline-block; margin:22px auto 0; font-size:12.5px; font-weight:800; letter-spacing:.14em;
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:999px;
+    padding:7px 22px; box-shadow:var(--hard-sm);
+  }
+  .gate-actions{margin-top:26px; display:flex; flex-direction:column; gap:12px; align-items:center}
+
+  /* ---------- 診断 ---------- */
+  .quiz{padding:30px 0 40px}
+  .q-progress{display:flex; gap:7px; justify-content:center; margin-bottom:24px}
+  .q-progress span{font-size:17px; opacity:.22; transition:opacity .2s}
+  .q-progress span.hit{opacity:1}
+  .q-card{
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:18px;
+    box-shadow:var(--hard); padding:26px 24px 24px; text-align:center;
+  }
+  .q-no{font-family:var(--mono); font-size:11px; letter-spacing:.22em; color:var(--faint)}
+  .q-text{font-size:clamp(18px,4vw,22px); font-weight:900; line-height:1.9; margin:10px 0 22px}
+  .q-opts{display:flex; flex-direction:column; gap:12px; max-width:420px; margin:0 auto}
+  .q-opt{
+    appearance:none; cursor:pointer; text-align:left;
+    background:var(--panel2); border:2.5px solid var(--outline); border-radius:14px;
+    padding:13px 18px; font-size:14.5px; font-weight:700; line-height:1.8;
+    box-shadow:var(--hard-sm); transition:transform .08s ease;
+  }
+  .q-opt:hover{transform:translate(-1px,-1px); background:var(--hi)}
+  .q-opt:active{transform:translate(2px,2px)}
+
+  /* ---------- 判定結果 ---------- */
+  .res{padding:26px 0 40px; text-align:center}
+  .res-drum{font-size:15px; font-weight:800; color:var(--muted); letter-spacing:.2em}
+  .res-emoji{font-size:96px; line-height:1.3; animation:pop .55s cubic-bezier(.2,1.6,.4,1) both}
+  @keyframes pop{from{transform:scale(.2) rotate(-14deg); opacity:0} to{transform:scale(1) rotate(0); opacity:1}}
+  .res-you{font-size:13px; font-weight:800; letter-spacing:.3em; color:var(--muted); margin-top:6px}
+  .res-name{font-size:clamp(26px,6vw,36px); font-weight:900; letter-spacing:.08em; margin:2px 0 8px}
+  .res-copy{max-width:27em; margin:0 auto; font-size:14.5px; font-weight:600; color:var(--muted); text-align:left}
+  .res-plate{
+    max-width:420px; margin:22px auto 0; text-align:left;
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:14px;
+    box-shadow:var(--hard-sm); overflow:hidden;
+  }
+  .res-plate .rp-bar{background:var(--wood); color:#fff7ea; font-size:12px; font-weight:900; letter-spacing:.18em; padding:7px 16px}
+  .res-plate dl{display:grid; grid-template-columns:auto 1fr; gap:6px 16px; margin:0; padding:14px 18px}
+  .res-plate dt{font-size:11px; font-weight:900; color:var(--faint); letter-spacing:.1em; padding-top:3px}
+  .res-plate dd{margin:0; font-size:13.5px; font-weight:700}
+  .res-axes{max-width:420px; margin:20px auto 0; display:flex; flex-direction:column; gap:10px; text-align:left}
+  .ax{font-size:11.5px; font-weight:800}
+  .ax .ax-lab{display:flex; justify-content:space-between; color:var(--muted); letter-spacing:.06em}
+  .ax .ax-bar{
+    height:14px; border:2px solid var(--outline); border-radius:999px; overflow:hidden;
+    background:var(--panel); margin-top:3px;
+  }
+  .ax .ax-fill{height:100%; background:var(--green); border-right:2px solid var(--outline)}
+  .res-quote{
+    max-width:420px; margin:24px auto 0; text-align:left;
+    background:var(--hi); border:2.5px solid var(--outline); border-radius:14px;
+    box-shadow:var(--hard-sm); padding:16px 18px;
+  }
+  .res-quote .rq-who{display:flex; align-items:center; gap:8px; font-size:12px; font-weight:900; letter-spacing:.08em}
+  .res-quote p{margin:8px 0 0; font-size:15px; font-weight:800; line-height:2}
+  .res-quote .rq-src{display:block; margin-top:6px; font-family:var(--mono); font-size:10.5px; color:var(--muted); letter-spacing:.08em; font-weight:400}
+  .res-entry{max-width:420px; margin:28px auto 0; display:flex; flex-direction:column; gap:10px}
+  .res-entry .row{display:flex; gap:10px}
+  .res-entry .in-field{flex:1; min-width:0}
+
+  /* ---------- ひろば ---------- */
+  .plaza{padding:20px 0 60px}
+  .id-card{
+    display:flex; gap:14px; align-items:center; flex-wrap:wrap;
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:16px;
+    box-shadow:var(--hard-sm); padding:14px 18px; margin-bottom:22px;
+  }
+  .id-emoji{font-size:38px; line-height:1}
+  .id-who{flex:1; min-width:180px}
+  .id-who b{font-size:16px; font-weight:900}
+  .id-who .id-type{font-size:12px; font-weight:800; color:var(--muted)}
+  .id-actions{display:flex; gap:4px; flex-wrap:wrap}
+  .sec-h{font-size:20px; font-weight:900; letter-spacing:.04em; margin:0 0 4px}
+  .sec-p{font-size:13.5px; font-weight:600; color:var(--muted); margin:0 0 18px}
+  .nk-composer{display:flex; gap:12px; align-items:flex-start; margin-bottom:26px}
+  .nk-av{
+    flex:none; width:52px; height:52px; border-radius:50%;
+    background:var(--panel); border:2.5px solid var(--outline); box-shadow:var(--hard-sm);
+    font-size:26px; display:flex; align-items:center; justify-content:center; line-height:1;
+  }
+  .nk-cform{flex:1; min-width:0; display:flex; flex-direction:column; gap:8px}
+  .nk-ta{
+    font-family:var(--sans); font-size:14px; font-weight:600; color:var(--ink); line-height:1.8;
+    background:var(--panel2); border:2.5px solid var(--outline); border-radius:12px;
+    padding:10px 13px; min-height:74px; resize:vertical;
+  }
+  .nk-crow{display:flex; justify-content:space-between; align-items:center; gap:10px}
+  .nk-count{font-family:var(--mono); font-size:11.5px; color:var(--faint); letter-spacing:.06em}
+  .nk-feed{display:flex; flex-direction:column; gap:12px}
+  .nk-post{
+    display:flex; gap:12px; align-items:flex-start; padding:14px 16px;
+    background:var(--panel); border:2.5px solid var(--outline); border-radius:14px; box-shadow:var(--hard-sm);
+  }
+  .nk-post.nagisa{background:var(--hi)}
+  .nk-pav{
+    flex:none; width:40px; height:40px; border-radius:50%; background:var(--panel2);
+    border:2px solid var(--outline); display:flex; align-items:center; justify-content:center;
+    font-size:21px; line-height:1;
+  }
+  .nk-pmain{flex:1; min-width:0}
+  .nk-phead{display:flex; gap:9px; align-items:baseline; flex-wrap:wrap}
+  .nk-pname{font-weight:900; font-size:13.5px}
+  .nk-ptime{font-family:var(--mono); font-size:10.5px; color:var(--faint); letter-spacing:.06em}
+  .nk-ptext{margin:4px 0 9px; font-size:14px; font-weight:600; line-height:1.9; white-space:pre-wrap; overflow-wrap:break-word}
+  .nk-pact{display:flex; gap:10px; align-items:center}
+  .nk-paw{
+    appearance:none; cursor:pointer; font-family:var(--sans);
+    background:var(--panel2); border:2px solid var(--outline); border-radius:999px;
+    padding:3px 12px; font-size:12px; font-weight:800; color:var(--muted);
+  }
+  .nk-paw.did{background:var(--hi); color:var(--ink)}
+  .nk-post.nagisa .nk-paw{background:var(--panel)}
+  .nk-del{
+    appearance:none; cursor:pointer; background:none; border:none;
+    font-size:11.5px; font-weight:700; color:var(--faint); text-decoration:underline; padding:3px 2px;
+  }
+  .nk-empty{font-size:13px; font-weight:600; color:var(--faint)}
+  footer{padding:10px 0 40px}
+  footer .wrap{font-size:12px; font-weight:600; color:var(--faint); line-height:2}
+  [hidden]{display:none!important}
+</style>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="mascot">
+      <circle cx="32" cy="32" r="28" fill="var(--panel, #fff)" stroke="var(--outline,#33291f)" stroke-width="3"/>
+      <path d="M32 11 C42 16 42 30 32 36 C22 30 22 16 32 11 Z" fill="#4cbf6b" stroke="var(--outline,#33291f)" stroke-width="2.5"/>
+      <circle cx="28.5" cy="23" r="1.8" fill="var(--outline,#33291f)"/>
+      <circle cx="35.5" cy="23" r="1.8" fill="var(--outline,#33291f)"/>
+      <path d="M28 27.5 q4 3.4 8 0" fill="none" stroke="var(--outline,#33291f)" stroke-width="2" stroke-linecap="round"/>
+      <path d="M14 45 q9 -8 18 0 t18 0" fill="none" stroke="#3aa7e8" stroke-width="3" stroke-linecap="round"/>
+      <path d="M19 52 q6.5 -6 13 0 t13 0" fill="none" stroke="#3aa7e8" stroke-width="2" stroke-linecap="round" opacity=".55"/>
+    </g>
+  </defs>
+</svg>
+
+<div class="awning" aria-hidden="true"></div>
+<header>
+  <div class="wrap brand-row">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 64 64"><use href="#mascot"/></svg>
+      鳴き声ひろば
+    </div>
+    <a class="back-link" href="index.html">← 本園（柊渚の思考動物園）へ</a>
+  </div>
+</header>
+
+<!-- ========== 受付 ========== -->
+<section id="viewGate" class="gate wrap" hidden>
+  <div class="big-emoji" aria-hidden="true">🦉🦊🐢</div>
+  <h1>あなたも、<br><mark>一頭</mark>になろう。</h1>
+  <p class="lead">人間は、考える動物です。でも最近は「ちゃんとした人間のフリ」に忙しくて、自分がもともと<strong>どんな動物だったか</strong>、忘れがちです。</p>
+  <p class="lead">ここは、来園者が一頭の動物として鳴き交わす広場。入園手続きは、<strong>9つの質問</strong>に答えるだけ。あなたの中に棲んでいる一頭を観察して、プレート（学名・食性・生息地）をお渡しします。</p>
+  <span class="gate-board">🐾 診断無料 ｜ 約2分 ｜ 何度でも転生可</span>
+  <div class="gate-actions">
+    <button class="btn btn-primary" id="startQuiz">入園手続きをはじめる</button>
+    <button class="btn-ghost" id="skipQuiz">診断せずに、名もなき来園者として入る</button>
+  </div>
+</section>
+
+<!-- ========== 診断 ========== -->
+<section id="viewQuiz" class="quiz wrap" hidden>
+  <div class="q-progress" id="qProgress" aria-hidden="true"></div>
+  <div class="q-card">
+    <div class="q-no" id="qNo">QUESTION 1 / 9</div>
+    <p class="q-text" id="qText"></p>
+    <div class="q-opts" id="qOpts"></div>
+  </div>
+</section>
+
+<!-- ========== 判定結果 ========== -->
+<section id="viewResult" class="res wrap" hidden>
+  <p class="res-drum">🐾 判定の結果……あなたは 🐾</p>
+  <div class="res-emoji" id="resEmoji">🦉</div>
+  <p class="res-you">YOUR SPECIES</p>
+  <h2 class="res-name" id="resName"></h2>
+  <p class="res-copy" id="resCopy"></p>
+  <div class="res-plate">
+    <div class="rp-bar">解説プレート</div>
+    <dl id="resPlate"></dl>
+  </div>
+  <div class="res-axes" id="resAxes"></div>
+  <div class="res-quote">
+    <div class="rq-who"><svg width="22" height="22" viewBox="0 0 64 64"><use href="#mascot"/></svg> この個体へ、柊渚からひとこと（本人の文章より）</div>
+    <p id="resQuote"></p>
+  </div>
+  <div class="res-entry" id="resEntry">
+    <div class="row">
+      <input class="in-field" id="entryName" maxlength="20" placeholder="この一頭の、よびな（例: たけだ）">
+      <button class="btn btn-primary" id="entryGo">この一頭として入園</button>
+    </div>
+    <p class="note">※この試作の「アカウント」は、この端末のブラウザに保存される仮のものです。実サイトでは会員登録（メール＋パスワード）になり、どの端末でも同じ一頭が続きます。</p>
+  </div>
+  <div class="res-entry" id="resBackOnly" hidden>
+    <button class="btn" id="resBack">ひろばへもどる</button>
+  </div>
+</section>
+
+<!-- ========== ひろば ========== -->
+<section id="viewPlaza" class="plaza wrap" hidden>
+  <div class="id-card">
+    <span class="id-emoji" id="idEmoji">🐾</span>
+    <div class="id-who">
+      <b id="idName">名もなき来園者</b>
+      <div class="id-type" id="idType"></div>
+    </div>
+    <div class="id-actions">
+      <button class="btn-ghost" id="showPlate">プレートをみる</button>
+      <button class="btn-ghost" id="rebirth">もういちど診断（転生）</button>
+      <button class="btn-ghost" id="renameBtn">よびなを変える</button>
+    </div>
+  </div>
+
+  <h2 class="sec-h">📣 みんなの鳴き声</h2>
+  <p class="sec-p">ここでは、あなたも展示個体のひとり。いま頭の中にいる考えごとを、ひと鳴きどうぞ。気に入った鳴き声には 🐾 の足あとを。</p>
+
+  <div class="nk-composer">
+    <span class="nk-av" id="nkMyAv">🐾</span>
+    <div class="nk-cform">
+      <textarea id="nkText" class="nk-ta" maxlength="140" placeholder="いま、あなたの頭の中にいる生き物は？（140字まで）"></textarea>
+      <div class="nk-crow">
+        <span class="nk-count" id="nkCount">0 / 140</span>
+        <button class="btn btn-primary" id="nkPost">鳴く</button>
+      </div>
+    </div>
+  </div>
+  <div class="nk-feed" id="nkFeed"></div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>この試作では、鳴き声とアカウントはあなたの端末にだけ保存されます。実サイトでは、全来園者のタイムラインと本物の会員登録がここに入ります。</p>
+    <p>遊びの診断で足りなくなったら——本気で自分を観察する場所は、<a href="index.html#ura">本園の閉園後</a>にあります。</p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  function load(k,d){ try{ var v = JSON.parse(localStorage.getItem(k)); return v === null || v === undefined ? d : v; }catch(e){ return d; } }
+  function save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} }
+  function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+  function $(id){ return document.getElementById(id); }
+
+  /* ========== 診断データ ==========
+     3軸×3問=9問。軸: A=頭の向き(観察I⇄表現E) / B=決め方(熟考T⇄直感F) / C=過ごし方(単独S⇄群れG)
+     ※質問と型の説明文は遊びの仮コピー。「柊渚からひとこと」だけは本人の逐語引用（発明しない）。 */
+  var QUESTIONS = [
+    {axis:"A", text:"考えごとがまとまるのは、どっちのとき？",
+     opts:[{t:"ひとりで歩いているとき", v:0},{t:"人にしゃべっているとき", v:1}]},
+    {axis:"C", text:"日曜の予定が、急になくなった。正直——",
+     opts:[{t:"やった、ひとりの時間だ", v:0},{t:"だれか誘おう。思い立ったが吉日", v:1}]},
+    {axis:"B", text:"頭に「いい考え」が浮かんだ。次の瞬間には——",
+     opts:[{t:"穴がないか、ひっくり返して眺める", v:0},{t:"もう動きはじめている", v:1}]},
+    {axis:"A", text:"SNSでのあなたは？",
+     opts:[{t:"見る専門。心の中でつっこむ", v:0},{t:"思ったことは、わりと口に出る", v:1}]},
+    {axis:"C", text:"グループ旅行での、あなたの役割は？",
+     opts:[{t:"気づいたら別行動している係", v:0},{t:"みんなの意見をまとめる係", v:1}]},
+    {axis:"B", text:"「なんでそう思うの？」と聞かれたら——",
+     opts:[{t:"理由を順番に説明できる。むしろ得意", v:0},{t:"「なんとなく。でも当たるんだ」", v:1}]},
+    {axis:"A", text:"動物園で、いちばん好きな瞬間は？",
+     opts:[{t:"動物と目が合った（気がした）瞬間", v:0},{t:"「見て見て！」とだれかを呼ぶ瞬間", v:1}]},
+    {axis:"C", text:"悩みごとができたとき、まず——",
+     opts:[{t:"自分の中で決着をつけたい", v:0},{t:"だれかに話したい", v:1}]},
+    {axis:"B", text:"初めての街に着いた。まず——",
+     opts:[{t:"地図を見て、回る順番を決める", v:0},{t:"おもしろそうな方へ歩き出す", v:1}]}
+  ];
+  /* key = A(0=観察I/1=表現E) + B(0=熟考T/1=直感F) + C(0=単独S/1=群れG) */
+  var TYPES = {
+    "000":{emoji:"🦉", name:"よふかしフクロウ",
+      copy:"暗くなってから頭が回りだす、観察の名手。にぎやかな昼間は気配を消していますが、その目は誰よりもよく見ています。答えを急かされるのが苦手で、じっくり抱えた問いほど遠くまで飛びます。",
+      plate:{g:"Bubo cogitans", s:"夜のしずけさと、解けない問い", h:"消灯後のベッドの中", t:"考えごとの長距離飛行"},
+      quote:"どうせ死ぬなら、お前は何者として生きるのか。", src:"Still life — 宣言"},
+    "001":{emoji:"🐢", name:"ながいきリクガメ",
+      copy:"あわてず、さぼらず、忘れず。まわりが走り出しても自分の歩幅を変えない、積み重ねの達人です。派手さはないのに、気づけばいちばん遠くまで来ているタイプ。仲間の帰る場所にもなります。",
+      plate:{g:"Testudo perseverans", s:"積み重ねと、決まった手順", h:"いつもの席", t:"一歩ずつで、どこまでも行く"},
+      quote:"毎回の授業までの準備も徹底的に行い、授業が反復する装置となるようにした。", src:"柊渚・中2の原体験"},
+    "010":{emoji:"🦊", name:"きまぐれキツネ",
+      copy:"地図にない小道を選んで、なぜか近道になっている。ひらめきで動く単独行の賢者です。説明はうまくできないのに当たる直感は、ひとりの時間にたっぷり観察を溜めているから。",
+      plate:{g:"Vulpes intuens", s:"ひらめきと、寄り道", h:"地図にない小道", t:"正解への近道を嗅ぎ当てる"},
+      quote:"努力は必要ないかもしれないという仮説だ。", src:"誕生とは、羊水からの解放である"},
+    "011":{emoji:"🐿️", name:"あつめずきリス",
+      copy:"小さな発見を拾っては、だれかに「ねえ、これ」と見せたくなる収集家。輪の中にいるのが好きなのに、観察眼は静かで鋭い。あなたの蓄えは、忘れたころに誰かを助けます。",
+      plate:{g:"Sciurus colligens", s:"小さな発見と、あいづち", h:"にぎやかな木の上", t:"あとで効いてくる蓄え"},
+      quote:"自分が変わるから環境が変わるのではなく、環境が自分を変える。", src:"誕生とは、羊水からの解放である"},
+    "100":{emoji:"🐺", name:"いっぴきオオカミ",
+      copy:"群れのすこし外側から、言うべきことは言う。孤高に見えて、実は誰より筋を通したいだけの正直者です。納得できないまま頷けない性分は、遠吠え（本音）の射程の長さでもあります。",
+      plate:{g:"Canis solitarius", s:"納得と、静かな決意", h:"群れのすこし外側", t:"遠吠え（本音）がよく通る"},
+      quote:"捨てることでしか得られないものだ。", src:"誕生とは、羊水からの解放である"},
+    "101":{emoji:"🐘", name:"おぼえてるゾウ",
+      copy:"長い話を最後まで聞けて、みんなの顔と約束を忘れない。輪の真ん中のすこし後ろから、群れ全体を支える大黒柱です。急がないのは鈍いからではなく、運んでいるものが大きいから。",
+      plate:{g:"Elephas memorans", s:"長い話と、みんなの顔", h:"輪の真ん中の、すこし後ろ", t:"ぜったいに忘れない"},
+      quote:"全ての人が、全ての人で在り続ける社会。", src:"stilllife の哲学"},
+    "110":{emoji:"🦅", name:"かぜよみタカ",
+      copy:"考えるより先に翼が動く、単独滑空の狩人。高いところから全体を見て、風が変わった瞬間に誰より早く動きます。囲いのある場所が苦手なのは、飛べる翼を持っている証拠です。",
+      plate:{g:"Aquila improvisa", s:"風向きと、勝機", h:"高いところ", t:"考えるより先に、翼が動く"},
+      quote:"制限されるからこそ、そこを飛び出たいという欲が湧く。", src:"誕生とは、羊水からの解放である"},
+    "111":{emoji:"🦜", name:"おしゃべりインコ",
+      copy:"思ったことが口から先に生まれてくる、広場の人気者。しゃべりながら考えがまとまっていく生態で、あなたの一声で場の空気が動きます。鳴き声ひろばの、いわば主役です。",
+      plate:{g:"Psittacus resonans", s:"会話と、拍手", h:"人だかりの中心", t:"思ったことが、口から先に生まれる"},
+      quote:"僕のアウトプットは、羊水を作ること。", src:"誕生とは、羊水からの解放である"}
+  };
+  var AXES_LABEL = {A:["観察", "表現"], B:["熟考", "直感"], C:["単独", "群れ"]};
+
+  /* ========== ビュー切替 ========== */
+  var views = ["viewGate","viewQuiz","viewResult","viewPlaza"];
+  function show(id){
+    views.forEach(function(v){ $(v).hidden = v !== id; });
+    window.scrollTo(0, 0);
+  }
+
+  /* ========== 診断の進行 ========== */
+  var answers = [];   // {axis, v}
+  var qi = 0;
+  function renderProgress(){
+    $("qProgress").innerHTML = QUESTIONS.map(function(_, i){
+      return '<span class="' + (i <= qi ? "hit" : "") + '">🐾</span>';
+    }).join("");
+  }
+  function renderQ(){
+    var q = QUESTIONS[qi];
+    $("qNo").textContent = "QUESTION " + (qi + 1) + " / " + QUESTIONS.length;
+    $("qText").textContent = q.text;
+    $("qOpts").innerHTML = q.opts.map(function(o, i){
+      return '<button class="q-opt" data-i="' + i + '">' + esc(o.t) + '</button>';
+    }).join("");
+    renderProgress();
+  }
+  $("qOpts").addEventListener("click", function(e){
+    var b = e.target.closest("[data-i]");
+    if(!b) return;
+    var q = QUESTIONS[qi];
+    answers.push({axis:q.axis, v:q.opts[parseInt(b.getAttribute("data-i"), 10)].v});
+    qi++;
+    if(qi < QUESTIONS.length){ renderQ(); }
+    else{ finishQuiz(); }
+  });
+  function tally(){
+    var sc = {A:0, B:0, C:0};
+    answers.forEach(function(a){ sc[a.axis] += a.v; });
+    return sc; // 各軸 0〜3。2以上で右側(E/F/G)
+  }
+  function finishQuiz(){
+    var sc = tally();
+    var key = (sc.A >= 2 ? "1" : "0") + (sc.B >= 2 ? "1" : "0") + (sc.C >= 2 ? "1" : "0");
+    var shindan = {key:key, scores:sc, t:Date.now()};
+    save("zoo-shindan", shindan);
+    save("zoo-avatar", TYPES[key].emoji); // 本園のアバターとも連動
+    renderResult(shindan, true);
+    show("viewResult");
+  }
+
+  /* ========== 結果表示 ========== */
+  function renderResult(shindan, withEntry){
+    var ty = TYPES[shindan.key];
+    $("resEmoji").textContent = ty.emoji;
+    $("resName").textContent = ty.name + " 型";
+    $("resCopy").textContent = ty.copy;
+    $("resPlate").innerHTML =
+      "<dt>学名</dt><dd>" + esc(ty.plate.g) + "</dd>" +
+      "<dt>食性</dt><dd>" + esc(ty.plate.s) + "</dd>" +
+      "<dt>生息地</dt><dd>" + esc(ty.plate.h) + "</dd>" +
+      "<dt>特技</dt><dd>" + esc(ty.plate.t) + "</dd>";
+    $("resAxes").innerHTML = ["A","B","C"].map(function(ax){
+      var right = shindan.scores[ax];            // 0〜3 (右側の点数)
+      var pct = Math.round((3 - right) / 3 * 100); // 左側の割合
+      var lab = AXES_LABEL[ax];
+      return '<div class="ax"><div class="ax-lab"><span>' + lab[0] + ' ' + pct + '%</span><span>' + lab[1] + ' ' + (100 - pct) + '%</span></div>' +
+        '<div class="ax-bar"><div class="ax-fill" style="width:' + pct + '%"></div></div></div>';
+    }).join("");
+    $("resQuote").innerHTML = "「" + esc(ty.quote) + "」<span class='rq-src'>— " + esc(ty.src) + "</span>";
+    $("resEntry").hidden = !withEntry;
+    $("resBackOnly").hidden = withEntry;
+    if(withEntry){ $("entryName").value = load("zoo-name", ""); }
+  }
+  $("entryGo").addEventListener("click", function(){
+    var n = $("entryName").value.trim();
+    save("zoo-name", n || "名もなき来園者");
+    enterPlaza();
+  });
+  $("resBack").addEventListener("click", enterPlaza);
+
+  /* ========== ひろば（タイムライン: 本園と同じlocalStorageを共有） ==========
+     実サイトではこの読み書きをSupabase等のAPIに差し替えると全来園者共有になる。 */
+  var LS_NK = "hiroba-posts", LS_NKPAW = "hiroba-mypaw";
+  function nkAll(){
+    var arr = load(LS_NK, null);
+    if(!arr){
+      /* 柊渚のシード投稿。哲学の文言は本人の逐語引用のみ（発明しない） */
+      arr = [
+        {id:"seed2", by:"nagisa", name:"柊渚", t:Date.now()-64*60000, paw:2,
+         text:"「どうせ死ぬなら、お前は何者として生きるのか。」——今週も、この問いから開園します。"},
+        {id:"seed1", by:"nagisa", name:"柊渚", t:Date.now()-180*60000, paw:3,
+         text:"ひろばを開きました。ここでは、来園者も鳴いていい。いま頭の中にいる生き物を、ひと鳴きどうぞ。"}
+      ];
+      save(LS_NK, arr);
+    }
+    return arr;
+  }
+  function nkAgo(t){
+    var s = Math.floor((Date.now() - t) / 1000);
+    if(s < 60) return "たった今";
+    if(s < 3600) return Math.floor(s/60) + "分前";
+    if(s < 86400) return Math.floor(s/3600) + "時間前";
+    return Math.floor(s/86400) + "日前";
+  }
+  function myEmoji(){
+    var sh = load("zoo-shindan", null);
+    return sh ? TYPES[sh.key].emoji : (load("zoo-avatar", "") || "🐾");
+  }
+  function nkPostHtml(p){
+    var did = load(LS_NKPAW, []).indexOf(p.id) >= 0;
+    var av = p.by === "nagisa"
+      ? '<svg width="30" height="30" viewBox="0 0 64 64"><use href="#mascot"/></svg>'
+      : esc(p.av || "🐾");
+    return '<div class="nk-post' + (p.by === "nagisa" ? " nagisa" : "") + '">' +
+      '<div class="nk-pav">' + av + '</div>' +
+      '<div class="nk-pmain">' +
+        '<div class="nk-phead"><span class="nk-pname">' + esc(p.name) + '</span>' +
+        '<span class="nk-ptime">' + nkAgo(p.t) + '</span></div>' +
+        '<p class="nk-ptext">' + esc(p.text) + '</p>' +
+        '<div class="nk-pact">' +
+          '<button class="nk-paw' + (did ? " did" : "") + '" data-paw="' + p.id + '" title="足あとを残す">🐾 ' + (p.paw || 0) + '</button>' +
+          (p.by === "me" ? '<button class="nk-del" data-del="' + p.id + '">この鳴き声を消す</button>' : '') +
+        '</div>' +
+      '</div></div>';
+  }
+  function renderFeed(){
+    var arr = nkAll();
+    $("nkFeed").innerHTML = arr.length
+      ? arr.map(nkPostHtml).join("")
+      : '<p class="nk-empty">まだ誰も鳴いていません。</p>';
+  }
+  $("nkFeed").addEventListener("click", function(e){
+    var t = e.target.closest("[data-paw],[data-del]");
+    if(!t) return;
+    var arr = nkAll();
+    if(t.hasAttribute("data-paw")){
+      var id = t.getAttribute("data-paw");
+      var mine = load(LS_NKPAW, []);
+      var i = mine.indexOf(id);
+      arr.forEach(function(p){ if(p.id === id) p.paw = Math.max(0, (p.paw || 0) + (i >= 0 ? -1 : 1)); });
+      if(i >= 0) mine.splice(i, 1); else mine.push(id);
+      save(LS_NKPAW, mine); save(LS_NK, arr);
+    }else{
+      if(!confirm("この鳴き声を消しますか？")) return;
+      var del = t.getAttribute("data-del");
+      arr = arr.filter(function(p){ return p.id !== del; });
+      save(LS_NK, arr);
+    }
+    renderFeed();
+  });
+  var nkText = $("nkText"), nkCount = $("nkCount");
+  nkText.addEventListener("input", function(){ nkCount.textContent = nkText.value.length + " / 140"; });
+  $("nkPost").addEventListener("click", function(){
+    var text = nkText.value.trim();
+    if(!text){ nkText.focus(); return; }
+    var arr = nkAll();
+    arr.unshift({id:"p" + Date.now() + Math.random().toString(36).slice(2,6), by:"me",
+                 name:load("zoo-name", "") || "名もなき来園者", av:myEmoji(), t:Date.now(), paw:0, text:text});
+    save(LS_NK, arr);
+    nkText.value = ""; nkCount.textContent = "0 / 140";
+    renderFeed();
+  });
+
+  /* ========== IDカード ========== */
+  function renderId(){
+    var sh = load("zoo-shindan", null);
+    $("idEmoji").textContent = myEmoji();
+    $("idName").textContent = load("zoo-name", "") || "名もなき来園者";
+    var rinne = parseInt(load("zoo-rinne", 0), 10) || 0;
+    $("idType").textContent = sh
+      ? TYPES[sh.key].name + " 型" + (rinne ? "（転生 " + rinne + " 回）" : "")
+      : "未診断の一頭";
+    $("showPlate").hidden = !sh;
+    $("nkMyAv").textContent = myEmoji();
+  }
+  $("showPlate").addEventListener("click", function(){
+    var sh = load("zoo-shindan", null);
+    if(!sh) return;
+    renderResult(sh, false);
+    show("viewResult");
+  });
+  $("rebirth").addEventListener("click", function(){
+    save("zoo-rinne", (parseInt(load("zoo-rinne", 0), 10) || 0) + 1);
+    answers = []; qi = 0;
+    renderQ();
+    show("viewQuiz");
+  });
+  $("renameBtn").addEventListener("click", function(){
+    var n = prompt("あたらしい、よびなは？", load("zoo-name", ""));
+    if(n === null) return;
+    save("zoo-name", n.trim() || "名もなき来園者");
+    renderId();
+  });
+
+  function enterPlaza(){
+    renderId(); renderFeed();
+    show("viewPlaza");
+  }
+
+  /* ========== 起動 ========== */
+  $("startQuiz").addEventListener("click", function(){
+    answers = []; qi = 0;
+    renderQ();
+    show("viewQuiz");
+  });
+  $("skipQuiz").addEventListener("click", function(){
+    if(!load("zoo-name", "")) save("zoo-name", "名もなき来園者");
+    enterPlaza();
+  });
+  /* アカウント（診断済み or よびな登録済み）ならひろばへ、初来園なら受付へ */
+  if(load("zoo-shindan", null) || load("zoo-name", "")){ enterPlaza(); }
+  else{ show("viewGate"); }
+})();
+</script>
+</html>
