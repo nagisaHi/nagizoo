@@ -749,53 +749,96 @@
     text-decoration:none; border-bottom:1px solid transparent; padding-bottom:3px;
   }
   #ura .ura-nav a:hover,#ura .ura-nav a:focus-visible{color:#e3e1dc; border-color:#8b8a92}
-  /* --- エッセイ棚（タイトルと球体の間） --- */
-  #ura .tana{width:100%; max-width:40em; margin:34px auto 0; text-align:left}
+  /* --- エッセイ（ブログ型カードグリッド: タイトルと球体の間） --- */
+  #ura .tana{
+    width:min(94vw, 1200px); position:relative; left:50%; transform:translateX(-50%);
+    margin:34px 0 0; text-align:left;
+  }
   #ura .tana-h{margin:0 0 6px; font-family:var(--mono); font-size:11px; letter-spacing:.3em; color:#9a98a0}
   #ura .tana-h .tana-en{color:#5b5a63; letter-spacing:.18em; margin-left:12px; text-transform:lowercase}
-  #ura .tana-lead{margin:0 0 18px; font-size:12.5px; color:#8b8a92; line-height:2}
-  #ura .tana-list{display:flex; flex-direction:column; border-top:1px solid #232329}
-  #ura .tana-list[hidden]{display:none}
-  #ura .tana-row{
-    display:flex; gap:14px; align-items:baseline; width:100%; text-align:left;
-    background:none; border:none; border-bottom:1px solid #232329; cursor:pointer;
-    padding:13px 4px; color:#c9c7c2; font-family:var(--sans);
+  #ura .tana-lead{margin:0 0 22px; font-size:12.5px; color:#8b8a92; line-height:2}
+  #ura .ess-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:26px 18px}
+  @media (max-width:980px){#ura .ess-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:520px){#ura .ess-grid{grid-template-columns:1fr}}
+  #ura .ess-card{display:block; text-decoration:none; color:inherit}
+  #ura .ess-thumb{
+    position:relative; aspect-ratio:16/10; overflow:hidden;
+    background:#17161c; border:1px solid #26252c;
   }
-  #ura .tana-row:hover .t-title,#ura .tana-row:focus-visible .t-title{color:#ffffff}
-  #ura .tana-row .t-date{font-family:var(--mono); font-size:10.5px; color:#5b5a63; letter-spacing:.08em; flex:none}
-  #ura .tana-row .t-title{flex:1; font-size:14px; font-weight:600; transition:color .2s}
-  #ura .tana-row .t-tag{font-family:var(--mono); font-size:10px; color:#8b8a92; letter-spacing:.12em; flex:none}
+  #ura .ess-thumb img{width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.92)}
+  #ura .ess-card:hover .ess-thumb img{filter:saturate(1)}
+  #ura .ess-excerpt{
+    display:block; padding:15px 15px 40px; font-family:var(--min); font-size:12.5px;
+    color:#a3a1a8; line-height:2.1; letter-spacing:.02em; overflow:hidden; max-height:100%;
+  }
+  #ura .ess-badge{
+    position:absolute; top:0; left:0; z-index:2;
+    font-size:11px; font-weight:800; letter-spacing:.14em; padding:4px 12px; color:#fff;
+  }
+  #ura .ess-badge.paid{background:#e8590c}
+  #ura .ess-badge.free{background:#2e7d54}
+  #ura .ess-title{
+    position:absolute; left:0; right:0; bottom:0; z-index:2;
+    background:rgba(10,10,12,.84); color:#f2f0eb;
+    font-size:13.5px; font-weight:700; line-height:1.7; padding:7px 12px 8px;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+  }
+  #ura .ess-card:hover .ess-title{background:rgba(10,10,12,.96); color:#fff}
+  #ura .ess-meta{
+    display:flex; align-items:center; gap:6px; margin:9px 2px 0;
+    font-family:var(--mono); font-size:11px; letter-spacing:.08em; color:#8b8a92;
+  }
+  #ura .ess-cat{margin:8px 2px 0}
+  #ura .ess-cat span{
+    display:inline-block; font-size:10.5px; color:#8b8a92; letter-spacing:.1em;
+    border:1px solid #33323a; border-radius:999px; padding:2px 12px;
+  }
   #ura .tana-empty{
     font-size:12.5px; color:#5b5a63; line-height:2; margin:0;
     border-top:1px solid #232329; border-bottom:1px solid #232329; padding:16px 4px;
   }
-  #ura .tana-reader{margin:6px 0 0}
-  #ura .tana-close{
-    background:none; border:none; cursor:pointer; padding:4px 0;
-    font-family:var(--mono); font-size:11px; letter-spacing:.18em; color:#8b8a92;
+  #ura .ess-more{display:flex; justify-content:center; margin:30px 0 0}
+  #ura .ess-more button{
+    background:none; border:1px solid #33323a; color:#c9c7c2; cursor:pointer;
+    font-family:var(--mono); font-size:11.5px; letter-spacing:.2em; padding:12px 34px;
   }
-  #ura .tana-close:hover{color:#e3e1dc}
-  #ura .tana-date{margin:20px 0 2px; font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:#5b5a63}
-  #ura .tana-title{
-    margin:0 0 26px; font-family:var(--min); font-size:22px; font-weight:600;
-    letter-spacing:.04em; line-height:1.9; color:#f2f0eb;
+  #ura .ess-more button:hover{border-color:#8b8a92}
+
+  /* --- エッセイ別ページ（#essay-<id>） --- */
+  #essayPage{
+    --min:"Yu Mincho","YuMincho","Hiragino Mincho ProN","MS PMincho",serif;
+    min-height:100vh; background:#0b0b0c; color:#e3e1dc; font-family:var(--sans); font-weight:500;
   }
-  #ura .tana-body{font-family:var(--min); font-size:15.5px; line-height:2.35; letter-spacing:.02em; color:#d9d7d2}
-  #ura .tana-body p{margin:0 0 1.7em !important}
-  /* 課金ライン: 本文の末尾をフェードで沈めて「続きを読むには」 */
-  #ura .tana-paywall{position:relative; margin-top:-104px; padding-top:128px; text-align:center}
-  #ura .pw-fade{
+  #essayPage .ep-inner{max-width:40em; margin:0 auto; padding:56px 26px 120px}
+  #essayPage .ep-back{font-family:var(--mono); font-size:11px; letter-spacing:.18em; color:#8b8a92; text-decoration:none}
+  #essayPage .ep-back:hover{color:#e3e1dc}
+  #essayPage .ep-meta{display:flex; align-items:center; gap:14px; margin:44px 0 12px}
+  #essayPage .ep-badge{font-size:11px; font-weight:800; letter-spacing:.14em; padding:3px 12px; color:#fff}
+  #essayPage .ep-badge.paid{background:#e8590c}
+  #essayPage .ep-badge.free{background:#2e7d54}
+  #essayPage .ep-date{font-family:var(--mono); font-size:11px; letter-spacing:.14em; color:#5b5a63}
+  #essayPage .ep-title{
+    margin:0 0 36px; font-family:var(--min); font-size:clamp(22px,4.6vw,30px);
+    font-weight:600; letter-spacing:.04em; line-height:1.9; color:#f2f0eb;
+  }
+  #essayPage .ep-body{font-family:var(--min); font-size:15.5px; line-height:2.35; letter-spacing:.02em; color:#d9d7d2}
+  #essayPage .ep-body p{margin:0 0 1.7em !important}
+  #essayPage .ep-paywall{position:relative; margin-top:-104px; padding-top:128px; text-align:center}
+  #essayPage .pw-fade{
     position:absolute; top:0; left:0; right:0; height:112px; pointer-events:none;
     background:linear-gradient(rgba(11,11,12,0), #0b0b0c 82%);
   }
-  #ura .pw-line{font-family:var(--mono); font-size:11px; letter-spacing:.5em; text-indent:.5em; color:#9a98a0; margin:0 0 16px}
-  #ura .pw-copy{font-size:13px; color:#8b8a92; line-height:2.2; margin:0 0 20px}
-  #ura .pw-actions{margin:0 0 8px}
-  #ura .pw-actions a{
+  #essayPage .pw-line{font-family:var(--mono); font-size:11px; letter-spacing:.5em; text-indent:.5em; color:#9a98a0; margin:0 0 16px}
+  #essayPage .pw-copy{font-size:13px; color:#8b8a92; line-height:2.2; margin:0 0 20px}
+  #essayPage .pw-actions{margin:0 0 8px}
+  #essayPage .pw-actions a{
     display:inline-block; font-family:var(--mono); font-size:11.5px; letter-spacing:.18em;
     color:#e3e1dc; text-decoration:none; border:1px solid #3a3942; padding:12px 26px;
   }
-  #ura .pw-actions a:hover{border-color:#8b8a92}
+  #essayPage .pw-actions a:hover{border-color:#8b8a92}
+  #essayPage .ep-foot{margin:70px 0 0; text-align:center}
+  #essayPage .ep-foot a{font-family:var(--mono); font-size:11px; letter-spacing:.18em; color:#8b8a92; text-decoration:none}
+  #essayPage .ep-foot a:hover{color:#e3e1dc}
   /* --- 卵子の見取り図（球体・触れると分裂） --- */
   #ura .ovum{position:relative; width:min(84vw,460px); aspect-ratio:1/1; margin:46px auto 6px; touch-action:manipulation}
   #ura .ovum-glow{
@@ -1851,20 +1894,9 @@
       <div class="tana" id="uraTana">
         <p class="tana-h">エッセイ<span class="tana-en">essays</span></p>
         <p class="tana-lead">あむに君が、自分の輪郭を言葉にしていく棚。書きはじめは、だれでも読めます。続きは、全園パスの領分。</p>
-        <div class="tana-list" id="tanaList"></div>
+        <div class="ess-grid" id="essGrid"></div>
         <p class="tana-empty" id="tanaEmpty" hidden>棚はまだ空です。管理室（表の⚙）から「裏 — エッセイ」に投稿すると、ここに並びます。</p>
-        <article class="tana-reader" id="tanaReader" hidden>
-          <button class="tana-close" id="tanaClose">← 棚へもどる</button>
-          <p class="tana-date" id="tanaDate"></p>
-          <h3 class="tana-title" id="tanaTitle"></h3>
-          <div class="tana-body" id="tanaBody"></div>
-          <div class="tana-paywall" id="tanaPaywall" hidden>
-            <div class="pw-fade" aria-hidden="true"></div>
-            <p class="pw-line">続きを読むには</p>
-            <p class="pw-copy">ここから先は、全園パス（月4,000円）の領分です。<br>この棚の全文と、書架の全論考、表の全5舎がひらきます。</p>
-            <p class="pw-actions"><a href="#ura-meiroku" data-ring="meiroku">目録で「全園パス」を見る</a></p>
-          </div>
-        </article>
+        <div class="ess-more" id="essMoreWrap" hidden><button id="essMoreBtn">↺ もっと表示</button></div>
       </div>
       <div class="namimon ovum" id="ovum" role="navigation" aria-label="裏の見取り図（卵子）">
         <div class="ovum-glow" aria-hidden="true"></div>
@@ -2181,6 +2213,22 @@
         <div class="um-body" id="umBody"></div>
       </div>
     </div>
+  </div>
+</div>
+
+<div id="essayPage" hidden>
+  <div class="ep-inner">
+    <a class="ep-back" href="#ura">← still life（エッセイ一覧）へ</a>
+    <p class="ep-meta"><span class="ep-badge" id="epBadge"></span><span class="ep-date" id="epDate"></span></p>
+    <h1 class="ep-title" id="epTitle"></h1>
+    <div class="ep-body" id="epBody"></div>
+    <div class="ep-paywall" id="epPaywall" hidden>
+      <div class="pw-fade" aria-hidden="true"></div>
+      <p class="pw-line">続きを読むには</p>
+      <p class="pw-copy">ここから先は、全園パス（月4,000円）の領分です。<br>エッセイの全文と、書架の全論考、表の全5舎がひらきます。</p>
+      <p class="pw-actions"><a href="#ura" id="epCta">目録で「全園パス」を見る</a></p>
+    </div>
+    <p class="ep-foot"><a href="#ura">← 一覧へもどる</a></p>
   </div>
 </div>
 
@@ -2751,16 +2799,23 @@
   var omoteEl = document.getElementById("omote");
   var uraEl = document.getElementById("ura");
   var adminEl = document.getElementById("admin");
+  var essayEl = document.getElementById("essayPage");
   var prevMode = null;
   function route(){
     var h = location.hash;
-    var mode = (h === "#admin") ? "admin" : (h.indexOf("#ura") === 0 ? "ura" : "omote");
+    var mode = (h === "#admin") ? "admin"
+      : (h.indexOf("#essay-") === 0 ? "essay"
+      : (h.indexOf("#ura") === 0 ? "ura" : "omote"));
     omoteEl.hidden = mode !== "omote";
     uraEl.hidden = mode !== "ura";
     adminEl.hidden = mode !== "admin";
-    document.body.classList.toggle("ura-mode", mode === "ura");
-    document.title = mode === "ura" ? "still life" : (mode === "admin" ? "管理室" : "あむに君の思考動物園");
-    if(mode !== prevMode && (mode === "ura" || mode === "admin")){
+    essayEl.hidden = mode !== "essay";
+    document.body.classList.toggle("ura-mode", mode === "ura" || mode === "essay");
+    if(mode !== "essay"){
+      document.title = mode === "ura" ? "still life" : (mode === "admin" ? "管理室" : "あむに君の思考動物園");
+    }
+    if(mode === "essay") renderEssayPage();
+    if(mode !== prevMode && (mode === "ura" || mode === "admin" || mode === "essay")){
       window.scrollTo(0,0);
       if(window.speechSynthesis) speechSynthesis.cancel();
     }
@@ -3253,40 +3308,73 @@
     renderTana();
   }
 
-  /* ================= 裏エッセイ棚（タイトルと球体の間） =================
-     管理室の「裏」投稿が読みやすい棚として並ぶ。本文中の [続き] が課金ライン——
-     無料でない記事は、全園パスがない読者にはそこから先を伏せて「続きを読むには」を出す。 */
+  /* ================= 裏エッセイ（ブログ型カードグリッド+別ページ） =================
+     管理室の「裏」投稿がカードとして並び、クリックで #essay-<id> の別ページへ遷移する。
+     本文中の [続き] が課金ライン——無料でない記事は、全園パスがない読者には
+     そこから先を伏せて「続きを読むには」を出す。 */
   var TANA_TOKEN = "[続き]";
+  var ESS_PAGE_SIZE = 8;
+  var essShowAll = false;
   function tanaEssays(){
     return cmsPosts.filter(function(p){ return p.side === "ura"; }).slice().reverse();
   }
+  function essPlain(body){
+    return String(body)
+      .replace(/\[画像[:：][^\]]+\]/g, " ")
+      .replace(/\[\/?[^\]]+\]/g, "")
+      .replace(/\s+/g, " ").trim();
+  }
+  function essThumb(p){
+    var m = String(p.body).match(/\[画像[:：]([^\]]+)\]/);
+    if(m){
+      var imgs = load("cms-images", {});
+      var src = imgs[m[1]] || m[1];
+      return '<img src="' + String(src).replace(/"/g, "&quot;") + '" alt="">';
+    }
+    var tx = essPlain(p.body);
+    return '<span class="ess-excerpt">' + esc(tx.slice(0, 64)) + (tx.length > 64 ? "…" : "") + '</span>';
+  }
   function renderTana(){
     var es = tanaEssays();
-    document.getElementById("tanaList").innerHTML = es.map(function(p){
-      var tag = (p.free || allAccess) ? "ぜんぶ読める" : "途中まで";
-      return '<button class="tana-row" data-tana="' + p.id + '">' +
-        '<span class="t-date">' + esc(p.date || "") + '</span>' +
-        '<span class="t-title">' + esc(p.title) + '</span>' +
-        '<span class="t-tag">' + tag + '</span></button>';
+    var show = essShowAll ? es : es.slice(0, ESS_PAGE_SIZE);
+    document.getElementById("essGrid").innerHTML = show.map(function(p){
+      var badge = p.free
+        ? '<span class="ess-badge free">無料</span>'
+        : '<span class="ess-badge paid">有料</span>';
+      return '<a class="ess-card" href="#essay-' + p.id + '">' +
+        '<div class="ess-thumb">' + badge + essThumb(p) +
+        '<span class="ess-title">' + esc(p.title) + '</span></div>' +
+        '<div class="ess-meta">🕒 ' + esc(p.date || "") + '</div>' +
+        '<div class="ess-cat"><span>エッセイ</span></div></a>';
     }).join("");
-    document.getElementById("tanaList").hidden = false;
     document.getElementById("tanaEmpty").hidden = es.length > 0;
-    document.getElementById("tanaReader").hidden = true;
+    document.getElementById("essMoreWrap").hidden = !(es.length > ESS_PAGE_SIZE && !essShowAll);
   }
-  function openTana(id){
+  document.getElementById("essMoreBtn").addEventListener("click", function(){
+    essShowAll = true; renderTana();
+  });
+  function renderEssayPage(){
+    var id = location.hash.slice(7); /* "#essay-" の後ろ */
     var p = null;
-    cmsPosts.forEach(function(x){ if(String(x.id) === String(id)) p = x; });
-    if(!p) return;
-    document.getElementById("tanaList").hidden = true;
-    document.getElementById("tanaEmpty").hidden = true;
-    var rd = document.getElementById("tanaReader");
-    rd.hidden = false;
-    document.getElementById("tanaDate").textContent = p.date || "";
-    document.getElementById("tanaTitle").textContent = p.title;
-    var pw = document.getElementById("tanaPaywall");
+    cmsPosts.forEach(function(x){ if(String(x.id) === id && x.side === "ura") p = x; });
+    var badge = document.getElementById("epBadge");
+    var pw = document.getElementById("epPaywall");
+    if(!p){
+      badge.textContent = ""; badge.className = "ep-badge";
+      document.getElementById("epDate").textContent = "";
+      document.getElementById("epTitle").textContent = "このエッセイは見つかりませんでした。";
+      document.getElementById("epBody").innerHTML = "";
+      pw.hidden = true;
+      return;
+    }
+    badge.textContent = p.free ? "無料" : "有料";
+    badge.className = "ep-badge " + (p.free ? "free" : "paid");
+    document.getElementById("epDate").textContent = "🕒 " + (p.date || "");
+    document.getElementById("epTitle").textContent = p.title;
+    document.title = p.title + " — still life";
     if(p.free || allAccess){
       /* 全文。[続き]トークンは段落の切れ目として吸収 */
-      document.getElementById("tanaBody").innerHTML = formatBody(p.body.split(TANA_TOKEN).join("\n\n"));
+      document.getElementById("epBody").innerHTML = formatBody(p.body.split(TANA_TOKEN).join("\n\n"));
       pw.hidden = true;
     }else{
       var ix = p.body.indexOf(TANA_TOKEN);
@@ -3298,16 +3386,15 @@
         if(parts.length > 2){ pre = parts.slice(0, 2).join("\n\n"); }
         else{ pre = p.body; gated = false; } /* 短すぎるものは全文 */
       }
-      document.getElementById("tanaBody").innerHTML = formatBody(pre);
+      document.getElementById("epBody").innerHTML = formatBody(pre);
       pw.hidden = !gated;
     }
-    rd.scrollIntoView({behavior:"smooth", block:"start"});
   }
-  document.getElementById("tanaList").addEventListener("click", function(e){
-    var b = e.target.closest ? e.target.closest("[data-tana]") : null;
-    if(b) openTana(b.getAttribute("data-tana"));
+  document.getElementById("epCta").addEventListener("click", function(e){
+    e.preventDefault();
+    location.hash = "#ura";
+    setTimeout(function(){ openRing("meiroku"); }, 60);
   });
-  document.getElementById("tanaClose").addEventListener("click", renderTana);
 
   /* ================= 園内マップ画像（絵地図への差し替え） ================= */
   var LS_MAPIMG = "zoo-map-img";
