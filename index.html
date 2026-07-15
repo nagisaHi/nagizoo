@@ -749,6 +749,53 @@
     text-decoration:none; border-bottom:1px solid transparent; padding-bottom:3px;
   }
   #ura .ura-nav a:hover,#ura .ura-nav a:focus-visible{color:#e3e1dc; border-color:#8b8a92}
+  /* --- エッセイ棚（タイトルと球体の間） --- */
+  #ura .tana{width:100%; max-width:40em; margin:34px auto 0; text-align:left}
+  #ura .tana-h{margin:0 0 6px; font-family:var(--mono); font-size:11px; letter-spacing:.3em; color:#9a98a0}
+  #ura .tana-h .tana-en{color:#5b5a63; letter-spacing:.18em; margin-left:12px; text-transform:lowercase}
+  #ura .tana-lead{margin:0 0 18px; font-size:12.5px; color:#8b8a92; line-height:2}
+  #ura .tana-list{display:flex; flex-direction:column; border-top:1px solid #232329}
+  #ura .tana-list[hidden]{display:none}
+  #ura .tana-row{
+    display:flex; gap:14px; align-items:baseline; width:100%; text-align:left;
+    background:none; border:none; border-bottom:1px solid #232329; cursor:pointer;
+    padding:13px 4px; color:#c9c7c2; font-family:var(--sans);
+  }
+  #ura .tana-row:hover .t-title,#ura .tana-row:focus-visible .t-title{color:#ffffff}
+  #ura .tana-row .t-date{font-family:var(--mono); font-size:10.5px; color:#5b5a63; letter-spacing:.08em; flex:none}
+  #ura .tana-row .t-title{flex:1; font-size:14px; font-weight:600; transition:color .2s}
+  #ura .tana-row .t-tag{font-family:var(--mono); font-size:10px; color:#8b8a92; letter-spacing:.12em; flex:none}
+  #ura .tana-empty{
+    font-size:12.5px; color:#5b5a63; line-height:2; margin:0;
+    border-top:1px solid #232329; border-bottom:1px solid #232329; padding:16px 4px;
+  }
+  #ura .tana-reader{margin:6px 0 0}
+  #ura .tana-close{
+    background:none; border:none; cursor:pointer; padding:4px 0;
+    font-family:var(--mono); font-size:11px; letter-spacing:.18em; color:#8b8a92;
+  }
+  #ura .tana-close:hover{color:#e3e1dc}
+  #ura .tana-date{margin:20px 0 2px; font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:#5b5a63}
+  #ura .tana-title{
+    margin:0 0 26px; font-family:var(--min); font-size:22px; font-weight:600;
+    letter-spacing:.04em; line-height:1.9; color:#f2f0eb;
+  }
+  #ura .tana-body{font-family:var(--min); font-size:15.5px; line-height:2.35; letter-spacing:.02em; color:#d9d7d2}
+  #ura .tana-body p{margin:0 0 1.7em !important}
+  /* 課金ライン: 本文の末尾をフェードで沈めて「続きを読むには」 */
+  #ura .tana-paywall{position:relative; margin-top:-104px; padding-top:128px; text-align:center}
+  #ura .pw-fade{
+    position:absolute; top:0; left:0; right:0; height:112px; pointer-events:none;
+    background:linear-gradient(rgba(11,11,12,0), #0b0b0c 82%);
+  }
+  #ura .pw-line{font-family:var(--mono); font-size:11px; letter-spacing:.5em; text-indent:.5em; color:#9a98a0; margin:0 0 16px}
+  #ura .pw-copy{font-size:13px; color:#8b8a92; line-height:2.2; margin:0 0 20px}
+  #ura .pw-actions{margin:0 0 8px}
+  #ura .pw-actions a{
+    display:inline-block; font-family:var(--mono); font-size:11.5px; letter-spacing:.18em;
+    color:#e3e1dc; text-decoration:none; border:1px solid #3a3942; padding:12px 26px;
+  }
+  #ura .pw-actions a:hover{border-color:#8b8a92}
   /* --- 卵子の見取り図（球体・触れると分裂） --- */
   #ura .ovum{position:relative; width:min(84vw,460px); aspect-ratio:1/1; margin:46px auto 6px; touch-action:manipulation}
   #ura .ovum-glow{
@@ -1801,6 +1848,24 @@
       <div class="ura-title">still life</div>
       <p class="ura-sub">人間の静物画 — あむに君</p>
       <p class="ura-oneline">ここは Still life。何を愛し、何を失い、何を恐れて生きてきたか——輪郭を切り取る場所。</p>
+      <div class="tana" id="uraTana">
+        <p class="tana-h">エッセイ<span class="tana-en">essays</span></p>
+        <p class="tana-lead">あむに君が、自分の輪郭を言葉にしていく棚。書きはじめは、だれでも読めます。続きは、全園パスの領分。</p>
+        <div class="tana-list" id="tanaList"></div>
+        <p class="tana-empty" id="tanaEmpty" hidden>棚はまだ空です。管理室（表の⚙）から「裏 — エッセイ」に投稿すると、ここに並びます。</p>
+        <article class="tana-reader" id="tanaReader" hidden>
+          <button class="tana-close" id="tanaClose">← 棚へもどる</button>
+          <p class="tana-date" id="tanaDate"></p>
+          <h3 class="tana-title" id="tanaTitle"></h3>
+          <div class="tana-body" id="tanaBody"></div>
+          <div class="tana-paywall" id="tanaPaywall" hidden>
+            <div class="pw-fade" aria-hidden="true"></div>
+            <p class="pw-line">続きを読むには</p>
+            <p class="pw-copy">ここから先は、全園パス（月4,000円）の領分です。<br>この棚の全文と、書架の全論考、表の全5舎がひらきます。</p>
+            <p class="pw-actions"><a href="#ura-meiroku" data-ring="meiroku">目録で「全園パス」を見る</a></p>
+          </div>
+        </article>
+      </div>
       <div class="namimon ovum" id="ovum" role="navigation" aria-label="裏の見取り図（卵子）">
         <div class="ovum-glow" aria-hidden="true"></div>
         <div class="ovum-port" aria-hidden="true">
@@ -2149,7 +2214,7 @@
         <div class="adm-row">
           <select id="pSide" class="adm-input">
             <option value="omote">表 — 飼育舎の「読む回」に載せる</option>
-            <option value="ura">裏 — 書架の論考に載せる</option>
+            <option value="ura">裏 — エッセイの棚に載せる（本文に [続き] と書くと、そこが課金ライン）</option>
             <option value="diary">表 — あむに観察日誌に一行たす（タイトル不要）</option>
           </select>
           <select id="pSeries" class="adm-input"></select>
@@ -3185,7 +3250,64 @@
       });
       shokaList.insertBefore(a, shokaList.firstChild);
     })(posts[i]); }
+    renderTana();
   }
+
+  /* ================= 裏エッセイ棚（タイトルと球体の間） =================
+     管理室の「裏」投稿が読みやすい棚として並ぶ。本文中の [続き] が課金ライン——
+     無料でない記事は、全園パスがない読者にはそこから先を伏せて「続きを読むには」を出す。 */
+  var TANA_TOKEN = "[続き]";
+  function tanaEssays(){
+    return cmsPosts.filter(function(p){ return p.side === "ura"; }).slice().reverse();
+  }
+  function renderTana(){
+    var es = tanaEssays();
+    document.getElementById("tanaList").innerHTML = es.map(function(p){
+      var tag = (p.free || allAccess) ? "ぜんぶ読める" : "途中まで";
+      return '<button class="tana-row" data-tana="' + p.id + '">' +
+        '<span class="t-date">' + esc(p.date || "") + '</span>' +
+        '<span class="t-title">' + esc(p.title) + '</span>' +
+        '<span class="t-tag">' + tag + '</span></button>';
+    }).join("");
+    document.getElementById("tanaList").hidden = false;
+    document.getElementById("tanaEmpty").hidden = es.length > 0;
+    document.getElementById("tanaReader").hidden = true;
+  }
+  function openTana(id){
+    var p = null;
+    cmsPosts.forEach(function(x){ if(String(x.id) === String(id)) p = x; });
+    if(!p) return;
+    document.getElementById("tanaList").hidden = true;
+    document.getElementById("tanaEmpty").hidden = true;
+    var rd = document.getElementById("tanaReader");
+    rd.hidden = false;
+    document.getElementById("tanaDate").textContent = p.date || "";
+    document.getElementById("tanaTitle").textContent = p.title;
+    var pw = document.getElementById("tanaPaywall");
+    if(p.free || allAccess){
+      /* 全文。[続き]トークンは段落の切れ目として吸収 */
+      document.getElementById("tanaBody").innerHTML = formatBody(p.body.split(TANA_TOKEN).join("\n\n"));
+      pw.hidden = true;
+    }else{
+      var ix = p.body.indexOf(TANA_TOKEN);
+      var pre, gated = true;
+      if(ix >= 0){
+        pre = p.body.slice(0, ix);
+      }else{
+        var parts = p.body.split(/\n\s*\n/);
+        if(parts.length > 2){ pre = parts.slice(0, 2).join("\n\n"); }
+        else{ pre = p.body; gated = false; } /* 短すぎるものは全文 */
+      }
+      document.getElementById("tanaBody").innerHTML = formatBody(pre);
+      pw.hidden = !gated;
+    }
+    rd.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+  document.getElementById("tanaList").addEventListener("click", function(e){
+    var b = e.target.closest ? e.target.closest("[data-tana]") : null;
+    if(b) openTana(b.getAttribute("data-tana"));
+  });
+  document.getElementById("tanaClose").addEventListener("click", renderTana);
 
   /* ================= 園内マップ画像（絵地図への差し替え） ================= */
   var LS_MAPIMG = "zoo-map-img";
