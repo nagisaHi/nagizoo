@@ -751,7 +751,7 @@
   #ura .ura-nav a:hover,#ura .ura-nav a:focus-visible{color:#e3e1dc; border-color:#8b8a92}
   /* --- エッセイ（ブログ型カードグリッド: タイトルと球体の間） --- */
   #ura .tana{
-    width:min(94vw, 1200px); position:relative; left:50%; transform:translateX(-50%);
+    width:min(94vw, 1200px); max-width:none; flex:none;
     margin:34px 0 0; text-align:left;
   }
   #ura .tana-h{margin:0 0 6px; font-family:var(--mono); font-size:11px; letter-spacing:.3em; color:#9a98a0}
@@ -3313,7 +3313,8 @@
      本文中の [続き] が課金ライン——無料でない記事は、全園パスがない読者には
      そこから先を伏せて「続きを読むには」を出す。 */
   var TANA_TOKEN = "[続き]";
-  var ESS_PAGE_SIZE = 8;
+  var ESS_PAGE_SIZE = 6;      /* 一覧の初期表示件数 */
+  var ESS_FREE_CHARS = 1500;  /* [続き]がない有料記事の、無料で読める目安の字数 */
   var essShowAll = false;
   function tanaEssays(){
     return cmsPosts.filter(function(p){ return p.side === "ura"; }).slice().reverse();
@@ -3380,11 +3381,19 @@
       var ix = p.body.indexOf(TANA_TOKEN);
       var pre, gated = true;
       if(ix >= 0){
-        pre = p.body.slice(0, ix);
+        pre = p.body.slice(0, ix); /* 著者が置いた課金ラインを最優先 */
+      }else if(essPlain(p.body).length <= ESS_FREE_CHARS){
+        pre = p.body; gated = false; /* 1500字以下は全文 */
       }else{
-        var parts = p.body.split(/\n\s*\n/);
-        if(parts.length > 2){ pre = parts.slice(0, 2).join("\n\n"); }
-        else{ pre = p.body; gated = false; } /* 短すぎるものは全文 */
+        /* 段落を積んで約1500字まで無料で見せる */
+        var parts = p.body.split(/\n\s*\n/), acc = [], len = 0;
+        for(var i = 0; i < parts.length; i++){
+          acc.push(parts[i]);
+          len += essPlain(parts[i]).length;
+          if(len >= ESS_FREE_CHARS) break;
+        }
+        pre = acc.join("\n\n");
+        if(acc.length === parts.length){ gated = false; }
       }
       document.getElementById("epBody").innerHTML = formatBody(pre);
       pw.hidden = !gated;
